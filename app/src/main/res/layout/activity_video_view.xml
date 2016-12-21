@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_video_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cn.swt.dandanplay.play.view.VideoViewActivity"
+    android:gravity="center">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#0099cc">
+        <com.superplayer.library.SuperPlayer
+            android:id="@+id/view_super_player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </com.superplayer.library.SuperPlayer>
+
+    </FrameLayout>
+
+</RelativeLayout>
