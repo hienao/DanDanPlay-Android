@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.os.Handler;
@@ -35,20 +34,6 @@ import com.superplayer.library.mediaplayer.IjkVideoView;
 import com.superplayer.library.utils.NetUtils;
 import com.superplayer.library.utils.SuperPlayerUtils;
 
-import java.util.Random;
-
-import master.flame.danmaku.controller.DrawHandler;
-import master.flame.danmaku.danmaku.loader.ILoader;
-import master.flame.danmaku.danmaku.loader.IllegalDataException;
-import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory;
-import master.flame.danmaku.danmaku.model.BaseDanmaku;
-import master.flame.danmaku.danmaku.model.DanmakuTimer;
-import master.flame.danmaku.danmaku.model.android.DanmakuContext;
-import master.flame.danmaku.danmaku.model.android.Danmakus;
-import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
-import master.flame.danmaku.danmaku.parser.IDataSource;
-import master.flame.danmaku.danmaku.parser.android.BiliDanmukuParser;
-import master.flame.danmaku.ui.widget.DanmakuView;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -128,15 +113,12 @@ public class SuperPlayer extends RelativeLayout {
     private boolean isSupportGesture = false;//是否至此手势操作，false ：小屏幕的时候不支持，全屏的支持；true : 小屏幕还是全屏都支持
     private boolean isPrepare = false;// 是否已经初始化播放
     private boolean isNetListener = true;// 是否添加网络监听 (默认是监听)
-    private boolean showDanmaku;//是否显示弹幕
-    private DanmakuView danmakuView;//弹幕view
-    private DanmakuContext danmakuContext;//弹幕上下文
-    //弹幕解析器
-    private BaseDanmakuParser parser;
     // 网络监听回调
     private NetChangeReceiver netChangeReceiver;
     private OnNetChangeListener onNetChangeListener;
 
+    private OnDanMuClickListener mDanMuClickListener;
+    private boolean danMuShowState=false ;
     private OrientationEventListener orientationEventListener;
     private int defaultTimeout = 3000;
     private int screenWidthPixels;
@@ -175,7 +157,6 @@ public class SuperPlayer extends RelativeLayout {
         $ = new Query(activity);
         contentView = View.inflate(context, R.layout.view_super_player, this);
         videoView = (IjkVideoView) contentView.findViewById(R.id.video_view);
-        danmakuView = (DanmakuView) contentView.findViewById(R.id.danmaku_view);
         videoView
                 .setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
                     @Override
@@ -305,112 +286,9 @@ public class SuperPlayer extends RelativeLayout {
             showStatus(activity.getResources().getString(R.string.not_support),
                     "重试");
         }
-    }
-
-    /**
-     * 弹幕初始化
-     * @param xmlurl    xml弹幕文件地址
-     */
-    public void addDanMu(String xmlurl) {
-        parser=createParser(xmlurl);
-        danmakuView.enableDanmakuDrawingCache(true);
-        danmakuView.setCallback(new DrawHandler.Callback() {
-            @Override
-            public void prepared() {
-                showDanmaku = true;
-                danmakuView.start();
-                //添加弹幕
-                generateSomeDanmaku();
-            }
-
-            @Override
-            public void updateTimer(DanmakuTimer timer) {
-
-            }
-
-            @Override
-            public void danmakuShown(BaseDanmaku danmaku) {
-
-            }
-
-            @Override
-            public void drawingFinished() {
-
-            }
-        });
-        danmakuContext = DanmakuContext.create();
-        danmakuView.prepare(parser, danmakuContext);
-    }
-    /**
-     * 创建解析器对象，解析xml文件地址
-     * @param commenturl    弹幕地址
-     * @return
-     */
-    private BaseDanmakuParser createParser(String commenturl) {
-
-        if (commenturl == null) {
-            return new BaseDanmakuParser() {
-
-                @Override
-                protected Danmakus parse() {
-                    return new Danmakus();
-                }
-            };
-        }
-
-        ILoader loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_BILI);
-
-        try {
-
-            loader.load("sdcard/catch.xml");
-        } catch (IllegalDataException e) {
-            e.printStackTrace();
-        }
-        BaseDanmakuParser parser = new BiliDanmukuParser();
-        IDataSource<?> dataSource = loader.getDataSource();
-        parser.load(dataSource);
-        return parser;
 
     }
-    /**
-     * 随机生成一些弹幕内容以供测试
-     */
-    private void generateSomeDanmaku() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(showDanmaku) {
-                    int time = new Random().nextInt(300);
-                    String content = "" + time + time;
-                    addDanmaku(content, false);
-                    try {
-                        Thread.sleep(time);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-    }
-    /**
-     * 向弹幕View中添加一条弹幕
-     * @param content
-     *          弹幕的具体内容
-     * @param  withBorder
-     *          弹幕是否有边框
-     */
-    private void addDanmaku(String content, boolean withBorder) {
-        BaseDanmaku danmaku = danmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-        danmaku.text = content;
-        danmaku.padding = 5;
-        danmaku.textSize = sp2px(this.context,20);
-        danmaku.textColor = Color.WHITE;
-        danmaku.setTime(danmakuView.getCurrentTime());
-        if (withBorder) {
-            danmaku.borderColor = Color.GREEN;
-        }
-        danmakuView.addDanmaku(danmaku);
-    }
+
     /**
      * sp转px
      *
@@ -429,6 +307,8 @@ public class SuperPlayer extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.view_jky_player_comment) {
+                mDanMuClickListener.setShowDanMuState(danMuShowState);
+                danMuShowState=!danMuShowState;
 //                toggleFullScreen();
             } else if (v.getId() == R.id.app_video_play) {
                 doPauseResume();
@@ -1487,6 +1367,9 @@ public class SuperPlayer extends RelativeLayout {
     public interface OnPreparedListener {
         void onPrepared();
     }
+    public interface OnDanMuClickListener{
+        void setShowDanMuState(boolean state);
+    }
 
     public SuperPlayer onError(OnErrorListener onErrorListener) {
         this.onErrorListener = onErrorListener;
@@ -1505,6 +1388,10 @@ public class SuperPlayer extends RelativeLayout {
 
     public SuperPlayer onPrepared(OnPreparedListener onPreparedListener) {
         this.onPreparedListener = onPreparedListener;
+        return this;
+    }
+    public SuperPlayer setOnShowDanMuState(OnDanMuClickListener onDanMuClickListener){
+        this.mDanMuClickListener=onDanMuClickListener;
         return this;
     }
 
