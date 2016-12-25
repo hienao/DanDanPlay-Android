@@ -19,5 +19,11 @@
         </com.superplayer.library.SuperPlayer>
 
     </FrameLayout>
+    <master.flame.danmaku.ui.widget.DanmakuView
+        android:id="@+id/danmaku_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false"/>
 
 </RelativeLayout>

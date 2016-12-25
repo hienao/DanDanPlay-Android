@@ -14,4 +14,7 @@ public class HttpConstant {
     public static final String ACPLAY_BASE_URL="https://api.acplay.net/";
     public static final String BiliBili_CID_GET="https://biliproxy.chinacloudsites.cn/";
 
+    public static final String BILIBILI_COMMENT_BASE_URL="https://comment.bilibili.com/";
+    public static final String BILIBILIJIJI_COMMENT_BASE_URL="http://www.bilibilijj.com/ashx/Barrage.ashx?f=true&av=&p=&s=xml&cid=";
+
 }

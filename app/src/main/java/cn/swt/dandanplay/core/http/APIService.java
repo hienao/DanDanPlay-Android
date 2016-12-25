@@ -102,4 +102,5 @@ public interface APIService {
      */
     @GET("av/{avnum}/{page}")
     Call<CidResponse> getBiliBiliCid(@Path("avnum") String avnum,@Path("page") String page);
+
 }

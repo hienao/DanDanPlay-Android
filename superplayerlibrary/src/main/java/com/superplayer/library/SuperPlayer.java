@@ -118,7 +118,6 @@ public class SuperPlayer extends RelativeLayout {
     private OnNetChangeListener onNetChangeListener;
 
     private OnDanMuClickListener mDanMuClickListener;
-    private boolean danMuShowState=false ;
     private OrientationEventListener orientationEventListener;
     private int defaultTimeout = 3000;
     private int screenWidthPixels;
@@ -307,8 +306,7 @@ public class SuperPlayer extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.view_jky_player_comment) {
-                mDanMuClickListener.setShowDanMuState(danMuShowState);
-                danMuShowState=!danMuShowState;
+                mDanMuClickListener.setDanMuClick();
 //                toggleFullScreen();
             } else if (v.getId() == R.id.app_video_play) {
                 doPauseResume();
@@ -1368,7 +1366,7 @@ public class SuperPlayer extends RelativeLayout {
         void onPrepared();
     }
     public interface OnDanMuClickListener{
-        void setShowDanMuState(boolean state);
+        void setDanMuClick();
     }
 
     public SuperPlayer onError(OnErrorListener onErrorListener) {
