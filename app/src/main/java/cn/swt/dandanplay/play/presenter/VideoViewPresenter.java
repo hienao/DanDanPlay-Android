@@ -193,7 +193,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
             //得到sax的解析器
             SAXParser saxParser=factory.newSAXParser();
             //创建handler对象
-            SAXContentHandler handlerService=new SAXContentHandler();
+            SAXContentHandler handlerService=new SAXContentHandler(mView);
             InputStream is = new ByteArrayInputStream(xmlData.getBytes());
             //直接解析
             saxParser.parse(is, handlerService);

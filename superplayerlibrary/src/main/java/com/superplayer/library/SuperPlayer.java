@@ -118,6 +118,7 @@ public class SuperPlayer extends RelativeLayout {
     private OnNetChangeListener onNetChangeListener;
 
     private OnDanMuClickListener mDanMuClickListener;
+    private OnVideoSeekListener mOnSeekListener;
     private OrientationEventListener orientationEventListener;
     private int defaultTimeout = 3000;
     private int screenWidthPixels;
@@ -476,6 +477,7 @@ public class SuperPlayer extends RelativeLayout {
                 videoView.seekTo(newPosition);
             }
             $.id(R.id.app_video_currentTime).text(time);
+            mOnSeekListener.seekChange(duration * progress/1000);
         }
 
         @Override
@@ -1368,6 +1370,9 @@ public class SuperPlayer extends RelativeLayout {
     public interface OnDanMuClickListener{
         void setDanMuClick();
     }
+    public interface OnVideoSeekListener{
+        void seekChange(long newPosion);
+    }
 
     public SuperPlayer onError(OnErrorListener onErrorListener) {
         this.onErrorListener = onErrorListener;
@@ -1390,6 +1395,10 @@ public class SuperPlayer extends RelativeLayout {
     }
     public SuperPlayer setOnShowDanMuState(OnDanMuClickListener onDanMuClickListener){
         this.mDanMuClickListener=onDanMuClickListener;
+        return this;
+    }
+    public SuperPlayer setOnSeek(OnVideoSeekListener onSeekListener){
+        this.mOnSeekListener=onSeekListener;
         return this;
     }
 

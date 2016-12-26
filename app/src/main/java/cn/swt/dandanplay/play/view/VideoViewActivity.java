@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -53,9 +54,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     SuperPlayer        mViewSuperPlayer;
     @BindView(R.id.danmaku_view)
     DanmakuView        mDanmakuView;
-    private DanmakuContext    mDanmakuContext;
+    private DanmakuContext     mDanmakuContext;
     private BaseDanmakuParser mBaseDanmakuParser;
-
+    private List<BaseDanmaku> mCommentsBeanList;
     private String            videoPath;
     private String            videoTitle;
     private boolean danMuShowState = true;
@@ -125,11 +126,42 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         return result;
     }
 
+
     @Override
-    public void addBilibiliDanMu(String xmlUrl) {
-        generateSomeDanmaku();
-//        mViewSuperPlayer.addDanMu(xmlUrl);
+    public void addBiliBiliDanmu(String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7,String text) {
+        BaseDanmaku danmaku = null;
+        //设置弹幕模式
+        switch (a1){
+            case "1":
+                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                break;
+            case "4":
+                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM);
+                break;
+            case "5":
+                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP);
+                break;
+            case "6":
+                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR);
+                break;
+            case "7":
+                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL);
+                break;
+            default:
+                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                break;
+        }
+        danmaku.text = text;
+        danmaku.padding = 5;
+        danmaku.textSize = sp2px(Integer.parseInt(a2));
+        danmaku.textColor = Integer.parseInt(a3);
+        danmaku.setTime((long)(Double.parseDouble(a0)*1000));
+        danmaku.priority=Byte.parseByte(a5);
+        danmaku.userHash=a6;
+        danmaku.index=Integer.parseInt(a7);
+        mDanmakuView.addDanmaku(danmaku);
     }
+
 
     private void initData() {
         videoPath = getIntent().getStringExtra("path");
@@ -141,6 +173,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 return new Danmakus();
             }
         };
+        mCommentsBeanList=new ArrayList<>();
     }
 
     private void initView() {
@@ -232,6 +265,12 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                     danMuShowState=true;
                     mDanmakuView.show();
                 }
+            }
+        });
+        mViewSuperPlayer.setOnSeek(new SuperPlayer.OnVideoSeekListener() {
+            @Override
+            public void seekChange(long newPosion) {
+                mDanmakuView.seekTo(newPosion);
             }
         });
     }
@@ -390,6 +429,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         }
         mDanmakuView.addDanmaku(danmaku);
     }
+
 
     /**
      * 随机生成一些弹幕内容以供测试
