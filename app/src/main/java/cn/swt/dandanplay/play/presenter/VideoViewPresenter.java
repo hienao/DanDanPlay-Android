@@ -1,23 +1,20 @@
 package cn.swt.dandanplay.play.presenter;
 
-import android.util.Log;
-
 import com.swt.corelib.utils.LogUtils;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import cn.swt.dandanplay.core.http.APIService;
 import cn.swt.dandanplay.core.http.HttpConstant;
 import cn.swt.dandanplay.core.http.RetrofitManager;
+import cn.swt.dandanplay.core.http.SAXContentHandler;
 import cn.swt.dandanplay.core.http.beans.CidResponse;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.core.http.beans.MatchResponse;
@@ -28,8 +25,6 @@ import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.R.attr.type;
 
 /**
  * Title: VideoViewPresenter <br>
@@ -143,16 +138,6 @@ public class VideoViewPresenter implements VideoViewContract.Present {
     }
     private void getBiliBiliComment(final String cid){
 
-
-
-
-
-
-
-
-
-
-
         OkHttpClient mOkHttpClient=new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(HttpConstant.BILIBILIJIJI_COMMENT_BASE_URL+cid+"&n="+cid+".xml");
         Request request = requestBuilder.build();
@@ -171,82 +156,50 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 //                    String info = new String(b, "GB2312");//然后将其转为gb2312
 //                    LogUtils.e("charset",info);
                     String xmlstr=response.body().string();
-                    parseXMLWithPull(xmlstr);
-                    testCharset(xmlstr);
+                    parseXMLWithSAX(xmlstr);
                 }else {
                     LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
                 }
             }
         });
     }
-    // 以下是测试字符编码的
-    public static void testCharset(String datastr){
-        try {
-            String temp = new String(datastr.getBytes(), "GBK");
-            Log.v("TestCharset","****** getBytes() -> GBK ******/n"+temp);
-            temp = new String(datastr.getBytes("GBK"), "UTF-8");
-            Log.v("TestCharset","****** GBK -> UTF-8 *******/n"+temp);
-            temp = new String(datastr.getBytes("GBK"), "ISO-8859-1");
-            Log.v("TestCharset","****** GBK -> ISO-8859-1 *******/n"+temp);
-            temp = new String(datastr.getBytes("ISO-8859-1"), "UTF-8");
-            Log.v("TestCharset","****** ISO-8859-1 -> UTF-8 *******/n"+temp);
-            temp = new String(datastr.getBytes("ISO-8859-1"), "GBK");
-            Log.v("TestCharset","****** ISO-8859-1 -> GBK *******/n"+temp);
-            temp = new String(datastr.getBytes("UTF-8"), "GBK");
-            Log.v("TestCharset","****** UTF-8 -> GBK *******/n"+temp);
-            temp = new String(datastr.getBytes("UTF-8"), "ISO-8859-1");
-            Log.v("TestCharset","****** UTF-8 -> ISO-8859-1 *******/n"+temp);
-            temp = new String(datastr.getBytes("UTF-8"), "GB2312");
-            Log.v("TestCharset","****** UTF-8 -> GB3212 *******/n"+temp);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
-    private void parseXMLWithPull(String xmlData){
+//    // 以下是测试字符编码的
+//    public static void testCharset(String datastr){
+//        try {
+//            String temp = new String(datastr.getBytes(), "GBK");
+//            Log.v("TestCharset","****** getBytes() -> GBK ******/n"+temp);
+//            temp = new String(datastr.getBytes("GBK"), "UTF-8");
+//            Log.v("TestCharset","****** GBK -> UTF-8 *******/n"+temp);
+//            temp = new String(datastr.getBytes("GBK"), "ISO-8859-1");
+//            Log.v("TestCharset","****** GBK -> ISO-8859-1 *******/n"+temp);
+//            temp = new String(datastr.getBytes("ISO-8859-1"), "UTF-8");
+//            Log.v("TestCharset","****** ISO-8859-1 -> UTF-8 *******/n"+temp);
+//            temp = new String(datastr.getBytes("ISO-8859-1"), "GBK");
+//            Log.v("TestCharset","****** ISO-8859-1 -> GBK *******/n"+temp);
+//            temp = new String(datastr.getBytes("UTF-8"), "GBK");
+//            Log.v("TestCharset","****** UTF-8 -> GBK *******/n"+temp);
+//            temp = new String(datastr.getBytes("UTF-8"), "ISO-8859-1");
+//            Log.v("TestCharset","****** UTF-8 -> ISO-8859-1 *******/n"+temp);
+//            temp = new String(datastr.getBytes("UTF-8"), "GB2312");
+//            Log.v("TestCharset","****** UTF-8 -> GB3212 *******/n"+temp);
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    private void parseXMLWithSAX(String xmlData){
         try{
-            XmlPullParserFactory xmlPullParserFactory=XmlPullParserFactory.newInstance();
-            XmlPullParser xmlPullParser=xmlPullParserFactory.newPullParser();
+            //SAX解析的工厂对象
+            SAXParserFactory factory=SAXParserFactory.newInstance();
+            //得到sax的解析器
+            SAXParser saxParser=factory.newSAXParser();
+            //创建handler对象
+            SAXContentHandler handlerService=new SAXContentHandler();
             InputStream is = new ByteArrayInputStream(xmlData.getBytes());
-            xmlPullParser.setInput(is, "utf-8");
-            int eventType=xmlPullParser.getEventType();
-            final int depth = xmlPullParser.getDepth();
-            String d="";
-            while ((type != XmlPullParser.END_TAG || xmlPullParser.getDepth() > depth) && eventType!=xmlPullParser.END_DOCUMENT){
-                String nodeName = xmlPullParser.getName();
-                switch (eventType){
-                    case XmlPullParser.START_DOCUMENT:
-//                        list = new ArrayList<Person>();
-                        break;
-                    case XmlPullParser.START_TAG:{
-                        if ("d".equals(nodeName)){
-                            d=xmlPullParser.nextText();
-                            String xxx=xmlPullParser.getAttributeName(0);
-                            String p=xmlPullParser.getAttributeValue(null,"p");
-                            System.out.println(p);
-                        }
-                        break;
-                    }
-                    case XmlPullParser.TEXT:{
-                        if ("d".equals(nodeName)){
-                            d=xmlPullParser.nextText();
-                            String p=xmlPullParser.getAttributeValue(null,"p");
-                            System.out.println(p);
-                        }
-                        break;
-                    }
-                    case XmlPullParser.END_TAG:{
-                        if ("i".equals(nodeName)){
-
-                        }
-                        break;
-                    }
-                    default:
-                        break;
-                }
-                eventType =xmlPullParser.next();
-            }
-        }catch (Exception e){
+            //直接解析
+            saxParser.parse(is, handlerService);
+        }catch(Exception e){
             e.printStackTrace();
         }
+
     }
 }
