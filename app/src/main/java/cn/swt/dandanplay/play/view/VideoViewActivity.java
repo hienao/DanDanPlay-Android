@@ -428,6 +428,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
             danmaku.borderColor = Color.GREEN;
         }
         mDanmakuView.addDanmaku(danmaku);
+        //mDanmakuView.seekTo((long)mViewSuperPlayer.getCurrentPosition());
     }
 
 
