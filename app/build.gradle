@@ -7,6 +7,10 @@ def releaseTime() {
 android {
     compileSdkVersion 25
     buildToolsVersion "24.0.3"
+    lintOptions {
+        abortOnError false
+    }
+
     defaultConfig {
         applicationId "cn.swt.dandanplay"
         minSdkVersion 21
