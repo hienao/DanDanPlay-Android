@@ -19,7 +19,7 @@
 #---------------------------------1.实体类---------------------------------
 -keep class cn.swt.dandanplay.core.http.beans.** { *; }
 -keep class master.flame.danmaku.** {*;}
-#-keep class com.superplayer.library.mediaplayer.** {*;}
+-keep class com.superplayer.library.** {*;}
 
 -dontwarn javax.xml.stream.events.**
 #-------------------------------------------------------------------------
