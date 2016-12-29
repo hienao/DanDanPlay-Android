@@ -23,6 +23,17 @@ android {
             abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86'//,  'x86_64'
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                // 输出apk名称为appname-1.0-beta1-xxxx-xx-xx.apk
+                def fileName = "app-${defaultConfig.versionName}-${variant.buildType.name}-${releaseTime()}.apk"
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
+        }
+    }
     buildTypes {
         release {
             // 混淆
@@ -34,16 +45,6 @@ android {
             // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    def outputFile = output.outputFile
-                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                        // 输出apk名称为appname-1.0-beta1-xxxx-xx-xx.apk
-                        def fileName = "app-${defaultConfig.versionName}-release-${releaseTime()}.apk"
-                        output.outputFile = new File(outputFile.parent, fileName)
-                    }
-                }
-            }
         }
         debug{
             // 混淆
@@ -54,18 +55,9 @@ android {
             shrinkResources false
             // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//            applicationVariants.all { variant ->
-//                variant.outputs.each { output ->
-//                    def outputFile = output.outputFile
-//                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
-//                        // 输出apk名称为appname-1.0-beta1-xxxx-xx-xx.apk
-//                        def fileName = "app-${defaultConfig.versionName}-debug-${releaseTime()}.apk"
-//                        output.outputFile = new File(outputFile.parent, fileName)
-//                    }
-//                }
-//            }
         }
     }
+
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
