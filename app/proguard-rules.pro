@@ -17,6 +17,7 @@
 #}
 #-------------------------------------------定制化区域----------------------------------------------
 #---------------------------------1.实体类---------------------------------
+-libraryjars <java.home>/lib/rt.jar(java/**,javax/**)
 -keep class cn.swt.dandanplay.core.http.beans.** { *; }
 -keep class cn.swt.dandanplay.fileexplorer.beans.** { *; }
 -keep class master.flame.danmaku.** {*;}
