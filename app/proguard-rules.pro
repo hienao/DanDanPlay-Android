@@ -19,7 +19,9 @@
 #---------------------------------1.实体类---------------------------------
 -keep class cn.swt.dandanplay.core.http.beans.** { *; }
 -keep class master.flame.danmaku.** {*;}
-
+-dontwarn class com.superplayer.library.**
+-dontwarn class tv.danmaku.ijk.**
+-dontwarn class org.simpleframework.xml.**
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
@@ -98,7 +100,6 @@
 
 #-------------------------------------------基本不用动区域--------------------------------------------
 #---------------------------------基本指令区----------------------------------
--dontwarn
 -optimizationpasses 5
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
