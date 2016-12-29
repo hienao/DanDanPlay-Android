@@ -23,7 +23,6 @@
 -keep class com.superplayer.library.** {*;}
 -keep class tv.danmaku.ijk.**{*;}
 -keep class org.simpleframework.xml.**{*;}
--dontwarn javax.xml.**
 -keep class javax.xml.**
 #-------------------------------------------------------------------------
 
