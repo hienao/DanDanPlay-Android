@@ -27,6 +27,7 @@
 
 #---------------------------------2.第三方包-------------------------------
 # (2)Simple XML
+-dontwarn javax.xml.stream.events.**
 -keep public class org.simpleframework.**{ *; }
 -keep class org.simpleframework.xml.**{ *; }
 -keep class org.simpleframework.xml.core.**{ *; }
