@@ -15,13 +15,12 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-dontwarn
 #-------------------------------------------定制化区域----------------------------------------------
 #---------------------------------1.实体类---------------------------------
 -keep class cn.swt.dandanplay.core.http.beans.** { *; }
 -keep class master.flame.danmaku.** {*;}
-#-dontwarn class com.superplayer.**
--dontwarn class tv.danmaku.ijk.**
--dontwarn class org.simpleframework.xml.**
+
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
