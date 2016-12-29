@@ -25,7 +25,8 @@
 
 #---------------------------------2.第三方包-------------------------------
 # Gson
--keepattributes Signature-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes *Annotation*
 -keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.stream.** { *; }
 # 使用Gson时需要配置Gson的解析对象及变量都不混淆。不然Gson会找不到变量。
