@@ -23,11 +23,14 @@
 -keep class com.superplayer.library.** {*;}
 -keep class tv.danmaku.ijk.**{*;}
 -keep class org.simpleframework.xml.**{*;}
+-keep class tv.cjump.ndkbitmap_armv7a.**{*;}
 -keep class javax.xml.**{*;}
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
 # Gson
+-keepattributes Signature-keepattributes *Annotation*
+-keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.stream.** { *; }
 -keep class com.google.gson.** { *;}
 # 使用Gson时需要配置Gson的解析对象及变量都不混淆。不然Gson会找不到变量。
