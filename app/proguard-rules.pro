@@ -20,6 +20,7 @@
 -keep class cn.swt.dandanplay.core.http.beans.** { *; }
 -keep class master.flame.danmaku.** {*;}
 
+-dontwarn javax.xml.stream.events.**
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
