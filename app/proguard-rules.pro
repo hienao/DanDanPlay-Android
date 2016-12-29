@@ -23,8 +23,7 @@
 -keep class com.superplayer.library.** {*;}
 -keep class tv.danmaku.ijk.**{*;}
 -keep class org.simpleframework.xml.**{*;}
--dontwarn javax.xml.stream.events.**
--keep class javax.xml.**
+-keep class javax.xml.**{*;}
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
