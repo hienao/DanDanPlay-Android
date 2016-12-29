@@ -21,17 +21,14 @@
 -keep class cn.swt.dandanplay.fileexplorer.beans.** { *; }
 -keep class master.flame.danmaku.** {*;}
 -keep class com.superplayer.library.** {*;}
-
+-keep class tv.danmaku.ijk.**{*;}
+-keep class org.simpleframework.xml.**{*;}
 -dontwarn javax.xml.stream.events.**
 -keep class javax.xml.stream.events.**
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
 # Gson
--keepattributes Signature
--keepattributes *Annotation*
-# Gson specific classes
--keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.stream.** { *; }
 -keep class com.google.gson.** { *;}
 # 使用Gson时需要配置Gson的解析对象及变量都不混淆。不然Gson会找不到变量。
@@ -70,7 +67,6 @@
 # Retrofit
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
--keepattributes Signature
 -keepattributes Exceptions
 
 # RxJava RxAndroid
