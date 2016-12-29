@@ -15,7 +15,6 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--ignorewarnings
 #-------------------------------------------定制化区域----------------------------------------------
 #---------------------------------1.实体类---------------------------------
 -keep class cn.swt.dandanplay.core.http.beans.** { *; }
@@ -27,8 +26,10 @@
 # Gson
 -keepattributes Signature
 -keepattributes *Annotation*
+# Gson specific classes
 -keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.stream.** { *; }
+-keep class com.google.gson.** { *;}
 # 使用Gson时需要配置Gson的解析对象及变量都不混淆。不然Gson会找不到变量。
 
 # ButterKnife
