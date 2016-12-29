@@ -17,7 +17,6 @@
 #}
 #-------------------------------------------定制化区域----------------------------------------------
 #---------------------------------1.实体类---------------------------------
--libraryjars <java.home>/lib/rt.jar(java/**,javax/**)
 -keep class cn.swt.dandanplay.core.http.beans.** { *; }
 -keep class cn.swt.dandanplay.fileexplorer.beans.** { *; }
 -keep class master.flame.danmaku.** {*;}
@@ -28,7 +27,6 @@
 
 #---------------------------------2.第三方包-------------------------------
 # (2)Simple XML
--dontwarn javax.xml.stream.events.**
 -keep public class org.simpleframework.**{ *; }
 -keep class org.simpleframework.xml.**{ *; }
 -keep class org.simpleframework.xml.core.**{ *; }
@@ -115,6 +113,7 @@
 -printmapping proguardMapping.txt
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
 -keepattributes *Annotation*,InnerClasses
+-libraryjars <java.home>/lib/rt.jar(java/**,javax/**)
 # 避免混淆泛型
 -keepattributes Signature
 
