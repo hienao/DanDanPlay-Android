@@ -22,12 +22,15 @@
 -keep class master.flame.danmaku.** {*;}
 -keep class com.superplayer.library.** {*;}
 -keep class tv.danmaku.ijk.**{*;}
--keep class org.simpleframework.xml.**{*;}
--keep class tv.cjump.ndkbitmap_armv7a.**{*;}
--keep class javax.xml.**{*;}
+-keep class tv.cjump.**{*;}
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
+# (2)Simple XML
+-keep public class org.simpleframework.**{ *; }
+-keep class org.simpleframework.xml.**{ *; }
+-keep class org.simpleframework.xml.core.**{ *; }
+-keep class org.simpleframework.xml.util.**{ *; }
 # Gson
 -keepattributes Signature-keepattributes *Annotation*
 -keep class sun.misc.Unsafe { *; }
