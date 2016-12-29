@@ -32,7 +32,6 @@
 -keep class org.simpleframework.xml.core.**{ *; }
 -keep class org.simpleframework.xml.util.**{ *; }
 # Gson
--keepattributes Signature-keepattributes *Annotation*
 -keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.stream.** { *; }
 -keep class com.google.gson.** { *;}
