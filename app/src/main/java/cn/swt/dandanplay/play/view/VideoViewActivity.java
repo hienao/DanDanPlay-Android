@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.superplayer.library.SuperPlayer;
-import com.swt.corelib.utils.ConvertUtils;
 import com.swt.corelib.utils.EncryptUtils;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
@@ -90,8 +89,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
             r.seek(0);
             byte[] bs = new byte[16 * 1024 * 1024];
             r.read(bs);
-            String md5Src = ConvertUtils.bytes2HexString(bs);
-            return EncryptUtils.encryptMD5ToString(md5Src);
+            return EncryptUtils.encryptMD5ToString(bs);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
