@@ -49,12 +49,6 @@
         </provider>
 
 
-        <service android:name=".fileexplorer.service.ScanVideoFileService">
-            <intent-filter>
-                <action android:name="cn.swt.dandanplay.ScanVideoFileService">
-                </action>
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>

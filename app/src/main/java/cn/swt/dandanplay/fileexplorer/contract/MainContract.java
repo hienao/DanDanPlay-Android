@@ -1,5 +1,6 @@
 package cn.swt.dandanplay.fileexplorer.contract;
 
+import android.content.ContentResolver;
 import android.content.Context;
 
 import cn.swt.dandanplay.core.base.BasePresenter;
@@ -19,6 +20,6 @@ public class MainContract {
     }
 
     public interface Present extends BasePresenter {
-        void getFileContentData();
+        void getAllVideo(ContentResolver contentResolver);
     }
 }

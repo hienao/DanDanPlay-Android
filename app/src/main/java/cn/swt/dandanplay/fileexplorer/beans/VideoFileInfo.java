@@ -1,7 +1,5 @@
 package cn.swt.dandanplay.fileexplorer.beans;
 
-import android.graphics.Bitmap;
-
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.PrimaryKey;
 import com.litesuits.orm.db.annotation.Table;
@@ -37,9 +35,9 @@ public class VideoFileInfo implements Comparable<VideoFileInfo>{
     @Column("_contentPath")
     String videoContentPath;
     /**
-     * 视频封面
+     * 视频封面bitmap的base64 字符串
      */
-    Bitmap cover;
+    String cover;
     /**
      * 视频时长
      */
@@ -52,7 +50,7 @@ public class VideoFileInfo implements Comparable<VideoFileInfo>{
         this.videoPath = videoPath;
     }
 
-    public VideoFileInfo(String videoNameWithoutSuffix, String videoName, String videoPath, Bitmap cover, String videoLength) {
+    public VideoFileInfo(String videoNameWithoutSuffix, String videoName, String videoPath, String cover, String videoLength) {
         this.videoNameWithoutSuffix = videoNameWithoutSuffix;
         this.videoName = videoName;
         this.videoPath = videoPath;
@@ -92,11 +90,11 @@ public class VideoFileInfo implements Comparable<VideoFileInfo>{
         this.videoPath = videoPath;
     }
 
-    public Bitmap getCover() {
+    public String getCover() {
         return cover;
     }
 
-    public void setCover(Bitmap cover) {
+    public void setCover(String cover) {
         this.cover = cover;
     }
 

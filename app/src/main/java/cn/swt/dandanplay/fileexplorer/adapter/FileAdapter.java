@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.swt.corelib.utils.ConvertUtils;
+
 import java.util.List;
 
 import cn.swt.dandanplay.R;
@@ -45,7 +47,7 @@ public class FileAdapter extends RecyclerView.Adapter{
         final ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.text_name.setText(list.get(position).getVideoNameWithoutSuffix());
         viewHolder.text_time.setText(list.get(position).getVideoLength());
-        viewHolder.iv_cover.setImageBitmap(list.get(position).getCover());
+        viewHolder.iv_cover.setImageBitmap(ConvertUtils.base64ToBitmap(list.get(position).getCover()));
         viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

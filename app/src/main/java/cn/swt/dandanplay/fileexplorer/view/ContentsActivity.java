@@ -2,6 +2,7 @@ package cn.swt.dandanplay.fileexplorer.view;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -27,15 +28,14 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cn.swt.dandanplay.application.MyApplication;
 import cn.swt.dandanplay.R;
+import cn.swt.dandanplay.application.MyApplication;
 import cn.swt.dandanplay.fileexplorer.adapter.ContentAdapter;
 import cn.swt.dandanplay.fileexplorer.beans.ContentInfo;
 import cn.swt.dandanplay.fileexplorer.component.DaggerMainComponent;
 import cn.swt.dandanplay.fileexplorer.contract.MainContract;
 import cn.swt.dandanplay.fileexplorer.module.MainModule;
 import cn.swt.dandanplay.fileexplorer.presenter.MainPresenter;
-import cn.swt.dandanplay.fileexplorer.service.ScanVideoFileService;
 
 public class ContentsActivity extends AppCompatActivity implements MainContract.View {
 
@@ -54,6 +54,7 @@ public class ContentsActivity extends AppCompatActivity implements MainContract.
     private List<ContentInfo> mDatas;
     private ContentAdapter mContentAdapter;
     private ScanVideoFileReceiver mScanVideoFileReceiver=null;
+    private ContentResolver mContentResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class ContentsActivity extends AppCompatActivity implements MainContract.
         IntentFilter filter=new IntentFilter();
         filter.addAction("cn.swt.dandanplay.ScanVideoFileService");
         registerReceiver(mScanVideoFileReceiver,filter);
+        mContentResolver=this.getContentResolver();
     }
 
     private void initView() {
@@ -90,8 +92,7 @@ public class ContentsActivity extends AppCompatActivity implements MainContract.
         mSwipRefeshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //启动服务
-                startService(new Intent(ContentsActivity.this, ScanVideoFileService.class));
+                mMainPresenter.getAllVideo(mContentResolver);
             }
         });
     }
@@ -152,7 +153,6 @@ public class ContentsActivity extends AppCompatActivity implements MainContract.
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(ContentsActivity.this, ScanVideoFileService.class));
         super.onDestroy();
         unregisterReceiver(mScanVideoFileReceiver);
     }
@@ -166,5 +166,8 @@ public class ContentsActivity extends AppCompatActivity implements MainContract.
             mSwipRefeshLayout.setRefreshing(false);
         }
     }
+
+
+
 
 }
