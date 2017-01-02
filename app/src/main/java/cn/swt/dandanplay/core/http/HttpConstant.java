@@ -16,5 +16,5 @@ public class HttpConstant {
 
     public static final String BILIBILI_COMMENT_BASE_URL="https://comment.bilibili.com/";
     public static final String BILIBILIJIJI_COMMENT_BASE_URL="http://www.bilibilijj.com/ashx/Barrage.ashx?f=true&av=&p=&s=xml&cid=";
-
+    public static final String ACFUN_COMMENT_BASE_URL="http://www.acfun.cn/";
 }

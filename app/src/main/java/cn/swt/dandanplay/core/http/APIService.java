@@ -1,5 +1,6 @@
 package cn.swt.dandanplay.core.http;
 
+import cn.swt.dandanplay.core.http.beans.AcFunCommentResponse;
 import cn.swt.dandanplay.core.http.beans.CidResponse;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.core.http.beans.MatchResponse;
@@ -102,5 +103,15 @@ public interface APIService {
      */
     @GET("av/{avnum}/{page}")
     Call<CidResponse> getBiliBiliCid(@Path("avnum") String avnum,@Path("page") String page);
+
+    /**
+     * 获取ACfun弹幕列表
+     * @param isNeedAllCount    一般为true
+     * @param contentId         acfun视频id
+     * @param currentPage       acfun视频合集中每个视频所在的分页
+     * @return
+     */
+    @GET("comment_list_json.aspx")
+    Call<AcFunCommentResponse> getAcFunComment(@Query("isNeedAllCount") String isNeedAllCount, @Query("contentId") String contentId, @Query("currentPage")String currentPage);
 
 }

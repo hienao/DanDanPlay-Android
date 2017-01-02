@@ -15,6 +15,7 @@ import cn.swt.dandanplay.core.http.APIService;
 import cn.swt.dandanplay.core.http.HttpConstant;
 import cn.swt.dandanplay.core.http.RetrofitManager;
 import cn.swt.dandanplay.core.http.SAXContentHandler;
+import cn.swt.dandanplay.core.http.beans.AcFunCommentResponse;
 import cn.swt.dandanplay.core.http.beans.CidResponse;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.core.http.beans.MatchResponse;
@@ -111,7 +112,11 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                     //按bilibili解析弹幕
                     String biliVideoUrl = relatedsBean.getUrl();
                     String avnum = biliVideoUrl.substring(biliVideoUrl.lastIndexOf("/av") + 3, biliVideoUrl.lastIndexOf("/"));
-                    String page = biliVideoUrl.substring(biliVideoUrl.lastIndexOf("_")+1,biliVideoUrl.lastIndexOf(".html"));
+                    String page ;
+                    if (biliVideoUrl.contains("_"))
+                        page=biliVideoUrl.substring(biliVideoUrl.lastIndexOf("_")+1,biliVideoUrl.lastIndexOf(".html"));
+                    else
+                        page="1";
                     RetrofitManager retrofitManager = RetrofitManager.getInstance();
                     APIService apiService = retrofitManager.create(HttpConstant.BiliBili_CID_GET);
                     retrofitManager.enqueue(apiService.getBiliBiliCid(avnum,page), new Callback<CidResponse>() {
@@ -127,9 +132,55 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                             LogUtils.e("VideoViewPresenter", "CidResponse Error", t);
                         }
                     });
-                } else if (relatedsBean.getProvider().contains("Acfun")) {
+                }
+                if (relatedsBean.getProvider().contains("Acfun")) {
+                    //按bilibili解析弹幕
+                    String acVideoUrl = relatedsBean.getUrl();
+                    String acnum = acVideoUrl.substring(acVideoUrl.lastIndexOf("/ac") + 3);
+                    String page ;
+                    if (acnum.contains("_")){
+                        page=acnum.substring(acnum.lastIndexOf("_")+1);
+                        acnum=acnum.substring(0,acnum.lastIndexOf("_"));
+                    } else
+                        page="1";
+                    OkHttpClient mOkHttpClient=new OkHttpClient();
+                    Request.Builder requestBuilder = new Request.Builder().url(HttpConstant.ACFUN_COMMENT_BASE_URL+"comment_list_json.aspx?isNeedAllCount=true&contentId="+acnum+"&currentPage="+page);
+                    Request request = requestBuilder.build();
+                    okhttp3.Call mcall= mOkHttpClient.newCall(request);
+                    mcall.enqueue(new okhttp3.Callback() {
 
-                } else if (relatedsBean.getProvider().contains("Tucao")) {
+                        @Override
+                        public void onFailure(okhttp3.Call call, IOException e) {
+                            LogUtils.e("VideoViewPresenter", "acfuncomment Error", e);
+                        }
+
+                        @Override
+                        public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+                            if (response.isSuccessful()){
+                                String jsonstr=response.body().string();
+                                jsonstr=jsonstr.replace("\"commentContentArr\":{","\"commentContentArr\":[").replace("}}}","]}}").replaceAll("\"c\\d+\":","");
+                                //解析
+                                System.out.println(jsonstr);
+                            }else {
+                                LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
+                            }
+                        }
+                    });
+                    RetrofitManager retrofitManager = RetrofitManager.getInstance();
+                    APIService apiService = retrofitManager.create(HttpConstant.ACFUN_COMMENT_BASE_URL);
+                    retrofitManager.enqueue(apiService.getAcFunComment("true",acnum,page), new Callback<AcFunCommentResponse>() {
+                        @Override
+                        public void onResponse(Call<AcFunCommentResponse> call, Response<AcFunCommentResponse> response) {
+                            AcFunCommentResponse acFunCommentResponse = response.body();
+                        }
+
+                        @Override
+                        public void onFailure(Call call, Throwable t) {
+                            LogUtils.e("VideoViewPresenter", "CidResponse Error", t);
+                        }
+                    });
+                }
+                if (relatedsBean.getProvider().contains("Tucao")) {
 
                 }
             }
