@@ -1,5 +1,7 @@
 package cn.swt.dandanplay.play.presenter;
 
+import android.text.TextUtils;
+
 import com.swt.corelib.utils.LogUtils;
 
 import java.io.ByteArrayInputStream;
@@ -111,6 +113,8 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                 if (relatedsBean.getProvider().contains("BiliBili")) {
                     //按bilibili解析弹幕
                     String biliVideoUrl = relatedsBean.getUrl();
+                    if (TextUtils.isEmpty(biliVideoUrl))
+                        return;
                     String avnum = biliVideoUrl.substring(biliVideoUrl.lastIndexOf("/av") + 3, biliVideoUrl.lastIndexOf("/"));
                     String page ;
                     if (biliVideoUrl.contains("_"))
@@ -136,6 +140,8 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                 if (relatedsBean.getProvider().contains("Acfun")) {
                     //按bilibili解析弹幕
                     String acVideoUrl = relatedsBean.getUrl();
+                    if (TextUtils.isEmpty(acVideoUrl))
+                        return;
                     String acnum = acVideoUrl.substring(acVideoUrl.lastIndexOf("/ac") + 3);
                     String page ;
                     if (acnum.contains("_")){
