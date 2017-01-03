@@ -17,7 +17,6 @@ import cn.swt.dandanplay.core.http.APIService;
 import cn.swt.dandanplay.core.http.HttpConstant;
 import cn.swt.dandanplay.core.http.RetrofitManager;
 import cn.swt.dandanplay.core.http.SAXContentHandler;
-import cn.swt.dandanplay.core.http.beans.AcFunCommentResponse;
 import cn.swt.dandanplay.core.http.beans.CidResponse;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.core.http.beans.MatchResponse;
@@ -172,19 +171,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                             }
                         }
                     });
-                    RetrofitManager retrofitManager = RetrofitManager.getInstance();
-                    APIService apiService = retrofitManager.create(HttpConstant.ACFUN_COMMENT_BASE_URL);
-                    retrofitManager.enqueue(apiService.getAcFunComment("true",acnum,page), new Callback<AcFunCommentResponse>() {
-                        @Override
-                        public void onResponse(Call<AcFunCommentResponse> call, Response<AcFunCommentResponse> response) {
-                            AcFunCommentResponse acFunCommentResponse = response.body();
-                        }
 
-                        @Override
-                        public void onFailure(Call call, Throwable t) {
-                            LogUtils.e("VideoViewPresenter", "CidResponse Error", t);
-                        }
-                    });
                 }
                 if (relatedsBean.getProvider().contains("Tucao")) {
 
