@@ -121,7 +121,11 @@ public class MainPresenter implements MainContract.Present {
                         videoFileInfo.setVideoName(videoName);
                         videoFileInfo.setVideoNameWithoutSuffix(videoName.substring(0,videoName.lastIndexOf(".")));
                         videoFileInfo.setCover(getVideoThumbnail(filePath));
-                        videoFileInfo.setVideoLength(TimeUtils.formatDuring(Long.parseLong(videoDuration)));
+                        try {
+                            videoFileInfo.setVideoLength(TimeUtils.formatDuring(Long.parseLong(videoDuration)));
+                        } catch (NumberFormatException e) {
+                            videoFileInfo.setVideoLength("UnKnown");
+                        }
                         videos.add(videoFileInfo);
                     }
                     for (String key:contentInfoIntegerMap.keySet()){

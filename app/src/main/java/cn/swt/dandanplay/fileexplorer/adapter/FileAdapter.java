@@ -47,7 +47,11 @@ public class FileAdapter extends RecyclerView.Adapter{
         final ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.text_name.setText(list.get(position).getVideoNameWithoutSuffix());
         viewHolder.text_time.setText(list.get(position).getVideoLength());
-        viewHolder.iv_cover.setImageBitmap(ConvertUtils.base64ToBitmap(list.get(position).getCover()));
+        try {
+            viewHolder.iv_cover.setImageBitmap(ConvertUtils.base64ToBitmap(list.get(position).getCover()));
+        } catch (Exception e) {
+            //获取缩略图失败
+        }
         viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
