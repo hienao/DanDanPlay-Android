@@ -26,6 +26,8 @@
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
+#LiteOrm
+-keep class com.litesuits.orm.db.** { *;}
 # (2)Simple XML
 -keep public class org.simpleframework.**{ *; }
 -keep class org.simpleframework.xml.**{ *; }
