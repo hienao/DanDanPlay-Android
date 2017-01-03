@@ -2,7 +2,6 @@ package cn.swt.dandanplay.fileexplorer.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,8 +17,9 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cn.swt.dandanplay.application.MyApplication;
 import cn.swt.dandanplay.R;
+import cn.swt.dandanplay.application.MyApplication;
+import cn.swt.dandanplay.core.base.BaseActivity;
 import cn.swt.dandanplay.fileexplorer.adapter.FileAdapter;
 import cn.swt.dandanplay.fileexplorer.beans.VideoFileInfo;
 import cn.swt.dandanplay.fileexplorer.component.DaggerMainComponent;
@@ -27,7 +27,7 @@ import cn.swt.dandanplay.fileexplorer.contract.FileExplorerContract;
 import cn.swt.dandanplay.fileexplorer.module.MainModule;
 import cn.swt.dandanplay.fileexplorer.presenter.FileExplorerPresenter;
 
-public class FileExplorerActivity extends AppCompatActivity implements FileExplorerContract.View{
+public class FileExplorerActivity extends BaseActivity implements FileExplorerContract.View{
     @Inject
     FileExplorerPresenter mFileExplorerPresenter;
     @BindView(R.id.rv_files)
@@ -57,6 +57,7 @@ public class FileExplorerActivity extends AppCompatActivity implements FileExplo
     }
 
     private void initView() {
+        setCustomTitle(getResources().getString(R.string.app_name));
         mRvFiles.setItemAnimator(new DefaultItemAnimator());
         mRvFiles.setLayoutManager(new LinearLayoutManager(this));
         mRvFiles.setAdapter(mFileAdapter);
