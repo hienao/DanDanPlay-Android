@@ -11,13 +11,12 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.superplayer.library.SuperPlayer;
-import com.swt.corelib.utils.EncryptUtils;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
+import com.swt.corelib.utils.MD5Util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -80,18 +79,18 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
      */
     @Override
     public String getVideoFileHash(String filePath) {
-        File file = FileUtils.getFileByPath(filePath);
-        if (file.length() < 16 * 1024 * 1024) {
-            return FileUtils.getFileMD5(file);
-        }
         try {
-            RandomAccessFile r = new RandomAccessFile(file, "r");
-            r.seek(0);
-            byte[] bs = new byte[16 * 1024 * 1024];
-            r.read(bs);
-            return EncryptUtils.encryptMD5ToString(bs);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            File file = FileUtils.getFileByPath(filePath);
+            if (file.length() < 16 * 1024 * 1024) {
+                return MD5Util.getFileMD5String(file);
+            }
+            else {
+                RandomAccessFile r = new RandomAccessFile(file, "r");
+                r.seek(0);
+                byte[] bs = new byte[16 * 1024 * 1024];
+                r.read(bs);
+                return MD5Util.getMD5String(bs);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
