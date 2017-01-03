@@ -151,12 +151,16 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         }
         danmaku.text = text;
         danmaku.padding = 5;
-        danmaku.textSize = sp2px(Integer.parseInt(a2));
+        danmaku.textSize = biliFontSizeConvert(Integer.parseInt(a2));
         danmaku.textColor = Integer.parseInt(a3);
         danmaku.setTime((long)(Double.parseDouble(a0)*1000));
         danmaku.priority=Byte.parseByte(a5);
         danmaku.userHash=a6;
-        danmaku.index=Integer.parseInt(a7);
+        try {
+            danmaku.index=Integer.parseInt(a7);
+        }catch (Exception e){
+            //超出int范围index  直接放弃
+        }
         mDanmakuView.addDanmaku(danmaku);
     }
 
@@ -200,7 +204,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         mDanmakuContext=DanmakuContext.create();
         // 设置弹幕的最大显示行数
         HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
-        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 8); // 滚动弹幕最大显示3行
+        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 16); // 滚动弹幕最大显示3行
         // 设置是否禁止重叠
         HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
         overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
@@ -419,7 +423,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
         danmaku.text = content;
         danmaku.padding = 5;
-        danmaku.textSize = sp2px(20);
+        danmaku.textSize = biliFontSizeConvert(20);
         danmaku.textColor = Color.WHITE;
         danmaku.setTime(mDanmakuView.getCurrentTime());
         if (withBorder) {
@@ -454,10 +458,10 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     /**
-     * sp转px的方法。
+     * b站弹幕字体大小转换
      */
-    public int sp2px(float spValue) {
+    public int biliFontSizeConvert(float pxValue) {
         final float fontScale = getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
+        return (int) (pxValue * fontScale * 0.6 + 0.5f);
     }
 }
