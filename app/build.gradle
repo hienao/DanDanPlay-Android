@@ -7,7 +7,7 @@ def releaseTime() {
 
 android {
     signingConfigs {
-        config {
+        releaseConfig {
             keyAlias 'Shiwentao'
             keyPassword '19921016'
             storeFile file('swt.keystore')
@@ -24,8 +24,8 @@ android {
         applicationId "cn.swt.dandanplay"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             // 设置支持的SO库架构
@@ -53,6 +53,7 @@ android {
             shrinkResources true
             // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
         }
         debug {
             // 混淆
