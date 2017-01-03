@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.dandanplay.R;
 import cn.swt.dandanplay.application.MyApplication;
+import cn.swt.dandanplay.core.base.BaseActivity;
 import cn.swt.dandanplay.fileexplorer.adapter.ContentAdapter;
 import cn.swt.dandanplay.fileexplorer.beans.ContentInfo;
 import cn.swt.dandanplay.fileexplorer.component.DaggerMainComponent;
@@ -37,7 +37,7 @@ import cn.swt.dandanplay.fileexplorer.contract.MainContract;
 import cn.swt.dandanplay.fileexplorer.module.MainModule;
 import cn.swt.dandanplay.fileexplorer.presenter.MainPresenter;
 
-public class ContentsActivity extends AppCompatActivity implements MainContract.View {
+public class ContentsActivity extends BaseActivity implements MainContract.View {
 
     @BindView(R.id.textView)
     TextView mTextView;
@@ -82,6 +82,8 @@ public class ContentsActivity extends AppCompatActivity implements MainContract.
     }
 
     private void initView() {
+        setCustomTitle(getResources().getString(R.string.app_name));
+        setShowNavigationIcon(false);
         mRvContent.setItemAnimator(new DefaultItemAnimator());
         mRvContent.setLayoutManager(new LinearLayoutManager(this));
         mRvContent.setAdapter(mContentAdapter);

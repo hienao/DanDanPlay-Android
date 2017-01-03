@@ -68,7 +68,6 @@
     <string name="VideoView_player_IjkExoMediaPlayer">Player: IjkExoMediaPlayer</string>
 
 
-
     <string name="pref_title_general">General</string>
 
     <string name="pref_key_enable_background_play">pref.enable_background_play</string>
