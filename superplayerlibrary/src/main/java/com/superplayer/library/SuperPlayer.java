@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.os.Handler;
@@ -34,6 +35,19 @@ import com.superplayer.library.mediaplayer.IjkVideoView;
 import com.superplayer.library.utils.NetUtils;
 import com.superplayer.library.utils.SuperPlayerUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import master.flame.danmaku.controller.DrawHandler;
+import master.flame.danmaku.danmaku.model.BaseDanmaku;
+import master.flame.danmaku.danmaku.model.DanmakuTimer;
+import master.flame.danmaku.danmaku.model.IDanmakus;
+import master.flame.danmaku.danmaku.model.IDisplayer;
+import master.flame.danmaku.danmaku.model.android.DanmakuContext;
+import master.flame.danmaku.danmaku.model.android.Danmakus;
+import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.ui.widget.DanmakuView;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -116,12 +130,15 @@ public class SuperPlayer extends RelativeLayout {
     // 网络监听回调
     private NetChangeReceiver netChangeReceiver;
     private OnNetChangeListener onNetChangeListener;
-
-    private OnDanMuClickListener mDanMuClickListener;
-    private OnVideoSeekListener mOnSeekListener;
     private OrientationEventListener orientationEventListener;
     private int defaultTimeout = 3000;
-    private int screenWidthPixels;
+    private  int               screenWidthPixels;
+    /**弹幕初始化**/
+    private DanmakuView mDanmakuView;
+    private DanmakuContext    mDanmakuContext;
+    private  BaseDanmakuParser mBaseDanmakuParser;
+    private  List<BaseDanmaku> mCommentsBeanList;
+    private boolean danMuShowState = true;
 
     private int initWidth = 0;
     private int initHeight = 0;
@@ -157,8 +174,8 @@ public class SuperPlayer extends RelativeLayout {
         $ = new Query(activity);
         contentView = View.inflate(context, R.layout.view_super_player, this);
         videoView = (IjkVideoView) contentView.findViewById(R.id.video_view);
-        videoView
-                .setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+        mDanmakuView= (DanmakuView) findViewById(R.id.danmaku_view);
+        videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(IMediaPlayer mp) {
                         statusChange(STATUS_COMPLETED);
@@ -286,20 +303,55 @@ public class SuperPlayer extends RelativeLayout {
             showStatus(activity.getResources().getString(R.string.not_support),
                     "重试");
         }
+        /**弹幕相关开始**/
+        mBaseDanmakuParser=new BaseDanmakuParser() {
+            @Override
+            protected IDanmakus parse() {
+                return new Danmakus();
+            }
+        };
+        mCommentsBeanList=new ArrayList<>();
+        mDanmakuView.enableDanmakuDrawingCache(true);
+        mDanmakuView.setCallback(new DrawHandler.Callback() {
+            @Override
+            public void prepared() {
+                mDanmakuView.start();
+            }
 
+            @Override
+            public void updateTimer(DanmakuTimer timer) {
+
+            }
+
+            @Override
+            public void danmakuShown(BaseDanmaku danmaku) {
+
+            }
+
+            @Override
+            public void drawingFinished() {
+
+            }
+        });
+        mDanmakuContext=DanmakuContext.create();
+        // 设置弹幕的最大显示行数
+        HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
+        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 16); // 滚动弹幕最大显示3行
+        // 设置是否禁止重叠
+        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
+        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
+        overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
+
+        mDanmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3) //设置描边样式
+                .setDuplicateMergingEnabled(false)
+                .setScrollSpeedFactor(1.2f) //是否启用合并重复弹幕
+                .setScaleTextSize(1.2f) //设置弹幕滚动速度系数,只对滚动弹幕有效
+                .setMaximumLines(maxLinesPair) //设置最大显示行数
+                .preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
+        mDanmakuView.prepare(mBaseDanmakuParser,mDanmakuContext);
+        /**弹幕相关结束**/
     }
 
-    /**
-     * sp转px
-     *
-     * @param context 上下文
-     * @param spValue sp值
-     * @return px值
-     */
-    public static int sp2px(Context context, float spValue) {
-        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
-    }
     /**
      * 相应点击事件
      */
@@ -307,7 +359,13 @@ public class SuperPlayer extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.view_jky_player_comment) {
-                mDanMuClickListener.setDanMuClick();
+                if (danMuShowState){
+                    danMuShowState=false;
+                    mDanmakuView.hide();
+                }else {
+                    danMuShowState=true;
+                    mDanmakuView.show();
+                }
 //                toggleFullScreen();
             } else if (v.getId() == R.id.app_video_play) {
                 doPauseResume();
@@ -475,9 +533,10 @@ public class SuperPlayer extends RelativeLayout {
             String time = generateTime(newPosition);
             if (instantSeeking) {
                 videoView.seekTo(newPosition);
+                mDanmakuView.seekTo((long) newPosition);
             }
             $.id(R.id.app_video_currentTime).text(time);
-            mOnSeekListener.seekChange(duration * progress/1000);
+            mDanmakuView.seekTo(duration * progress/1000);
         }
 
         @Override
@@ -1367,12 +1426,6 @@ public class SuperPlayer extends RelativeLayout {
     public interface OnPreparedListener {
         void onPrepared();
     }
-    public interface OnDanMuClickListener{
-        void setDanMuClick();
-    }
-    public interface OnVideoSeekListener{
-        void seekChange(long newPosion);
-    }
 
     public SuperPlayer onError(OnErrorListener onErrorListener) {
         this.onErrorListener = onErrorListener;
@@ -1391,14 +1444,6 @@ public class SuperPlayer extends RelativeLayout {
 
     public SuperPlayer onPrepared(OnPreparedListener onPreparedListener) {
         this.onPreparedListener = onPreparedListener;
-        return this;
-    }
-    public SuperPlayer setOnShowDanMuState(OnDanMuClickListener onDanMuClickListener){
-        this.mDanMuClickListener=onDanMuClickListener;
-        return this;
-    }
-    public SuperPlayer setOnSeek(OnVideoSeekListener onSeekListener){
-        this.mOnSeekListener=onSeekListener;
         return this;
     }
 
@@ -1575,5 +1620,81 @@ public class SuperPlayer extends RelativeLayout {
     public View getView(int ViewId) {
         return activity.findViewById(ViewId);
     }
+    /**
+     * 向弹幕View中添加一条弹幕
+     * @param content
+     *          弹幕的具体内容
+     * @param  withBorder
+     *          弹幕是否有边框
+     */
+    public void addDanmaku(String content, boolean withBorder) {
+        BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+        danmaku.text = content;
+        danmaku.padding = 5;
+        danmaku.textSize = biliFontSizeConvert(20);
+        danmaku.textColor = Color.WHITE;
+        danmaku.setTime(mDanmakuView.getCurrentTime());
+        if (withBorder) {
+            danmaku.borderColor = Color.GREEN;
+        }
+        mDanmakuView.addDanmaku(danmaku);
+        //mDanmakuView.seekTo((long)mViewSuperPlayer.getCurrentPosition());
+    }
 
+    /**
+     * @param time      弹幕出现时间  单位 秒
+     * @param type      弹幕类型，详见switch
+     * @param textsize  弹幕字体大小 单位px
+     * @param textcolor 弹幕颜色    单位int
+     * @param a4
+     * @param priority  弹幕优先级
+     * @param userHash  弹幕用户hash值
+     * @param index     弹幕在弹幕库中的索引
+     * @param text      弹幕内容
+     */
+    public void addBiliBiliDanmu(String time, String type, String textsize, String textcolor, String a4, String priority, String userHash, String index,String text) {
+        BaseDanmaku danmaku = null;
+        //设置弹幕模式
+        switch (type) {
+            case "1":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                break;
+            case "4":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM);
+                break;
+            case "5":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP);
+                break;
+            case "6":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR);
+                break;
+            case "7":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL);
+                break;
+            default:
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                break;
+        }
+        danmaku.text = text;
+        danmaku.padding = 5;
+        danmaku.textSize = biliFontSizeConvert(Integer.parseInt(textsize));
+        danmaku.textColor = Integer.parseInt(textcolor);
+        danmaku.setTime((long) (Double.parseDouble(time) * 1000));
+        danmaku.priority = Byte.parseByte(priority);
+        danmaku.userHash = userHash;
+        try {
+            danmaku.index = Integer.parseInt(index);
+        } catch (Exception e) {
+            //超出int范围index  直接放弃
+        }
+        mDanmakuView.addDanmaku(danmaku);
+        mCommentsBeanList.add(danmaku);
+    }
+    /**
+     * b站弹幕字体大小转换
+     */
+    public int biliFontSizeConvert(float pxValue) {
+        final float fontScale = getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue * fontScale * 0.6 + 0.5f);
+    }
 }

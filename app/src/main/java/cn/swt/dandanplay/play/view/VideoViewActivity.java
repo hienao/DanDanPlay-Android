@@ -2,7 +2,6 @@ package cn.swt.dandanplay.play.view;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,10 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -33,15 +29,6 @@ import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.core.http.beans.MatchResponse;
 import cn.swt.dandanplay.play.contract.VideoViewContract;
 import cn.swt.dandanplay.play.presenter.VideoViewPresenter;
-import master.flame.danmaku.controller.DrawHandler;
-import master.flame.danmaku.danmaku.model.BaseDanmaku;
-import master.flame.danmaku.danmaku.model.DanmakuTimer;
-import master.flame.danmaku.danmaku.model.IDanmakus;
-import master.flame.danmaku.danmaku.model.IDisplayer;
-import master.flame.danmaku.danmaku.model.android.DanmakuContext;
-import master.flame.danmaku.danmaku.model.android.Danmakus;
-import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
-import master.flame.danmaku.ui.widget.DanmakuView;
 
 public class VideoViewActivity extends AppCompatActivity implements VideoViewContract.View, View.OnClickListener, SuperPlayer.OnNetChangeListener {
     @Inject
@@ -50,14 +37,8 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     RelativeLayout     mActivityVideoView;
     @BindView(R.id.view_super_player)
     SuperPlayer        mViewSuperPlayer;
-    @BindView(R.id.danmaku_view)
-    DanmakuView        mDanmakuView;
-    private DanmakuContext     mDanmakuContext;
-    private BaseDanmakuParser mBaseDanmakuParser;
-    private List<BaseDanmaku> mCommentsBeanList;
     private String            videoPath;
     private String            videoTitle;
-    private boolean danMuShowState = true;
 
 
     @Override
@@ -126,41 +107,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 
     @Override
     public void addBiliBiliDanmu(String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7,String text) {
-        BaseDanmaku danmaku = null;
-        //设置弹幕模式
-        switch (a1){
-            case "1":
-                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-                break;
-            case "4":
-                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM);
-                break;
-            case "5":
-                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP);
-                break;
-            case "6":
-                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR);
-                break;
-            case "7":
-                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL);
-                break;
-            default:
-                danmaku=mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-                break;
-        }
-        danmaku.text = text;
-        danmaku.padding = 5;
-        danmaku.textSize = biliFontSizeConvert(Integer.parseInt(a2));
-        danmaku.textColor = Integer.parseInt(a3);
-        danmaku.setTime((long)(Double.parseDouble(a0)*1000));
-        danmaku.priority=Byte.parseByte(a5);
-        danmaku.userHash=a6;
-        try {
-            danmaku.index=Integer.parseInt(a7);
-        }catch (Exception e){
-            //超出int范围index  直接放弃
-        }
-        mDanmakuView.addDanmaku(danmaku);
+        mViewSuperPlayer.addBiliBiliDanmu(a0, a1, a2, a3, a4, a5, a6, a7, text);
     }
 
 
@@ -168,54 +115,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         videoPath = getIntent().getStringExtra("path");
         videoTitle = getIntent().getStringExtra("title");
         mVideoViewPresenter = new VideoViewPresenter(this);
-        mBaseDanmakuParser=new BaseDanmakuParser() {
-            @Override
-            protected IDanmakus parse() {
-                return new Danmakus();
-            }
-        };
-        mCommentsBeanList=new ArrayList<>();
     }
 
     private void initView() {
-        mDanmakuView.enableDanmakuDrawingCache(true);
-        mDanmakuView.setCallback(new DrawHandler.Callback() {
-            @Override
-            public void prepared() {
-                mDanmakuView.start();
-            }
-
-            @Override
-            public void updateTimer(DanmakuTimer timer) {
-
-            }
-
-            @Override
-            public void danmakuShown(BaseDanmaku danmaku) {
-
-            }
-
-            @Override
-            public void drawingFinished() {
-
-            }
-        });
-        mDanmakuContext=DanmakuContext.create();
-        // 设置弹幕的最大显示行数
-        HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
-        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 16); // 滚动弹幕最大显示3行
-        // 设置是否禁止重叠
-        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
-        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
-        overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
-
-        mDanmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3) //设置描边样式
-                .setDuplicateMergingEnabled(false)
-                .setScrollSpeedFactor(1.2f) //是否启用合并重复弹幕
-                .setScaleTextSize(1.2f) //设置弹幕滚动速度系数,只对滚动弹幕有效
-                .setMaximumLines(maxLinesPair) //设置最大显示行数
-                .preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
-        mDanmakuView.prepare(mBaseDanmakuParser,mDanmakuContext);
     }
 
     private void initPlayer() {
@@ -256,24 +158,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 .play(videoPath);//开始播放视频
         mViewSuperPlayer.setScaleType(SuperPlayer.SCALETYPE_FITXY);
         mViewSuperPlayer.setPlayerWH(0, mViewSuperPlayer.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
-        mViewSuperPlayer.setOnShowDanMuState(new SuperPlayer.OnDanMuClickListener() {
-            @Override
-            public void setDanMuClick() {
-                if (danMuShowState){
-                    danMuShowState=false;
-                    mDanmakuView.hide();
-                }else {
-                    danMuShowState=true;
-                    mDanmakuView.show();
-                }
-            }
-        });
-        mViewSuperPlayer.setOnSeek(new SuperPlayer.OnVideoSeekListener() {
-            @Override
-            public void seekChange(long newPosion) {
-                mDanmakuView.seekTo(newPosion);
-            }
-        });
     }
 
     @Override
@@ -410,57 +294,5 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     @Override
     public void onNoAvailable() {
 
-    }
-    /**
-     * 向弹幕View中添加一条弹幕
-     * @param content
-     *          弹幕的具体内容
-     * @param  withBorder
-     *          弹幕是否有边框
-     */
-    private void addDanmaku(String content, boolean withBorder) {
-        BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-        danmaku.text = content;
-        danmaku.padding = 5;
-        danmaku.textSize = biliFontSizeConvert(20);
-        danmaku.textColor = Color.WHITE;
-        danmaku.setTime(mDanmakuView.getCurrentTime());
-        if (withBorder) {
-            danmaku.borderColor = Color.GREEN;
-        }
-        mDanmakuView.addDanmaku(danmaku);
-        //mDanmakuView.seekTo((long)mViewSuperPlayer.getCurrentPosition());
-    }
-
-
-    /**
-     * 随机生成一些弹幕内容以供测试
-     */
-    private void generateSomeDanmaku() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true){
-                    if (danMuShowState){
-                        int time = new Random().nextInt(300);
-                        String content = "" + time + time;
-                        addDanmaku(content, false);
-                        try {
-                            Thread.sleep(time);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }).start();
-    }
-
-    /**
-     * b站弹幕字体大小转换
-     */
-    public int biliFontSizeConvert(float pxValue) {
-        final float fontScale = getResources().getDisplayMetrics().scaledDensity;
-        return (int) (pxValue * fontScale * 0.6 + 0.5f);
     }
 }

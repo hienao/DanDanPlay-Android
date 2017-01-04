@@ -112,8 +112,6 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.6'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.github.ctiao:DanmakuFlameMaster:0.6.2'
-    compile 'com.github.ctiao:ndkbitmap-armv7a:0.6.2'
     compile('com.squareup.retrofit2:converter-simplexml:2.1.0') {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
