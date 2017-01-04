@@ -19,6 +19,10 @@
         android:supportsRtl="true"
         android:largeHeap="true"
         android:theme="@style/MyAppTheme">
+        <!-- 配置APP渠道号 -->
+        <meta-data
+            android:name="BUGLY_APP_CHANNEL"
+            android:value="${APP_Channel}" />
         <activity
             android:name=".fileexplorer.view.ContentsActivity"
             android:screenOrientation="portrait">
