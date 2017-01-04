@@ -27,7 +27,6 @@ public class ContentAdapter extends RecyclerView.Adapter{
     private LayoutInflater inflater;
     public List<ContentInfo> list;
     private Context mContext;
-
     public ContentAdapter(Context context,List<ContentInfo> list) {
         this.list = list;
         mContext=context;

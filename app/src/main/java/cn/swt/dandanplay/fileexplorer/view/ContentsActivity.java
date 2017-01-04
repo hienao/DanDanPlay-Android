@@ -15,8 +15,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.swt.corelib.utils.ToastUtils;
 
@@ -39,21 +37,17 @@ import cn.swt.dandanplay.fileexplorer.presenter.MainPresenter;
 
 public class ContentsActivity extends BaseActivity implements MainContract.View {
 
-    @BindView(R.id.textView)
-    TextView mTextView;
-    @BindView(R.id.button)
-    Button mButton;
     @Inject
     MainPresenter mMainPresenter;
     @BindView(R.id.rv_content)
-    RecyclerView mRvContent;
+    RecyclerView  mRvContent;
 
     public static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 111;
     @BindView(R.id.swip_refesh_layout)
     SwipeRefreshLayout mSwipRefeshLayout;
     private List<ContentInfo> mDatas;
-    private ContentAdapter mContentAdapter;
-    private ScanVideoFileReceiver mScanVideoFileReceiver=null;
+    private ContentAdapter    mContentAdapter;
+    private ScanVideoFileReceiver mScanVideoFileReceiver = null;
     private ContentResolver mContentResolver;
 
     @Override
@@ -74,11 +68,11 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         mDatas = new ArrayList<>();
         mContentAdapter = new ContentAdapter(this, mDatas);
         //注册广播接收器
-        mScanVideoFileReceiver=new ScanVideoFileReceiver();
-        IntentFilter filter=new IntentFilter();
+        mScanVideoFileReceiver = new ScanVideoFileReceiver();
+        IntentFilter filter = new IntentFilter();
         filter.addAction("cn.swt.dandanplay.ScanVideoFileService");
-        registerReceiver(mScanVideoFileReceiver,filter);
-        mContentResolver=this.getContentResolver();
+        registerReceiver(mScanVideoFileReceiver, filter);
+        mContentResolver = this.getContentResolver();
     }
 
     private void initView() {
@@ -109,9 +103,13 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     public void getDataFromSQLite() {
         mDatas.clear();
         ArrayList<ContentInfo> contentInfoArrayList = MyApplication.getLiteOrm().query(ContentInfo.class);
-        if (contentInfoArrayList != null)
+        if (contentInfoArrayList != null) {
             mDatas.addAll(contentInfoArrayList);
+        }
         mContentAdapter.notifyDataSetChanged();
+        if (mDatas.size()==0){
+            ToastUtils.showShortToast(ContentsActivity.this,R.string.no_file_notice);
+        }
         mSwipRefeshLayout.setRefreshing(false);
     }
 
@@ -125,10 +123,10 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
      */
     void requestPremission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED||ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             //申请WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE权限
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE},
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
                     WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
         } else {
             getDataFromSQLite();
@@ -159,18 +157,16 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         super.onDestroy();
         unregisterReceiver(mScanVideoFileReceiver);
     }
+
     class ScanVideoFileReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle bundle=intent.getExtras();
-            boolean status=bundle.getBoolean("scanfinish");
+            Bundle bundle = intent.getExtras();
+            boolean status = bundle.getBoolean("scanfinish");
             getDataFromSQLite();
-            mSwipRefeshLayout.setRefreshing(false);
         }
     }
-
-
 
 
 }
