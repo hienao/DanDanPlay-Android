@@ -3,6 +3,7 @@ package cn.swt.dandanplay.fileexplorer.view;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
@@ -12,13 +13,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.dandanplay.R;
 import cn.swt.dandanplay.core.base.BaseActivity;
 import cn.swt.dandanplay.core.http.beans.MatchResponse;
+import cn.swt.dandanplay.core.http.beans.SearchAllResponse;
 import cn.swt.dandanplay.fileexplorer.component.DaggerMainComponent;
 import cn.swt.dandanplay.fileexplorer.contract.EpisodeIdMatchContract;
 import cn.swt.dandanplay.fileexplorer.module.MainModule;
@@ -27,8 +32,11 @@ import cn.swt.dandanplay.fileexplorer.presenter.EpisodeIdMatchPresenter;
 public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMatchContract.View {
     @Inject
     EpisodeIdMatchPresenter mEpisodeIdMatchPresenter;
-    private String videoPath;
-    private String videoTitle;
+    @BindView(R.id.rv_match_results)
+    RecyclerView            mRvMatchResults;
+    private String                              videoPath;
+    private String                              videoTitle;
+    private List<SearchAllResponse.AnimesBean> mMatchesBeanList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
     private void initData() {
         videoPath = getIntent().getStringExtra("path");
         videoTitle = getIntent().getStringExtra("title");
+        mMatchesBeanList = new ArrayList<>();
 //        mEpisodeIdMatchPresenter=new EpisodeIdMatchPresenter(this);
     }
 
@@ -62,10 +71,11 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
     @Override
     public void gotMatchEpisodeId(MatchResponse matchResponse) {
         if (matchResponse.getMatches() == null || matchResponse.getMatches().size() == 0) {
-            //未检测到，提示用户手工匹配
+            //未检测到，提示用户手工匹配调用关键字匹配接口
         } else {
             //检测到，提示用户判断是否正确，错误的话手工匹配
             MatchResponse.MatchesBean matchesBean = matchResponse.getMatches().get(0);
+            //不正确调用关键字匹配接口
         }
     }
 
@@ -79,11 +89,10 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
     public String getVideoFileHash(String filePath) {
         try {
             File file = FileUtils.getFileByPath(filePath);
-            if (file!=null){
+            if (file != null) {
                 if (file.length() < 16 * 1024 * 1024) {
                     return MD5Util.getFileMD5String(file);
-                }
-                else {
+                } else {
                     RandomAccessFile r = new RandomAccessFile(file, "r");
                     r.seek(0);
                     byte[] bs = new byte[16 * 1024 * 1024];

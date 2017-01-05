@@ -7,4 +7,10 @@
     android:layout_height="match_parent"
     tools:context="cn.swt.dandanplay.fileexplorer.view.EpisodeIdMatchActivity">
     <include layout="@layout/base_toobar_view"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_match_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
 </RelativeLayout>
