@@ -156,14 +156,14 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 
                         @Override
                         public void onFailure(okhttp3.Call call, IOException e) {
-                            LogUtils.e("VideoViewPresenter", "acfuncomment Error", e);
+                            LogUtils.e("VideoViewPresenter", "acfuncomment Request Error", e);
                         }
 
                         @Override
                         public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
                             if (response.isSuccessful()){
                                 String jsonstr=response.body().string();
-                                jsonstr=jsonstr.replace("\"commentContentArr\":{","\"commentContentArr\":[").replace("}}}","]}}").replaceAll("\"c\\d+\":","");
+                                jsonstr=jsonstr.replace("\"commentContentArr\":{","\"commentContentArr\":[").replace("}}}}","}]}}").replaceAll("\"c\\d+\":","");
                                 //解析
                                 System.out.println(jsonstr);
                             }else {

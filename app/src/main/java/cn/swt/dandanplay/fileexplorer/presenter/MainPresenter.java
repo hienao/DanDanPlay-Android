@@ -119,7 +119,12 @@ public class MainPresenter implements MainContract.Present {
                         videoFileInfo.setVideoPath(filePath);
                         videoFileInfo.setVideoContentPath(filePath.substring(0,filePath.lastIndexOf("/")+1));
                         videoFileInfo.setVideoName(videoName);
-                        videoFileInfo.setVideoNameWithoutSuffix(videoName.substring(0,videoName.lastIndexOf(".")));
+                        if(videoName.contains(".")){
+                            videoFileInfo.setVideoNameWithoutSuffix(videoName.substring(0,videoName.lastIndexOf(".")));
+                        }else {
+                            videoFileInfo.setVideoNameWithoutSuffix(videoName);
+                        }
+
                         videoFileInfo.setCover(getVideoThumbnail(filePath));
                         try {
                             videoFileInfo.setVideoLength(TimeUtils.formatDuring(Long.parseLong(videoDuration)));
