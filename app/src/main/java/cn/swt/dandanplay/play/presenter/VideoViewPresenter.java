@@ -52,7 +52,6 @@ public class VideoViewPresenter implements VideoViewContract.Present {
             public void onResponse(Call<MatchResponse> call, Response<MatchResponse> response) {
                 if (response.isSuccessful()) {
                     MatchResponse matchResponse = response.body();
-//                MatchResponse matchResponse= GsonManager.getInstance().fromJson(responseJson,MatchResponse.class);
                     mView.gotMatchEpisodeId(matchResponse);
                 }
             }

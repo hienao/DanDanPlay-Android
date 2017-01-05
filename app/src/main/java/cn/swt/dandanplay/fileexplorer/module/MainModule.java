@@ -1,5 +1,6 @@
 package cn.swt.dandanplay.fileexplorer.module;
 
+import cn.swt.dandanplay.fileexplorer.contract.EpisodeIdMatchContract;
 import cn.swt.dandanplay.fileexplorer.contract.FileExplorerContract;
 import cn.swt.dandanplay.fileexplorer.contract.MainContract;
 import dagger.Module;
@@ -16,11 +17,15 @@ import dagger.Provides;
 public class MainModule {
     private MainContract.View mView;
     private FileExplorerContract.View mFileView;
+    private EpisodeIdMatchContract.View mEpisodeIdMatchView;
     public MainModule(MainContract.View view) {
         mView = view;
     }
     public MainModule(FileExplorerContract.View view) {
         mFileView = view;
+    }
+    public MainModule(EpisodeIdMatchContract.View view) {
+        mEpisodeIdMatchView = view;
     }
     @Provides
     MainContract.View provideMainView() {
@@ -29,5 +34,9 @@ public class MainModule {
     @Provides
     FileExplorerContract.View provideFileView() {
         return mFileView;
+    }
+    @Provides
+    EpisodeIdMatchContract.View provideEpisodeIdMatchView() {
+        return mEpisodeIdMatchView;
     }
 }
