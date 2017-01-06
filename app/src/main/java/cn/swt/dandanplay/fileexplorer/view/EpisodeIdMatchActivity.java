@@ -101,6 +101,14 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
                 mEpisodeIdMatchPresenter.searchALLEpisodeId(mEdtSearchEpisodeTitle.getText().toString(),mEdtSearchEpisodeId.getText().toString());
             }
         });
+        mBtnEpisodeSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(EpisodeIdMatchActivity.this, VideoViewActivity.class)
+                        .putExtra("path",videoPath)
+                        .putExtra("file_title",videoTitle));
+            }
+        });
     }
 
 
