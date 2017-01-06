@@ -52,7 +52,6 @@ public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
                     mView.gotMatchEpisodeId(matchResponse);
                 }
             }
-
             @Override
             public void onFailure(Call call, Throwable t) {
                 LogUtils.e("VideoViewPresenter", "matchEpisodeId Error", t);

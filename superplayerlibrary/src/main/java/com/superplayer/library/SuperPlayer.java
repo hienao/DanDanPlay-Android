@@ -315,7 +315,6 @@ public class SuperPlayer extends RelativeLayout {
         mDanmakuView.setCallback(new DrawHandler.Callback() {
             @Override
             public void prepared() {
-                mDanmakuView.start();
             }
 
             @Override
@@ -428,11 +427,19 @@ public class SuperPlayer extends RelativeLayout {
             }
             videoView.seekTo(0);
             videoView.start();
+            mDanmakuView.start();
         } else if (videoView.isPlaying()) {
             statusChange(STATUS_PAUSE);
             videoView.pause();
+            if (mDanmakuView != null && mDanmakuView.isPrepared()) {
+                mDanmakuView.pause();
+            }
         } else {
             videoView.start();
+            //继续
+            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+                mDanmakuView.resume();
+            }
         }
         updatePausePlay();
     }
@@ -554,6 +561,7 @@ public class SuperPlayer extends RelativeLayout {
             if (!instantSeeking) {
                 videoView
                         .seekTo((int) ((duration * seekBar.getProgress() * 1.0) / 1000));
+//                mDanmakuView.seekTo((long) ((duration * seekBar.getProgress() * 1.0) / 1000));
             }
             show(defaultTimeout);
             handler.removeMessages(MESSAGE_SHOW_PROGRESS);
@@ -797,6 +805,11 @@ public class SuperPlayer extends RelativeLayout {
         orientationEventListener.disable();
         handler.removeCallbacksAndMessages(null);
         videoView.stopPlayback();
+        if (mDanmakuView != null) {
+            // dont forget release!
+            mDanmakuView.release();
+            mDanmakuView = null;
+        }
     }
 
     /**
@@ -988,6 +1001,7 @@ public class SuperPlayer extends RelativeLayout {
             newPosition = 0;
             delta = -position;
         }
+        mDanmakuView.seekTo(newPosition);
         int showDelta = (int) delta / 1000;
         if (showDelta != 0) {
             $.id(R.id.app_video_fastForward_box).visible();
@@ -1318,6 +1332,7 @@ public class SuperPlayer extends RelativeLayout {
     public void release() {
         videoView.release(true);
         videoView.seekTo(0);
+        mDanmakuView.seekTo(0l);
     }
 
     /**
@@ -1345,6 +1360,7 @@ public class SuperPlayer extends RelativeLayout {
      */
     public SuperPlayer seekTo(int msec, boolean showControlPanle) {
         videoView.seekTo(msec);
+        mDanmakuView.seekTo((long) msec);
         if (showControlPanle) {
             show(defaultTimeout);
         }
