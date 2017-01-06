@@ -40,7 +40,8 @@
         </activity>
         <activity
             android:name=".play.view.VideoViewActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden">
         </activity>
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
@@ -58,7 +59,9 @@
 
         <activity android:name=".core.base.BaseActivity">
         </activity>
-        <activity android:name=".fileexplorer.view.EpisodeIdMatchActivity">
+        <activity android:name=".fileexplorer.view.EpisodeIdMatchActivity"
+                  android:windowSoftInputMode="stateHidden"
+                  android:screenOrientation="portrait">
         </activity>
     </application>
 

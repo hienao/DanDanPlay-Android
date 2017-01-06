@@ -103,8 +103,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                  */
 
             }
-        }).setTitle(videoTitle)//设置视频的titleName
-                .play(videoPath);//开始播放视频
+        }).play(videoPath);//开始播放视频
         mViewSuperPlayer.setScaleType(SuperPlayer.SCALETYPE_FITXY);
         mViewSuperPlayer.setPlayerWH(0, mViewSuperPlayer.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
     }
