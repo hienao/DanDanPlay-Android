@@ -7,4 +7,9 @@
     <string name="search_episode_id">视频集数:</string>
     <string name="search_episode_skip">放弃加载弹幕</string>
     <string name="search_episode_search">搜索弹幕</string>
+    <string name="match_result">匹配结果</string>
+    <string name="match_none">未找到匹配结果,请手工输入信息，查找相关信息</string>
+    <string name="confirm">确定</string>
+    <string name="match_result_right">匹配结果正确</string>
+    <string name="match_result_wrong">不正确，我要自己选</string>
 </resources>

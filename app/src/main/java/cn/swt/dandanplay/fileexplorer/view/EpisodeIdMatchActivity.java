@@ -1,8 +1,11 @@
 package cn.swt.dandanplay.fileexplorer.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +38,7 @@ import cn.swt.dandanplay.fileexplorer.component.DaggerMainComponent;
 import cn.swt.dandanplay.fileexplorer.contract.EpisodeIdMatchContract;
 import cn.swt.dandanplay.fileexplorer.module.MainModule;
 import cn.swt.dandanplay.fileexplorer.presenter.EpisodeIdMatchPresenter;
+import cn.swt.dandanplay.play.view.VideoViewActivity;
 
 public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMatchContract.View {
     @Inject
@@ -107,11 +111,41 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
 
     @Override
     public void gotMatchEpisodeId(MatchResponse matchResponse) {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);  //先得到构造器
+        builder.setTitle(getResources().getString(R.string.match_result)); //设置标题
+        builder.setIcon(R.mipmap.ic_launcher);//设置图标，图片id即可
         if (matchResponse.getMatches() == null || matchResponse.getMatches().size() == 0) {
             //未检测到，提示用户手工匹配调用关键字匹配接口
+            builder.setMessage(getResources().getString(R.string.match_none)); //设置内容
+            builder.setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() { //设置确定按钮
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss(); //关闭dialog
+                }
+            });
+            builder.create().show();
         } else {
             //检测到，提示用户判断是否正确，错误的话手工匹配
-            MatchResponse.MatchesBean matchesBean = matchResponse.getMatches().get(0);
+            final MatchResponse.MatchesBean matchesBean = matchResponse.getMatches().get(0);
+            //弹窗提示
+            builder.setMessage(getResources().getString(R.string.match_result)+":"+matchesBean.getAnimeTitle()+"\r\n"+matchesBean.getEpisodeTitle()); //设置内容
+            builder.setPositiveButton(getResources().getString(R.string.match_result_right), new DialogInterface.OnClickListener() { //设置确定按钮
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss(); //关闭dialog
+                    startActivity(new Intent(EpisodeIdMatchActivity.this, VideoViewActivity.class)
+                            .putExtra("path",videoPath)
+                            .putExtra("file_title",videoTitle)
+                            .putExtra("title",matchesBean.getAnimeTitle()+" "+matchesBean.getEpisodeTitle()).putExtra("episode_id",matchesBean.getEpisodeId()));
+                }
+            });
+            builder.setNegativeButton(getResources().getString(R.string.match_result_wrong), new DialogInterface.OnClickListener() { //设置取消按钮
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create().show();
             List<MatchResponse.MatchesBean>matchesBeanList=matchResponse.getMatches();
             for (MatchResponse.MatchesBean matchesBean1:matchesBeanList){
                 SearchResultInfo resultInfoHeader=new SearchResultInfo();
