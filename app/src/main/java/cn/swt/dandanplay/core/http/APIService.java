@@ -91,7 +91,7 @@ public interface APIService {
                             如果参数中包含特殊字符则需要经过Url编码后才能传递。
      * @return
      */
-    @GET("api/v1/searchall/{anime}/{episode}")
+    @GET("api/v1/searchall/{anime}/{episodeId}")
     Call<SearchAllResponse> searchALLEpisodeId(@Path("anime") String anime,@Path("episodeId") String episodeId);
 
     /**

@@ -2,22 +2,15 @@ package cn.swt.dandanplay.play.view;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.superplayer.library.SuperPlayer;
-import com.swt.corelib.utils.FileUtils;
-import com.swt.corelib.utils.LogUtils;
-import com.swt.corelib.utils.MD5Util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -26,7 +19,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.dandanplay.R;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
-import cn.swt.dandanplay.core.http.beans.MatchResponse;
 import cn.swt.dandanplay.play.contract.VideoViewContract;
 import cn.swt.dandanplay.play.presenter.VideoViewPresenter;
 
@@ -37,9 +29,8 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     RelativeLayout     mActivityVideoView;
     @BindView(R.id.view_super_player)
     SuperPlayer        mViewSuperPlayer;
-    private String            videoPath;
-    private String            videoTitle;
-
+    private String            videoPath,videoTitle,file_title;
+    private int            episode_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,59 +40,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         initData();
         initView();
         initPlayer();
-        mVideoViewPresenter.matchEpisodeId(videoPath, videoTitle, getVideoFileHash(videoPath), String.valueOf(new File(videoPath).length()), String.valueOf(getVideoDuration(videoPath)), "0");
-    }
-
-    /**
-     * 文件前16MB(16x1024x1024Byte)数据的32位MD5结果，不区分大小写
-     * 若小于此大小则返回文件的MD5
-     *
-     * @return
-     */
-    @Override
-    public String getVideoFileHash(String filePath) {
-        try {
-            File file = FileUtils.getFileByPath(filePath);
-            if (file.length() < 16 * 1024 * 1024) {
-                return MD5Util.getFileMD5String(file);
-            }
-            else {
-                RandomAccessFile r = new RandomAccessFile(file, "r");
-                r.seek(0);
-                byte[] bs = new byte[16 * 1024 * 1024];
-                r.read(bs);
-                return MD5Util.getMD5String(bs);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    /**
-     * 获取视频时长
-     *
-     * @param path 路径
-     * @return 时长
-     */
-    @Override
-    public long getVideoDuration(String path) {
-        long result = 0;
-        File f = new File(path);
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.reset();
-            mediaPlayer.setDataSource(new FileInputStream(f).getFD());
-            mediaPlayer.prepare();
-            result = mediaPlayer.getDuration();
-        } catch (IOException e) {
-            LogUtils.i(e.toString());
-            e.printStackTrace();
-        } finally {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-        }
-        return result;
     }
 
 
@@ -113,11 +51,22 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 
     private void initData() {
         videoPath = getIntent().getStringExtra("path");
+        file_title = getIntent().getStringExtra("file_title");
         videoTitle = getIntent().getStringExtra("title");
+        episode_id =getIntent().getIntExtra("episode_id",-1);
         mVideoViewPresenter = new VideoViewPresenter(this);
     }
 
     private void initView() {
+        if (!TextUtils.isEmpty(videoTitle)){
+            mViewSuperPlayer.setTitle(videoTitle);
+        }else {
+            mViewSuperPlayer.setTitle(file_title);
+        }
+        if (episode_id>0){
+            mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
+            mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
+        }
     }
 
     private void initPlayer() {
@@ -178,18 +127,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     @Override
     public Context getContext() {
         return this;
-    }
-
-    @Override
-    public void gotMatchEpisodeId(MatchResponse matchResponse) {
-        if (matchResponse.getMatches() == null || matchResponse.getMatches().size() == 0) {
-
-        } else {
-            MatchResponse.MatchesBean matchesBean = matchResponse.getMatches().get(0);
-            mViewSuperPlayer.setTitle(matchesBean.getAnimeTitle() + " " + matchesBean.getEpisodeTitle());
-            mVideoViewPresenter.getComment(String.valueOf(matchesBean.getEpisodeId()), "0");
-            mVideoViewPresenter.getCommentSource(String.valueOf(matchesBean.getEpisodeId()));
-        }
     }
 
     @Override

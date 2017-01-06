@@ -3,4 +3,8 @@
     <string name="danmu_match">弹幕匹配</string>
     <string name="no_file_notice">无文件，如果是第一次安装请下拉刷新文件列表</string>
     <string name="video">视频</string>
+    <string name="search_episode_title">视频标题:</string>
+    <string name="search_episode_id">视频集数:</string>
+    <string name="search_episode_skip">放弃加载弹幕</string>
+    <string name="search_episode_search">搜索弹幕</string>
 </resources>

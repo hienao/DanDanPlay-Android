@@ -1,8 +1,11 @@
 package cn.swt.dandanplay.fileexplorer.contract;
 
+import java.util.List;
+
 import cn.swt.dandanplay.core.base.BasePresenter;
 import cn.swt.dandanplay.core.base.BaseView;
 import cn.swt.dandanplay.core.http.beans.MatchResponse;
+import cn.swt.dandanplay.fileexplorer.beans.SearchResultInfo;
 
 /**
  * Title: EpisodeIdMatchContract <br>
@@ -14,11 +17,13 @@ import cn.swt.dandanplay.core.http.beans.MatchResponse;
 public class EpisodeIdMatchContract {
     public interface View extends BaseView {
         void gotMatchEpisodeId(MatchResponse matchResponse);
+        void gotSearchALLEpisodeId(List<SearchResultInfo> searchResultInfo);
         String getVideoFileHash(String filePath);
         long getVideoDuration(String path);
     }
 
     public interface Present extends BasePresenter {
         void matchEpisodeId(String filePath,String title,String hash,String length,String duration,String force);
+        void searchALLEpisodeId(String anime, String episodeId);
     }
 }

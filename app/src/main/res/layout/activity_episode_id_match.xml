@@ -1,16 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_episode_id_match"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="cn.swt.dandanplay.fileexplorer.view.EpisodeIdMatchActivity">
     <include layout="@layout/base_toobar_view"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/y5"
+            android:layout_marginBottom="@dimen/y5">
+            <TextView
+                android:layout_width="@dimen/x0"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/text_black"
+                android:text="@string/search_episode_title"/>
+            <EditText
+                android:id="@+id/edt_search_episode_title"
+                android:layout_width="@dimen/x0"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/text_black"
+                android:drawableBottom="@drawable/line"
+                android:background="@null"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/y5"
+            android:layout_marginBottom="@dimen/y5">
+            <TextView
+                android:layout_width="@dimen/x0"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/text_black"
+                android:text="@string/search_episode_id"/>
+            <EditText
+                android:id="@+id/edt_search_episode_id"
+                android:layout_width="@dimen/x0"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/text_black"
+                android:inputType="number"
+                android:drawableBottom="@drawable/line"
+                android:background="@null"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn_episode_skip"
+                android:layout_width="@dimen/x0"
+                android:layout_weight="1"
+                android:text="@string/search_episode_skip"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_episode_search"
+                android:layout_width="@dimen/x0"
+                android:layout_weight="1"
+                android:text="@string/search_episode_search"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_match_results"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
-</RelativeLayout>
+</LinearLayout>

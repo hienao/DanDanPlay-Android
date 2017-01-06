@@ -19,7 +19,6 @@ import cn.swt.dandanplay.core.http.RetrofitManager;
 import cn.swt.dandanplay.core.http.SAXContentHandler;
 import cn.swt.dandanplay.core.http.beans.CidResponse;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
-import cn.swt.dandanplay.core.http.beans.MatchResponse;
 import cn.swt.dandanplay.core.http.beans.RelatedResponse;
 import cn.swt.dandanplay.play.contract.VideoViewContract;
 import okhttp3.OkHttpClient;
@@ -41,26 +40,6 @@ public class VideoViewPresenter implements VideoViewContract.Present {
     @Inject
     public VideoViewPresenter(VideoViewContract.View view) {
         mView = view;
-    }
-
-    @Override
-    public void matchEpisodeId(String filePath, String title, String hash, String length, String duration, String force) {
-        RetrofitManager retrofitManager = RetrofitManager.getInstance();
-        APIService apiService = retrofitManager.create();
-        retrofitManager.enqueue(apiService.matchEpisodeId(title, hash, length, duration, force), new Callback<MatchResponse>() {
-            @Override
-            public void onResponse(Call<MatchResponse> call, Response<MatchResponse> response) {
-                if (response.isSuccessful()) {
-                    MatchResponse matchResponse = response.body();
-                    mView.gotMatchEpisodeId(matchResponse);
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, Throwable t) {
-                LogUtils.e("VideoViewPresenter", "matchEpisodeId Error", t);
-            }
-        });
     }
 
     @Override
