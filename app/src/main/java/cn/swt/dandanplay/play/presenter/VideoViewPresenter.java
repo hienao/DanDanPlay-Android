@@ -120,44 +120,44 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                         }
                     });
                 }else if (relatedsBean.getProvider().contains("Acfun")) {
-                    //按bilibili解析弹幕
-                    String acVideoUrl = relatedsBean.getUrl();
-                    if (TextUtils.isEmpty(acVideoUrl))
-                        return;
-                    String acnum = acVideoUrl.substring(acVideoUrl.lastIndexOf("/ac") + 3);
-                    String page ;
-                    if (acnum.contains("_")){
-                        page=acnum.substring(acnum.lastIndexOf("_")+1);
-                        acnum=acnum.substring(0,acnum.lastIndexOf("_"));
-                    } else
-                        page="1";
-                    OkHttpClient mOkHttpClient=new OkHttpClient();
-                    Request.Builder requestBuilder = new Request.Builder().url(HttpConstant.ACFUN_COMMENT_BASE_URL+"comment_list_json.aspx?isNeedAllCount=true&contentId="+acnum+"&currentPage="+page);
-                    Request request = requestBuilder.build();
-                    okhttp3.Call mcall= mOkHttpClient.newCall(request);
-                    mcall.enqueue(new okhttp3.Callback() {
-
-                        @Override
-                        public void onFailure(okhttp3.Call call, IOException e) {
-                            LogUtils.e("VideoViewPresenter", "acfuncomment Request Error", e);
-                            mView.addOtherCommentSourceCount();
-                        }
-
-                        @Override
-                        public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
-                            if (response.isSuccessful()){
-                                String jsonstr=response.body().string();
-                                jsonstr=jsonstr.replace("\"commentContentArr\":{","\"commentContentArr\":[").replace("}}}}","}]}}").replaceAll("\"c\\d+\":","");
-                                //解析
-                                System.out.println(jsonstr);
-                                mView.addOtherCommentSourceCount();
-                            }else {
-                                LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
-                                mView.addOtherCommentSourceCount();
-                            }
-                        }
-                    });
-
+//                    //按bilibili解析弹幕
+//                    String acVideoUrl = relatedsBean.getUrl();
+//                    if (TextUtils.isEmpty(acVideoUrl))
+//                        return;
+//                    String acnum = acVideoUrl.substring(acVideoUrl.lastIndexOf("/ac") + 3);
+//                    String page ;
+//                    if (acnum.contains("_")){
+//                        page=acnum.substring(acnum.lastIndexOf("_")+1);
+//                        acnum=acnum.substring(0,acnum.lastIndexOf("_"));
+//                    } else
+//                        page="1";
+//                    OkHttpClient mOkHttpClient=new OkHttpClient();
+//                    Request.Builder requestBuilder = new Request.Builder().url(HttpConstant.ACFUN_COMMENT_BASE_URL+"comment_list_json.aspx?isNeedAllCount=true&contentId="+acnum+"&currentPage="+page);
+//                    Request request = requestBuilder.build();
+//                    okhttp3.Call mcall= mOkHttpClient.newCall(request);
+//                    mcall.enqueue(new okhttp3.Callback() {
+//
+//                        @Override
+//                        public void onFailure(okhttp3.Call call, IOException e) {
+//                            LogUtils.e("VideoViewPresenter", "acfuncomment Request Error", e);
+//                            mView.addOtherCommentSourceCount();
+//                        }
+//
+//                        @Override
+//                        public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+//                            if (response.isSuccessful()){
+//                                String jsonstr=response.body().string();
+//                                jsonstr=jsonstr.replace("\"commentContentArr\":{","\"commentContentArr\":[").replace("}}}}","}]}}").replaceAll("\"c\\d+\":","");
+//                                //解析
+//                                System.out.println(jsonstr);
+//                                mView.addOtherCommentSourceCount();
+//                            }else {
+//                                LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
+//                                mView.addOtherCommentSourceCount();
+//                            }
+//                        }
+//                    });
+                    mView.addOtherCommentSourceCount();
                 }else if (relatedsBean.getProvider().contains("Tucao")) {
                     mView.addOtherCommentSourceCount();
                 }

@@ -141,7 +141,14 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         if (commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
         } else {
             List<CommentResponse.CommentsBean> commentsBeanList = commentResponse.getComments();
-
+            if (commentsBeanList!=null&&commentsBeanList.size()!=0){
+                for (CommentResponse.CommentsBean commentsBean:commentsBeanList){
+                    mViewSuperPlayer.addBiliBiliDanmu(String.valueOf(commentsBean.getTime()), String.valueOf(commentsBean.getMode()),
+                            String.valueOf(25), String.valueOf(commentsBean.getColor()),"",
+                            String.valueOf(commentsBean.getPool()),String.valueOf(commentsBean.getUId()),
+                            String.valueOf(commentsBean.getCId()),commentsBean.getMessage());
+                }
+            }
         }
         gotDanDanPlayComment=true;
     }

@@ -1658,7 +1658,7 @@ public class SuperPlayer extends RelativeLayout {
         BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
         danmaku.text = content;
         danmaku.padding = 5;
-        danmaku.textSize = biliFontSizeConvert(20);
+        danmaku.textSize = biliFontSizeConvert(25);
         danmaku.textColor = Color.WHITE;
         danmaku.setTime(mDanmakuView.getCurrentTime());
         if (withBorder) {
