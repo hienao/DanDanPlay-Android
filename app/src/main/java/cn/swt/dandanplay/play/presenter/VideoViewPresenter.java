@@ -52,6 +52,8 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                 CommentResponse commentResponse = response.body();
                 if (commentResponse!=null){
                     mView.gotComment(commentResponse);
+                }else {
+                    mView.gotComment(null);
                 }
             }
 

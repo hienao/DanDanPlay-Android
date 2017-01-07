@@ -1680,42 +1680,42 @@ public class SuperPlayer extends RelativeLayout {
      * @param text      弹幕内容
      */
     public void addBiliBiliDanmu(String time, String type, String textsize, String textcolor, String a4, String priority, String userHash, String index,String text) {
-        BaseDanmaku danmaku = null;
-        //设置弹幕模式
-        switch (type) {
-            case "1":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-                break;
-            case "4":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM);
-                break;
-            case "5":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP);
-                break;
-            case "6":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR);
-                break;
-            case "7":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL);
-                break;
-            default:
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-                break;
-        }
-        danmaku.text = text;
-        danmaku.padding = 5;
-        danmaku.textSize = biliFontSizeConvert(Integer.parseInt(textsize));
-        danmaku.textColor = Integer.parseInt(textcolor);
-        danmaku.setTime((long) (Double.parseDouble(time) * 1000));
-        danmaku.priority = Byte.parseByte(priority);
-        danmaku.userHash = userHash;
         try {
+            BaseDanmaku danmaku = null;
+            //设置弹幕模式
+            switch (type) {
+                case "1":
+                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                    break;
+                case "4":
+                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM);
+                    break;
+                case "5":
+                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP);
+                    break;
+                case "6":
+                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR);
+                    break;
+                case "7":
+                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL);
+                    break;
+                default:
+                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                    break;
+            }
+            danmaku.text = text;
+            danmaku.padding = 5;
+            danmaku.textSize = biliFontSizeConvert(Integer.parseInt(textsize));
+            danmaku.textColor = Integer.parseInt(textcolor);
+            danmaku.setTime((long) (Double.parseDouble(time) * 1000));
+            danmaku.priority = Byte.parseByte(priority);
+            danmaku.userHash = userHash;
             danmaku.index = Integer.parseInt(index);
+            mDanmakuView.addDanmaku(danmaku);
+            mCommentsBeanList.add(danmaku);
         } catch (Exception e) {
-            //超出int范围index  直接放弃
+            //转换出现异常，放弃
         }
-        mDanmakuView.addDanmaku(danmaku);
-        mCommentsBeanList.add(danmaku);
     }
     /**
      * b站弹幕字体大小转换

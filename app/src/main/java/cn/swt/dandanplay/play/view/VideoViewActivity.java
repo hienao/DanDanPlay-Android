@@ -61,23 +61,21 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void initView() {
-        ProgressDialogUtils.showDialog(VideoViewActivity.this,getResources().getString(R.string.init_ing));
         if (!TextUtils.isEmpty(videoTitle)){
             mViewSuperPlayer.setTitle(videoTitle);
         }else {
             mViewSuperPlayer.setTitle(file_title);
         }
+        mViewSuperPlayer.play(videoPath);
+        mViewSuperPlayer.pause();
         if (episode_id>0){
             ProgressDialogUtils.showDialog(VideoViewActivity.this,getResources().getString(R.string.danmu_loading));
             mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
             mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
         }
-        mViewSuperPlayer.play(videoPath);
-        mViewSuperPlayer.pause();
     }
 
     private void initPlayer() {
-        ProgressDialogUtils.showDialog(VideoViewActivity.this,getResources().getString(R.string.video_loading));
         mViewSuperPlayer.setLive(false);//设置该地址是直播的地址
         mViewSuperPlayer.setNetChangeListener(true)//设置监听手机网络的变化
                 .setOnNetChangeListener(this)//实现网络变化的回调
@@ -138,7 +136,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 
     @Override
     public void gotComment(CommentResponse commentResponse) {
-        if (commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
+        if (commentResponse==null || commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
         } else {
             List<CommentResponse.CommentsBean> commentsBeanList = commentResponse.getComments();
             if (commentsBeanList!=null&&commentsBeanList.size()!=0){
@@ -151,6 +149,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
             }
         }
         gotDanDanPlayComment=true;
+        judgeDanmuLoadState();
     }
 
     @Override

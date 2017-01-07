@@ -100,46 +100,48 @@ public class MainPresenter implements MainContract.Present {
                     String filePath;
                     String fileSize;
                     String videoDuration;
-                    while (cursor.moveToNext()) {
-                        videoId = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media._ID));
-                        videoName = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME));
-                        filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));
-                        fileSize = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.SIZE));
-                        videoDuration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
-                        File f=new File(filePath);
-                        //目录判断
-                        if (contentInfoIntegerMap.containsKey(FileUtils.getDirName(f))){
-                            contentInfoIntegerMap.put(FileUtils.getDirName(f),contentInfoIntegerMap.get(FileUtils.getDirName(f))+1);
-                        }else {
-                            contentInfoIntegerMap.put(FileUtils.getDirName(f),1);
-                        }
-                        Log.e("ryze_text", videoId + " -- " + videoName + " -- " + "--" + fileSize + filePath);
-                        //文件判断
-                        VideoFileInfo videoFileInfo = new VideoFileInfo();
-                        videoFileInfo.setVideoPath(filePath);
-                        videoFileInfo.setVideoContentPath(filePath.substring(0,filePath.lastIndexOf("/")+1));
-                        videoFileInfo.setVideoName(videoName);
-                        if(videoName.contains(".")){
-                            videoFileInfo.setVideoNameWithoutSuffix(videoName.substring(0,videoName.lastIndexOf(".")));
-                        }else {
-                            videoFileInfo.setVideoNameWithoutSuffix(videoName);
-                        }
+                    if(cursor!=null){
+                        while (cursor.moveToNext()) {
+                            videoId = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media._ID));
+                            videoName = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME));
+                            filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));
+                            fileSize = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.SIZE));
+                            videoDuration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
+                            File f=new File(filePath);
+                            //目录判断
+                            if (contentInfoIntegerMap.containsKey(FileUtils.getDirName(f))){
+                                contentInfoIntegerMap.put(FileUtils.getDirName(f),contentInfoIntegerMap.get(FileUtils.getDirName(f))+1);
+                            }else {
+                                contentInfoIntegerMap.put(FileUtils.getDirName(f),1);
+                            }
+                            Log.e("ryze_text", videoId + " -- " + videoName + " -- " + "--" + fileSize + filePath);
+                            //文件判断
+                            VideoFileInfo videoFileInfo = new VideoFileInfo();
+                            videoFileInfo.setVideoPath(filePath);
+                            videoFileInfo.setVideoContentPath(filePath.substring(0,filePath.lastIndexOf("/")+1));
+                            videoFileInfo.setVideoName(videoName);
+                            if(videoName.contains(".")){
+                                videoFileInfo.setVideoNameWithoutSuffix(videoName.substring(0,videoName.lastIndexOf(".")));
+                            }else {
+                                videoFileInfo.setVideoNameWithoutSuffix(videoName);
+                            }
 
-                        videoFileInfo.setCover(getVideoThumbnail(filePath));
-                        try {
-                            videoFileInfo.setVideoLength(TimeUtils.formatDuring(Long.parseLong(videoDuration)));
-                        } catch (NumberFormatException e) {
-                            videoFileInfo.setVideoLength("UnKnown");
+                            videoFileInfo.setCover(getVideoThumbnail(filePath));
+                            try {
+                                videoFileInfo.setVideoLength(TimeUtils.formatDuring(Long.parseLong(videoDuration)));
+                            } catch (NumberFormatException e) {
+                                videoFileInfo.setVideoLength("UnKnown");
+                            }
+                            videos.add(videoFileInfo);
                         }
-                        videos.add(videoFileInfo);
+                        for (String key:contentInfoIntegerMap.keySet()){
+                            contentInfoList.add(new ContentInfo(key,contentInfoIntegerMap.get(key)));
+                        }
+                        MyApplication.getLiteOrm().save(contentInfoList);
+                        MyApplication.getLiteOrm().save(videos);
+                        cursor.close();
+                        cursor = null;
                     }
-                    for (String key:contentInfoIntegerMap.keySet()){
-                        contentInfoList.add(new ContentInfo(key,contentInfoIntegerMap.get(key)));
-                    }
-                    MyApplication.getLiteOrm().save(contentInfoList);
-                    MyApplication.getLiteOrm().save(videos);
-                    cursor.close();
-                    cursor = null;
                     mHandler.sendEmptyMessage(MSG_SCAN_FINISH);
                     Message msg =new Message();
                     mHandler.sendMessage(msg);
