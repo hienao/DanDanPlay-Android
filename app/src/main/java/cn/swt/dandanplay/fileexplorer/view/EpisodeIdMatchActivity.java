@@ -17,6 +17,7 @@ import android.widget.EditText;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
 import com.swt.corelib.utils.MD5Util;
+import com.swt.corelib.utils.ProgressDialogUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,6 +85,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
         mRvMatchResults.setItemAnimator(new DefaultItemAnimator());
         mRvMatchResults.setLayoutManager(new LinearLayoutManager(this));
         mRvMatchResults.setAdapter(mMatchResultAdapter);
+        ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this,getResources().getString(R.string.loading));
         mEpisodeIdMatchPresenter.matchEpisodeId(videoPath, videoTitle, getVideoFileHash(videoPath), String.valueOf(new File(videoPath).length()), String.valueOf(getVideoDuration(videoPath)), "0");
     }
 
@@ -99,6 +101,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
             public void onClick(View v) {
                 mSearchBeanList.clear();
                 mEpisodeIdMatchPresenter.searchALLEpisodeId(mEdtSearchEpisodeTitle.getText().toString(),mEdtSearchEpisodeId.getText().toString());
+                ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this,getResources().getString(R.string.loading));
             }
         });
         mBtnEpisodeSkip.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +122,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
 
     @Override
     public void gotMatchEpisodeId(MatchResponse matchResponse) {
+        dismissProgressDialog();
         AlertDialog.Builder builder=new AlertDialog.Builder(this);  //先得到构造器
         builder.setTitle(getResources().getString(R.string.match_result)); //设置标题
         builder.setIcon(R.mipmap.ic_launcher);//设置图标，图片id即可
@@ -191,6 +195,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
      */
     @Override
     public void gotSearchALLEpisodeId(List<SearchResultInfo> searchResultInfo) {
+        dismissProgressDialog();
         mSearchBeanList.clear();
         if (searchResultInfo != null && searchResultInfo.size() != 0) {
             mSearchBeanList.addAll(searchResultInfo);
@@ -253,6 +258,11 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
             }
         }
         return result;
+    }
+
+    @Override
+    public void dismissProgressDialog() {
+        ProgressDialogUtils.dismissDialog();
     }
 
     @Override

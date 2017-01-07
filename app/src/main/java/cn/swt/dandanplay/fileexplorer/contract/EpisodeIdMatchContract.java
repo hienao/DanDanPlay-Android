@@ -20,6 +20,7 @@ public class EpisodeIdMatchContract {
         void gotSearchALLEpisodeId(List<SearchResultInfo> searchResultInfo);
         String getVideoFileHash(String filePath);
         long getVideoDuration(String path);
+        void dismissProgressDialog();
     }
 
     public interface Present extends BasePresenter {

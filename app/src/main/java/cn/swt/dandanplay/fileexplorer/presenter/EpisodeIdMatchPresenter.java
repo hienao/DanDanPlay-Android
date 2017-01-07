@@ -55,6 +55,7 @@ public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
             @Override
             public void onFailure(Call call, Throwable t) {
                 LogUtils.e("VideoViewPresenter", "matchEpisodeId Error", t);
+                mView.dismissProgressDialog();
             }
         });
     }
@@ -106,6 +107,7 @@ public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
             @Override
             public void onFailure(Call call, Throwable t) {
                 LogUtils.e("VideoViewPresenter", "searchEpisodeId Error", t);
+                mView.dismissProgressDialog();
             }
         });
     }
