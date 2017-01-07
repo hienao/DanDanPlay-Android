@@ -76,7 +76,7 @@ public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
                     SearchAllResponse searchAllResponse = response.body();
                     List<SearchAllResponse.AnimesBean>contentlist=searchAllResponse.getAnimes();
                     if (contentlist!=null&&contentlist.size()!=0){
-                        List<SearchResultInfo>searchResultInfoList=new ArrayList<SearchResultInfo>();
+                        List<SearchResultInfo>searchResultInfoList=new ArrayList<>();
                         for (int i=0;i<contentlist.size();i++){
                             SearchAllResponse.AnimesBean animesBean=contentlist.get(i);
                             String mainTitle=animesBean.getTitle();
@@ -100,7 +100,11 @@ public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
                             }
                         }
                         mView.gotSearchALLEpisodeId(searchResultInfoList);
+                    }else {
+                        mView.gotSearchALLEpisodeId(null);
                     }
+                }else {
+                    mView.gotSearchALLEpisodeId(null);
                 }
             }
 

@@ -100,8 +100,9 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
             @Override
             public void onClick(View v) {
                 mSearchBeanList.clear();
-                mEpisodeIdMatchPresenter.searchALLEpisodeId(mEdtSearchEpisodeTitle.getText().toString(),mEdtSearchEpisodeId.getText().toString());
                 ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this,getResources().getString(R.string.loading));
+                mEpisodeIdMatchPresenter.searchALLEpisodeId(mEdtSearchEpisodeTitle.getText().toString(),mEdtSearchEpisodeId.getText().toString());
+
             }
         });
         mBtnEpisodeSkip.setOnClickListener(new View.OnClickListener() {
