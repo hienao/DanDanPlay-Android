@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.superplayer.library.SuperPlayer;
+import com.swt.corelib.utils.ProgressDialogUtils;
 
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     SuperPlayer        mViewSuperPlayer;
     private String            videoPath,videoTitle,file_title;
     private int            episode_id;
+    private boolean gotDanDanPlayComment=false;//是否加载完dandanplay的弹幕源
+    private int otherCommentSourceNum=-1,otherCommentSourceCount=0;//第三方弹幕源数量，已加载第三方弹幕源数量
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +41,8 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         setContentView(R.layout.activity_video_view);
         ButterKnife.bind(this);
         initData();
-        initView();
         initPlayer();
+        initView();
     }
 
 
@@ -58,18 +61,23 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void initView() {
+        ProgressDialogUtils.showDialog(VideoViewActivity.this,getResources().getString(R.string.init_ing));
         if (!TextUtils.isEmpty(videoTitle)){
             mViewSuperPlayer.setTitle(videoTitle);
         }else {
             mViewSuperPlayer.setTitle(file_title);
         }
         if (episode_id>0){
+            ProgressDialogUtils.showDialog(VideoViewActivity.this,getResources().getString(R.string.danmu_loading));
             mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
             mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
         }
+        mViewSuperPlayer.play(videoPath);
+        mViewSuperPlayer.pause();
     }
 
     private void initPlayer() {
+        ProgressDialogUtils.showDialog(VideoViewActivity.this,getResources().getString(R.string.video_loading));
         mViewSuperPlayer.setLive(false);//设置该地址是直播的地址
         mViewSuperPlayer.setNetChangeListener(true)//设置监听手机网络的变化
                 .setOnNetChangeListener(this)//实现网络变化的回调
@@ -103,7 +111,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                  */
 
             }
-        }).play(videoPath);//开始播放视频
+        });
         mViewSuperPlayer.setScaleType(SuperPlayer.SCALETYPE_FITXY);
         mViewSuperPlayer.setPlayerWH(0, mViewSuperPlayer.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
     }
@@ -131,9 +139,27 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     @Override
     public void gotComment(CommentResponse commentResponse) {
         if (commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
-
         } else {
             List<CommentResponse.CommentsBean> commentsBeanList = commentResponse.getComments();
+
+        }
+        gotDanDanPlayComment=true;
+    }
+
+    @Override
+    public void setOtherCommentSourceNum(int num) {
+        otherCommentSourceNum=num;
+    }
+
+    @Override
+    public void addOtherCommentSourceCount() {
+        otherCommentSourceCount++;
+        judgeDanmuLoadState();
+    }
+
+    private void judgeDanmuLoadState() {
+        if (gotDanDanPlayComment&&otherCommentSourceNum>-1&&otherCommentSourceNum==otherCommentSourceCount){
+            loadFinish();
         }
     }
 
@@ -210,6 +236,10 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 //                player.playSwitch("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
 //            }
 //        }
+    }
+    private void loadFinish(){
+        ProgressDialogUtils.dismissDialog();
+        mViewSuperPlayer.start();
     }
 
     @Override

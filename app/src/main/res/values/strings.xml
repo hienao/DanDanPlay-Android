@@ -12,4 +12,7 @@
     <string name="confirm">确定</string>
     <string name="match_result_right">匹配正确,去播放</string>
     <string name="match_result_wrong">不正确,我要自己选</string>
+    <string name="init_ing">初始化中...</string>
+    <string name="video_loading">视频加载中...</string>
+    <string name="danmu_loading">开始加载弹幕...</string>
 </resources>

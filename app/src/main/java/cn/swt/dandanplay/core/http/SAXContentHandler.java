@@ -65,7 +65,7 @@ public class SAXContentHandler extends DefaultHandler {
         }
         super.endElement(uri, localName, qName);
         tagName=null;
-
+        mView.addOtherCommentSourceCount();
     }
 
     @Override

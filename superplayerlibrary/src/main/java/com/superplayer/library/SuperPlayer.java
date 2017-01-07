@@ -315,6 +315,8 @@ public class SuperPlayer extends RelativeLayout {
         mDanmakuView.setCallback(new DrawHandler.Callback() {
             @Override
             public void prepared() {
+                mDanmakuView.start();
+                mDanmakuView.pause();
             }
 
             @Override
@@ -427,7 +429,7 @@ public class SuperPlayer extends RelativeLayout {
             }
             videoView.seekTo(0);
             videoView.start();
-            mDanmakuView.start();
+            mDanmakuView.seekTo(0l);
         } else if (videoView.isPlaying()) {
             statusChange(STATUS_PAUSE);
             videoView.pause();
@@ -861,10 +863,19 @@ public class SuperPlayer extends RelativeLayout {
                 videoView.setVideoPath(url);
                 if (isLive) {
                     videoView.seekTo(0);
+                    if (mDanmakuView != null && mDanmakuView.isPrepared()) {
+                        mDanmakuView.seekTo(0l);
+                    }
                 } else {
                     seekTo(currentPosition, true);
+                    if (mDanmakuView != null && mDanmakuView.isPrepared()) {
+                        mDanmakuView.seekTo((long) currentPosition);
+                    }
                 }
                 videoView.start();
+                if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+                    mDanmakuView.resume();
+                }
             }
         }
     }

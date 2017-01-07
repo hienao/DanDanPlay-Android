@@ -50,12 +50,15 @@ public class VideoViewPresenter implements VideoViewContract.Present {
             @Override
             public void onResponse(Call<CommentResponse> call, Response<CommentResponse> response) {
                 CommentResponse commentResponse = response.body();
-                mView.gotComment(commentResponse);
+                if (commentResponse!=null){
+                    mView.gotComment(commentResponse);
+                }
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
                 LogUtils.e("VideoViewPresenter", "commentResponse Error", t);
+                mView.gotComment(null);
             }
         });
     }
@@ -74,6 +77,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
             @Override
             public void onFailure(Call call, Throwable t) {
                 LogUtils.e("VideoViewPresenter", "commentResponse Error", t);
+                mView.setOtherCommentSourceNum(0);
             }
         });
 
@@ -86,6 +90,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
      */
     private void getOtherComment(List<RelatedResponse.RelatedsBean> relatedsBeanList) {
         if (relatedsBeanList != null && relatedsBeanList.size() != 0) {
+            mView.setOtherCommentSourceNum(relatedsBeanList.size());
             for (RelatedResponse.RelatedsBean relatedsBean : relatedsBeanList) {
                 if (relatedsBean.getProvider().contains("BiliBili")) {
                     //按bilibili解析弹幕
@@ -111,10 +116,10 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                         @Override
                         public void onFailure(Call call, Throwable t) {
                             LogUtils.e("VideoViewPresenter", "CidResponse Error", t);
+                            mView.addOtherCommentSourceCount();
                         }
                     });
-                }
-                if (relatedsBean.getProvider().contains("Acfun")) {
+                }else if (relatedsBean.getProvider().contains("Acfun")) {
                     //按bilibili解析弹幕
                     String acVideoUrl = relatedsBean.getUrl();
                     if (TextUtils.isEmpty(acVideoUrl))
@@ -135,6 +140,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                         @Override
                         public void onFailure(okhttp3.Call call, IOException e) {
                             LogUtils.e("VideoViewPresenter", "acfuncomment Request Error", e);
+                            mView.addOtherCommentSourceCount();
                         }
 
                         @Override
@@ -144,17 +150,23 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                                 jsonstr=jsonstr.replace("\"commentContentArr\":{","\"commentContentArr\":[").replace("}}}}","}]}}").replaceAll("\"c\\d+\":","");
                                 //解析
                                 System.out.println(jsonstr);
+                                mView.addOtherCommentSourceCount();
                             }else {
                                 LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
+                                mView.addOtherCommentSourceCount();
                             }
                         }
                     });
 
+                }else if (relatedsBean.getProvider().contains("Tucao")) {
+                    mView.addOtherCommentSourceCount();
                 }
-                if (relatedsBean.getProvider().contains("Tucao")) {
-
+                else {
+                    mView.addOtherCommentSourceCount();
                 }
             }
+        }else {
+            mView.setOtherCommentSourceNum(0);
         }
 
     }
@@ -169,6 +181,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
                 LogUtils.e("VideoViewPresenter", "bilicomment Error", e);
+                mView.addOtherCommentSourceCount();
             }
 
             @Override
@@ -181,6 +194,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                     parseXMLWithSAX(xmlstr);
                 }else {
                     LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
+                    mView.addOtherCommentSourceCount();
                 }
             }
         });
@@ -221,6 +235,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
             saxParser.parse(is, handlerService);
         }catch(Exception e){
             e.printStackTrace();
+            mView.addOtherCommentSourceCount();
         }
 
     }
