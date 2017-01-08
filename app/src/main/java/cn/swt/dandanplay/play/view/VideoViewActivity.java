@@ -68,11 +68,8 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         }
         mViewSuperPlayer.play(videoPath);
         mViewSuperPlayer.pause();
-        if (episode_id>0){
-            ProgressDialogUtils.showDialog(VideoViewActivity.this,getResources().getString(R.string.danmu_loading));
-            mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
-            mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
-        }
+        if (mViewSuperPlayer.getDanmakuView()!=null)
+            mViewSuperPlayer.getDanmakuView().hide();
     }
 
     private void initPlayer() {
@@ -164,7 +161,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void judgeDanmuLoadState() {
-        if (gotDanDanPlayComment&&otherCommentSourceNum>-1&&otherCommentSourceNum==otherCommentSourceCount){
+        if (gotDanDanPlayComment&&otherCommentSourceNum>-1&&otherCommentSourceNum<=otherCommentSourceCount){
             loadFinish();
         }
     }
@@ -179,6 +176,11 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         super.onResume();
         if (mViewSuperPlayer != null) {
             mViewSuperPlayer.onResume();
+        }
+        if (episode_id>0){
+            ProgressDialogUtils.showDialog(VideoViewActivity.this,getResources().getString(R.string.danmu_loading));
+            mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
+            mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
         }
     }
 
@@ -246,6 +248,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     private void loadFinish(){
         ProgressDialogUtils.dismissDialog();
         mViewSuperPlayer.start();
+        if (mViewSuperPlayer.getDanmakuView()!=null) {
+            mViewSuperPlayer.getDanmakuView().show();
+        }
     }
 
     @Override

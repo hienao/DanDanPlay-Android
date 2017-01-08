@@ -8,20 +8,20 @@ import cn.swt.dandanplay.play.contract.VideoViewContract;
 import master.flame.danmaku.danmaku.model.android.DanmakuContext;
 
 /**
- * Title: SAXContentHandler <br>
+ * Title: BiliSAXContentHandler <br>
  * Description: <br>
  * Copyright (c) 传化物流版权所有 2016 <br>
  * Created DateTime: 2016/12/25 0025 22:50
  * Created by Wentao.Shi.
  */
-public class SAXContentHandler extends DefaultHandler {
+public class BiliSAXContentHandler extends DefaultHandler {
     //声明标签的名称
     public String                        tagName;
     private DanmakuContext mDanmakuContext;
     private VideoViewContract.View mView;
     private String []strarr;
 
-    public SAXContentHandler(VideoViewContract.View view) {
+    public BiliSAXContentHandler(VideoViewContract.View view) {
         mView=view;
     }
 
@@ -34,6 +34,7 @@ public class SAXContentHandler extends DefaultHandler {
     @Override
     public void endDocument() throws SAXException {
         super.endDocument();
+        mView.addOtherCommentSourceCount();
     }
 
     @Override
@@ -65,7 +66,7 @@ public class SAXContentHandler extends DefaultHandler {
         }
         super.endElement(uri, localName, qName);
         tagName=null;
-        mView.addOtherCommentSourceCount();
+
     }
 
     @Override

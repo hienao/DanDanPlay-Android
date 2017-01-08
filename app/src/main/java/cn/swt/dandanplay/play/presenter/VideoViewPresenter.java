@@ -7,7 +7,10 @@ import com.swt.corelib.utils.LogUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.xml.parsers.SAXParser;
@@ -16,7 +19,8 @@ import javax.xml.parsers.SAXParserFactory;
 import cn.swt.dandanplay.core.http.APIService;
 import cn.swt.dandanplay.core.http.HttpConstant;
 import cn.swt.dandanplay.core.http.RetrofitManager;
-import cn.swt.dandanplay.core.http.SAXContentHandler;
+import cn.swt.dandanplay.core.http.BiliSAXContentHandler;
+import cn.swt.dandanplay.core.http.TucaoSAXContentHandler;
 import cn.swt.dandanplay.core.http.beans.CidResponse;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.core.http.beans.RelatedResponse;
@@ -92,6 +96,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
      */
     private void getOtherComment(List<RelatedResponse.RelatedsBean> relatedsBeanList) {
         if (relatedsBeanList != null && relatedsBeanList.size() != 0) {
+            dereplicationDanmuSource(relatedsBeanList);
             mView.setOtherCommentSourceNum(relatedsBeanList.size());
             for (RelatedResponse.RelatedsBean relatedsBean : relatedsBeanList) {
                 if (relatedsBean.getProvider().contains("BiliBili")) {
@@ -161,9 +166,9 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 //                    });
                     mView.addOtherCommentSourceCount();
                 }else if (relatedsBean.getProvider().contains("Tucao")) {
-                    mView.addOtherCommentSourceCount();
-                }
-                else {
+                    getTuCaoCommentURL(relatedsBean.getUrl());
+
+                } else {
                     mView.addOtherCommentSourceCount();
                 }
             }
@@ -172,6 +177,109 @@ public class VideoViewPresenter implements VideoViewContract.Present {
         }
 
     }
+
+    /**
+     * 获取吐槽网弹幕URL
+     * @param url
+     */
+    private void getTuCaoCommentURL(String url) {
+        OkHttpClient mOkHttpClient=new OkHttpClient();
+        Request.Builder requestBuilder = new Request.Builder().url(url);
+        Request request = requestBuilder.build();
+        okhttp3.Call mcall= mOkHttpClient.newCall(request);
+        mcall.enqueue(new okhttp3.Callback() {
+
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                LogUtils.e("VideoViewPresenter", "tucaocomment Error", e);
+                mView.addOtherCommentSourceCount();
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String htmlstr=response.body().string();
+                    String pattern = "http://www.tucao.tv/index.php\\?m=mukio.*?\"";
+                    // 创建 Pattern 对象
+                    Pattern r = Pattern.compile(pattern);
+
+                    // 现在创建 matcher 对象
+                    Matcher m = r.matcher(htmlstr);
+                    if (m.find()){
+                        String danmuurl=m.group(0).substring(0,m.group(0).length()-1).replace("tj","init");
+                        getTuCaoComments(danmuurl);
+                    }else {
+                        mView.addOtherCommentSourceCount();
+                    }
+                }else {
+                    LogUtils.e("VideoViewPresenter", "tucaocomment Error: server error");
+                    mView.addOtherCommentSourceCount();
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取吐槽网弹幕信息
+     * @param danmuurl
+     */
+    private void getTuCaoComments(String danmuurl){
+        OkHttpClient mOkHttpClient=new OkHttpClient();
+        Request.Builder requestBuilder = new Request.Builder().url(danmuurl);
+        Request request = requestBuilder.build();
+        okhttp3.Call mcall= mOkHttpClient.newCall(request);
+        mcall.enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                LogUtils.e("VideoViewPresenter", "tucaocomment Error", e);
+                mView.addOtherCommentSourceCount();
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String xmlstr=response.body().string();
+                    parseTucaoCommentsXMLWithSAX(xmlstr);
+                }else {
+                    LogUtils.e("VideoViewPresenter", "tucaocomment Error: server error");
+                    mView.addOtherCommentSourceCount();
+                }
+            }
+        });
+    }
+
+    private void parseTucaoCommentsXMLWithSAX(String xmlstr) {
+        try{
+            //SAX解析的工厂对象
+            SAXParserFactory factory=SAXParserFactory.newInstance();
+            //得到sax的解析器
+            SAXParser saxParser=factory.newSAXParser();
+            //创建handler对象
+            TucaoSAXContentHandler handlerService=new TucaoSAXContentHandler(mView);
+            InputStream is = new ByteArrayInputStream(xmlstr.getBytes());
+            //直接解析
+            saxParser.parse(is, handlerService);
+        }catch(Exception e){
+            e.printStackTrace();
+            mView.addOtherCommentSourceCount();
+        }
+    }
+
+    /**
+     * 去除重复弹幕源
+     * @param relatedsBeanList
+     */
+    private void dereplicationDanmuSource(List<RelatedResponse.RelatedsBean> relatedsBeanList) {
+        ArrayList sourceList = new ArrayList();
+        for (RelatedResponse.RelatedsBean relatedsBean : relatedsBeanList){
+            if (sourceList.contains(relatedsBean.getProvider())){
+                relatedsBean.setProvider("repeat");
+            }else {
+                sourceList.add(relatedsBean.getProvider());
+            }
+        }
+    }
+
     private void getBiliBiliComment(final String cid){
 
         OkHttpClient mOkHttpClient=new OkHttpClient();
@@ -193,7 +301,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 //                    String info = new String(b, "GB2312");//然后将其转为gb2312
 //                    LogUtils.e("charset",info);
                     String xmlstr=response.body().string();
-                    parseXMLWithSAX(xmlstr);
+                    parseBiliCommentsXMLWithSAX(xmlstr);
                 }else {
                     LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
                     mView.addOtherCommentSourceCount();
@@ -224,14 +332,14 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 //            e.printStackTrace();
 //        }
 //    }
-    private void parseXMLWithSAX(String xmlData){
+    private void parseBiliCommentsXMLWithSAX(String xmlData){
         try{
             //SAX解析的工厂对象
             SAXParserFactory factory=SAXParserFactory.newInstance();
             //得到sax的解析器
             SAXParser saxParser=factory.newSAXParser();
             //创建handler对象
-            SAXContentHandler handlerService=new SAXContentHandler(mView);
+            BiliSAXContentHandler handlerService=new BiliSAXContentHandler(mView);
             InputStream is = new ByteArrayInputStream(xmlData.getBytes());
             //直接解析
             saxParser.parse(is, handlerService);

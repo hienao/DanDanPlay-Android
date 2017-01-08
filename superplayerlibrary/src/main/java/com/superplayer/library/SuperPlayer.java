@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -163,6 +164,55 @@ public class SuperPlayer extends RelativeLayout {
      * 初始化视图
      */
     public void initView() {
+        contentView = View.inflate(context, R.layout.view_super_player, this);
+        /**弹幕相关开始**/
+        mDanmakuView= (DanmakuView) findViewById(R.id.danmaku_view);
+        mBaseDanmakuParser=new BaseDanmakuParser() {
+            @Override
+            protected IDanmakus parse() {
+                return new Danmakus();
+            }
+        };
+        mCommentsBeanList=new ArrayList<>();
+        mDanmakuView.enableDanmakuDrawingCache(true);
+        mDanmakuView.setCallback(new DrawHandler.Callback() {
+            @Override
+            public void prepared() {
+                mDanmakuView.start();
+            }
+
+            @Override
+            public void updateTimer(DanmakuTimer timer) {
+
+            }
+
+            @Override
+            public void danmakuShown(BaseDanmaku danmaku) {
+
+            }
+
+            @Override
+            public void drawingFinished() {
+
+            }
+        });
+        mDanmakuContext=DanmakuContext.create();
+        // 设置弹幕的最大显示行数
+        HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
+        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 16); // 滚动弹幕最大显示3行
+        // 设置是否禁止重叠
+        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
+        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
+        overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
+
+        mDanmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3) //设置描边样式
+                .setDuplicateMergingEnabled(false)
+                .setScrollSpeedFactor(1.2f) //是否启用合并重复弹幕
+                .setScaleTextSize(1.2f) //设置弹幕滚动速度系数,只对滚动弹幕有效
+                .setMaximumLines(maxLinesPair) //设置最大显示行数
+                .preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
+        mDanmakuView.prepare(mBaseDanmakuParser,mDanmakuContext);
+        /**弹幕相关结束**/
         try {
             IjkMediaPlayer.loadLibrariesOnce(null);
             IjkMediaPlayer.native_profileBegin("libijkplayer.so");
@@ -172,9 +222,7 @@ public class SuperPlayer extends RelativeLayout {
         }
         screenWidthPixels = activity.getResources().getDisplayMetrics().widthPixels;
         $ = new Query(activity);
-        contentView = View.inflate(context, R.layout.view_super_player, this);
         videoView = (IjkVideoView) contentView.findViewById(R.id.video_view);
-        mDanmakuView= (DanmakuView) findViewById(R.id.danmaku_view);
         videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(IMediaPlayer mp) {
@@ -303,54 +351,7 @@ public class SuperPlayer extends RelativeLayout {
             showStatus(activity.getResources().getString(R.string.not_support),
                     "重试");
         }
-        /**弹幕相关开始**/
-        mBaseDanmakuParser=new BaseDanmakuParser() {
-            @Override
-            protected IDanmakus parse() {
-                return new Danmakus();
-            }
-        };
-        mCommentsBeanList=new ArrayList<>();
-        mDanmakuView.enableDanmakuDrawingCache(true);
-        mDanmakuView.setCallback(new DrawHandler.Callback() {
-            @Override
-            public void prepared() {
-                mDanmakuView.start();
-                mDanmakuView.pause();
-            }
 
-            @Override
-            public void updateTimer(DanmakuTimer timer) {
-
-            }
-
-            @Override
-            public void danmakuShown(BaseDanmaku danmaku) {
-
-            }
-
-            @Override
-            public void drawingFinished() {
-
-            }
-        });
-        mDanmakuContext=DanmakuContext.create();
-        // 设置弹幕的最大显示行数
-        HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
-        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 16); // 滚动弹幕最大显示3行
-        // 设置是否禁止重叠
-        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
-        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
-        overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
-
-        mDanmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3) //设置描边样式
-                .setDuplicateMergingEnabled(false)
-                .setScrollSpeedFactor(1.2f) //是否启用合并重复弹幕
-                .setScaleTextSize(1.2f) //设置弹幕滚动速度系数,只对滚动弹幕有效
-                .setMaximumLines(maxLinesPair) //设置最大显示行数
-                .preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
-        mDanmakuView.prepare(mBaseDanmakuParser,mDanmakuContext);
-        /**弹幕相关结束**/
     }
 
     /**
@@ -432,16 +433,17 @@ public class SuperPlayer extends RelativeLayout {
             mDanmakuView.seekTo(0l);
         } else if (videoView.isPlaying()) {
             statusChange(STATUS_PAUSE);
-            videoView.pause();
             if (mDanmakuView != null && mDanmakuView.isPrepared()) {
                 mDanmakuView.pause();
             }
+            videoView.pause();
+
         } else {
-            videoView.start();
             //继续
-            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+            if (mDanmakuView != null && mDanmakuView.isPrepared() ) {
                 mDanmakuView.resume();
             }
+            videoView.start();
         }
         updatePausePlay();
     }
@@ -686,6 +688,9 @@ public class SuperPlayer extends RelativeLayout {
                 currentPosition = videoView.getCurrentPosition();
             }
         }
+        if (mDanmakuView!=null&&mDanmakuView.isPrepared()){
+            mDanmakuView.pause();
+        }
     }
 
     public void onResume() {
@@ -699,6 +704,9 @@ public class SuperPlayer extends RelativeLayout {
                 }
             }
             videoView.start();
+            if (mDanmakuView!=null&&mDanmakuView.isPrepared()){
+                mDanmakuView.start();
+            }
         }
     }
 
@@ -872,10 +880,11 @@ public class SuperPlayer extends RelativeLayout {
                         mDanmakuView.seekTo((long) currentPosition);
                     }
                 }
-                videoView.start();
-                if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
-                    mDanmakuView.resume();
+                if (mDanmakuView != null && mDanmakuView.isPrepared()) {
+                    mDanmakuView.start();
                 }
+                videoView.start();
+
             }
         }
     }
@@ -1151,6 +1160,12 @@ public class SuperPlayer extends RelativeLayout {
 
     public void start() {
         videoView.start();
+        if (mDanmakuView!=null&&mDanmakuView.isPrepared()){
+            mDanmakuView.resume();
+        }
+    }
+    public DanmakuView getDanmakuView(){
+        return mDanmakuView;
     }
 
     public void pause() {
@@ -1680,42 +1695,51 @@ public class SuperPlayer extends RelativeLayout {
      * @param text      弹幕内容
      */
     public void addBiliBiliDanmu(String time, String type, String textsize, String textcolor, String a4, String priority, String userHash, String index,String text) {
-        try {
-            BaseDanmaku danmaku = null;
-            //设置弹幕模式
-            switch (type) {
-                case "1":
-                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-                    break;
-                case "4":
-                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM);
-                    break;
-                case "5":
-                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP);
-                    break;
-                case "6":
-                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR);
-                    break;
-                case "7":
-                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL);
-                    break;
-                default:
-                    danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-                    break;
-            }
-            danmaku.text = text;
-            danmaku.padding = 5;
-            danmaku.textSize = biliFontSizeConvert(Integer.parseInt(textsize));
-            danmaku.textColor = Integer.parseInt(textcolor);
-            danmaku.setTime((long) (Double.parseDouble(time) * 1000));
-            danmaku.priority = Byte.parseByte(priority);
-            danmaku.userHash = userHash;
-            danmaku.index = Integer.parseInt(index);
-            mDanmakuView.addDanmaku(danmaku);
-            mCommentsBeanList.add(danmaku);
-        } catch (Exception e) {
-            //转换出现异常，放弃
+        BaseDanmaku danmaku = null;
+        //设置弹幕模式
+        switch (type) {
+            case "1":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                break;
+            case "4":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM);
+                break;
+            case "5":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP);
+                break;
+            case "6":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR);
+                break;
+            case "7":
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL);
+                break;
+            default:
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                break;
         }
+        if (text==null){
+            danmaku.text="";
+        }else {
+            danmaku.text = text;
+        }
+        danmaku.padding = 5;
+        danmaku.textSize = biliFontSizeConvert(Integer.parseInt(textsize));
+        try {
+            danmaku.textColor = Integer.parseInt(textcolor);
+        }catch (NumberFormatException e){
+            danmaku.textColor =bilicolor2dandancolor(textcolor);
+        }
+        danmaku.setTime((long) (Double.parseDouble(time) * 1000));
+        danmaku.priority = Byte.parseByte(priority);
+        if (userHash!=null)
+            danmaku.userHash = userHash;
+        try {
+            danmaku.index = Integer.parseInt(index);
+        }catch (NumberFormatException e){
+//            danmaku.index = -1;
+        }
+        mDanmakuView.addDanmaku(danmaku);
+        mCommentsBeanList.add(danmaku);
     }
     /**
      * b站弹幕字体大小转换
@@ -1723,5 +1747,21 @@ public class SuperPlayer extends RelativeLayout {
     public int biliFontSizeConvert(float pxValue) {
         final float fontScale = getResources().getDisplayMetrics().scaledDensity;
         return (int) (pxValue * fontScale * 0.6 + 0.5f);
+    }
+    /**
+     * 将bilibili弹幕xml信息中的颜色字符串转化为dandanplay的颜色信息
+     * @param bilicolor        10位16进制颜色字符串
+     * @return 32位整形数的弹幕颜色，算法为 R*256*256 + G*256 + B。
+     */
+    public static int bilicolor2dandancolor(String bilicolor){
+        if (bilicolor==null)
+            return -1;
+        if (TextUtils.isDigitsOnly(bilicolor)&&bilicolor.length()==8){
+            int r=Integer.parseInt(bilicolor.substring(2,4),16);
+            int g=Integer.parseInt(bilicolor.substring(4,6),16);
+            int b=Integer.parseInt(bilicolor.substring(6,8),16);
+            return r*256*256+g*256+b;
+        }
+        return -1;
     }
 }

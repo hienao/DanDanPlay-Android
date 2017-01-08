@@ -8,6 +8,7 @@ package cn.swt.dandanplay.core.http;
  * Created by Wentao.Shi.
  */
 public class HttpConstant {
+
     /**
      * 弹弹play弹幕API基础地址
      */
