@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
 import com.superplayer.library.SuperPlayer;
@@ -31,8 +30,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     RelativeLayout     mActivityVideoView;
     @BindView(R.id.view_super_player)
     SuperPlayer        mViewSuperPlayer;
-    @BindView(R.id.webView)
-    WebView            mWebView;
     private String videoPath, videoTitle, file_title;
     private int episode_id;
     private boolean gotDanDanPlayComment  = false;//是否加载完dandanplay的弹幕源
