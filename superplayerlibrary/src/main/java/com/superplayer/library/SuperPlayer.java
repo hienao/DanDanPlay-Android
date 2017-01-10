@@ -1766,4 +1766,7 @@ public class SuperPlayer extends RelativeLayout {
         }
         return -1;
     }
+    public  List<BaseDanmaku> getDanmuList(){
+        return mCommentsBeanList;
+    }
 }

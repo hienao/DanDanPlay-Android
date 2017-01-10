@@ -306,8 +306,16 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 //                    byte[] b = response.body().bytes();     //获取数据的bytes
 //                    String info = new String(b, "GB2312");//然后将其转为gb2312
 //                    LogUtils.e("charset",info);
-                    String xmlstr = response.body().string();
-                    parseBiliCommentsXMLWithSAX(xmlstr);
+                    videoPath=mView.getVideoPath();
+                    if (videoPath!=null){
+                        String xmlfilepath=videoPath.substring(0,videoPath.lastIndexOf("."))+".xml";
+                        if (FileUtils.isFileExists(xmlfilepath)){
+                            FileUtils.createFileByDeleteOldFile(xmlfilepath);
+                        }
+                        FileUtils.writeFileFromIS(xmlfilepath,response.body().byteStream(),true);
+                        String xmlstr=FileUtils.readFile2String(xmlfilepath,"UTF-8");
+                        parseBiliCommentsXMLWithSAX(xmlstr);
+                    }
                 } else {
                     LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
                     mView.addOtherCommentSourceCount();

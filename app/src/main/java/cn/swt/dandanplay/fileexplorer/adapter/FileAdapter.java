@@ -11,12 +11,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.swt.corelib.utils.ConvertUtils;
+import com.swt.corelib.utils.NetworkUtils;
 
 import java.util.List;
 
 import cn.swt.dandanplay.R;
 import cn.swt.dandanplay.fileexplorer.beans.VideoFileInfo;
 import cn.swt.dandanplay.fileexplorer.view.EpisodeIdMatchActivity;
+import cn.swt.dandanplay.play.view.VideoViewActivity;
 
 /**
  * Title: ContentAdapter <br>
@@ -55,9 +57,17 @@ public class FileAdapter extends RecyclerView.Adapter{
         viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mContext.startActivity(new Intent(mContext, EpisodeIdMatchActivity.class)
-                        .putExtra("path",list.get(position).getVideoPath())
-                        .putExtra("title",list.get(position).getVideoNameWithoutSuffix()));
+                if ( NetworkUtils.isAvailableByPing(mContext)){
+                    mContext.startActivity(new Intent(mContext, EpisodeIdMatchActivity.class)
+                            .putExtra("path",list.get(position).getVideoPath())
+                            .putExtra("title",list.get(position).getVideoNameWithoutSuffix()));
+                }else {
+                    mContext.startActivity(new Intent(mContext, VideoViewActivity.class)
+                            .putExtra("path",list.get(position).getVideoPath())
+                            .putExtra("file_title",list.get(position).getVideoNameWithoutSuffix())
+                            .putExtra("isoffline",true));
+                }
+
             }
         });
     }
