@@ -56,6 +56,11 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     @Override
+    public void addBiliBiliDanmu(BaseDanmaku baseDanmaku) {
+        mViewSuperPlayer.addBiliBiliDanmu(baseDanmaku);
+    }
+
+    @Override
     public String getVideoPath() {
         return videoPath;
     }
@@ -172,8 +177,13 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void judgeDanmuLoadState() {
-        if (gotDanDanPlayComment && otherCommentSourceNum > -1 && otherCommentSourceNum <= otherCommentSourceCount) {
+        if (gotDanDanPlayComment && otherCommentSourceNum > -1 && otherCommentSourceNum <= otherCommentSourceCount&&isOffLine==false) {
             loadFinish();
+        }else if (isOffLine){
+            mViewSuperPlayer.start();
+            if (mViewSuperPlayer.getDanmakuView() != null) {
+                mViewSuperPlayer.getDanmakuView().show();
+            }
         }
     }
 
@@ -188,12 +198,24 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         if (mViewSuperPlayer != null) {
             mViewSuperPlayer.onResume();
         }
+
         if (episode_id > 0&&isOffLine==false) {
             ProgressDialogUtils.showDialog(VideoViewActivity.this, getResources().getString(R.string.danmu_loading));
             mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
             mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
         }else {
             //检查离线文件是否存在，存在则读取
+            if (videoPath!=null){
+                String  jsonfilepath=videoPath.substring(0,videoPath.lastIndexOf("."))+".json";
+                String  xmlfilepath=videoPath.substring(0,videoPath.lastIndexOf("."))+".xml";
+                String danmu_json_str = null,danmu_xml_str = null;
+                if (FileUtils.isFileExists(jsonfilepath)){
+                    danmu_json_str=FileUtils.readFile2String(jsonfilepath,"UTF-8");
+                }else if (FileUtils.isFileExists(xmlfilepath)){
+                    danmu_xml_str=FileUtils.readFile2String(jsonfilepath,"UTF-8");
+                }
+                mVideoViewPresenter.getCommentOffline(danmu_json_str,danmu_xml_str);
+            }
         }
     }
 

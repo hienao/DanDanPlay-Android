@@ -1736,8 +1736,18 @@ public class SuperPlayer extends RelativeLayout {
         try {
             danmaku.index = Integer.parseInt(index);
         }catch (NumberFormatException e){
-//            danmaku.index = -1;
         }
+        if(danmaku!=null){
+            mDanmakuView.addDanmaku(danmaku);
+            mCommentsBeanList.add(danmaku);
+        }
+    }
+
+    /**
+     * 添加弹幕
+     * @param danmaku
+     */
+    public void addBiliBiliDanmu(BaseDanmaku danmaku){
         if(danmaku!=null){
             mDanmakuView.addDanmaku(danmaku);
             mCommentsBeanList.add(danmaku);

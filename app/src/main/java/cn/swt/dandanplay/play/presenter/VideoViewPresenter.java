@@ -2,6 +2,7 @@ package cn.swt.dandanplay.play.presenter;
 
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
 
@@ -25,7 +26,9 @@ import cn.swt.dandanplay.core.http.TucaoSAXContentHandler;
 import cn.swt.dandanplay.core.http.beans.CidResponse;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.core.http.beans.RelatedResponse;
+import cn.swt.dandanplay.play.beans.DanmuStorageBean;
 import cn.swt.dandanplay.play.contract.VideoViewContract;
+import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Call;
@@ -89,6 +92,27 @@ public class VideoViewPresenter implements VideoViewContract.Present {
             }
         });
 
+    }
+
+    @Override
+    public void getCommentOffline(String jsonstr, String xmlstr) {
+        try {
+            if (jsonstr!=null){
+                Gson gson=new Gson();
+                DanmuStorageBean danmuStorageBean= null;
+                danmuStorageBean = gson.fromJson(jsonstr, DanmuStorageBean.class);
+                List<BaseDanmaku> danmakuList=danmuStorageBean.getDanmuBeanList();
+                if (danmakuList!=null&&danmakuList.size()!=0){
+                    for (BaseDanmaku baseDanmaku:danmakuList){
+                        mView.addBiliBiliDanmu(baseDanmaku);
+                    }
+                }
+            }else if (xmlstr!=null){
+                parseBiliCommentsXMLWithSAX(xmlstr);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
