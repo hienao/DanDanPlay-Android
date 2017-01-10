@@ -181,9 +181,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
             loadFinish();
         }else if (isOffLine){
             mViewSuperPlayer.start();
-            if (mViewSuperPlayer.getDanmakuView() != null) {
-                mViewSuperPlayer.getDanmakuView().show();
-            }
         }
     }
 
@@ -204,6 +201,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
             mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
             mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
         }else {
+            if (mViewSuperPlayer.getDanmakuView() != null) {
+                mViewSuperPlayer.getDanmakuView().show();
+            }
             //检查离线文件是否存在，存在则读取
             if (videoPath!=null){
                 String  jsonfilepath=videoPath.substring(0,videoPath.lastIndexOf("."))+".json";
