@@ -1717,6 +1717,9 @@ public class SuperPlayer extends RelativeLayout {
                 danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
                 break;
         }
+        if (danmaku == null || mDanmakuView == null) {
+            return;
+        }
         if (text==null){
             danmaku.text="";
         }else {
@@ -1737,10 +1740,8 @@ public class SuperPlayer extends RelativeLayout {
             danmaku.index = Integer.parseInt(index);
         }catch (NumberFormatException e){
         }
-        if(danmaku!=null){
-            mDanmakuView.addDanmaku(danmaku);
-            mCommentsBeanList.add(danmaku);
-        }
+        mDanmakuView.addDanmaku(danmaku);
+        mCommentsBeanList.add(danmaku);
     }
 
     /**

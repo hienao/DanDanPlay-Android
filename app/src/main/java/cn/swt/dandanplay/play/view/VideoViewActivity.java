@@ -212,7 +212,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 if (FileUtils.isFileExists(jsonfilepath)){
                     danmu_json_str=FileUtils.readFile2String(jsonfilepath,"UTF-8");
                 }else if (FileUtils.isFileExists(xmlfilepath)){
-                    danmu_xml_str=FileUtils.readFile2String(jsonfilepath,"UTF-8");
+                    danmu_xml_str=FileUtils.readFile2String(xmlfilepath,"UTF-8");
                 }
                 mVideoViewPresenter.getCommentOffline(danmu_json_str,danmu_xml_str);
             }
