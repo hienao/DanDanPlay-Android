@@ -1,5 +1,6 @@
 package cn.swt.dandanplay.play.presenter;
 
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -95,7 +96,7 @@ public class VideoViewPresenter implements VideoViewContract.Present {
     }
 
     @Override
-    public void getCommentOffline(String jsonstr, String xmlstr) {
+    public void getCommentOffline(String jsonstr, final String xmlstr) {
         try {
             if (jsonstr!=null){
                 Gson gson=new Gson();
@@ -108,7 +109,14 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                     }
                 }
             }else if (xmlstr!=null){
-                parseBiliCommentsXMLWithSAX(xmlstr);
+                //延迟执行，否则看不到弹幕
+//                parseBiliCommentsXMLWithSAX(xmlstr);
+                new Handler().postDelayed(new Runnable(){
+                    public void run() {
+                        parseBiliCommentsXMLWithSAX(xmlstr);
+                    }
+                }, 4000);
+
             }
         } catch (Exception e) {
             e.printStackTrace();

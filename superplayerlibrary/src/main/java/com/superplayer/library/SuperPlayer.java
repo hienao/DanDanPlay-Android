@@ -156,6 +156,20 @@ public class SuperPlayer extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         this.context = context;
         activity = (Activity) this.context;
+        mDanmakuContext=DanmakuContext.create();
+        // 设置弹幕的最大显示行数
+        HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
+        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 16); // 滚动弹幕最大显示3行
+        // 设置是否禁止重叠
+        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
+        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
+        overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
+        mDanmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3) //设置描边样式
+                .setDuplicateMergingEnabled(false)
+                .setScrollSpeedFactor(1.2f) //是否启用合并重复弹幕
+                .setScaleTextSize(1.2f) //设置弹幕滚动速度系数,只对滚动弹幕有效
+                .setMaximumLines(maxLinesPair) //设置最大显示行数
+                .preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
         //初始化view和其他相关的
         initView();
 
@@ -196,21 +210,6 @@ public class SuperPlayer extends RelativeLayout {
 
             }
         });
-        mDanmakuContext=DanmakuContext.create();
-        // 设置弹幕的最大显示行数
-        HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
-        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 16); // 滚动弹幕最大显示3行
-        // 设置是否禁止重叠
-        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
-        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
-        overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
-
-        mDanmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3) //设置描边样式
-                .setDuplicateMergingEnabled(false)
-                .setScrollSpeedFactor(1.2f) //是否启用合并重复弹幕
-                .setScaleTextSize(1.2f) //设置弹幕滚动速度系数,只对滚动弹幕有效
-                .setMaximumLines(maxLinesPair) //设置最大显示行数
-                .preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
         mDanmakuView.prepare(mBaseDanmakuParser,mDanmakuContext);
         /**弹幕相关结束**/
         try {
@@ -1670,7 +1669,7 @@ public class SuperPlayer extends RelativeLayout {
      *          弹幕是否有边框
      */
     public void addDanmaku(String content, boolean withBorder) {
-        BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+        BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL,mDanmakuContext);
         danmaku.text = content;
         danmaku.padding = 5;
         danmaku.textSize = biliFontSizeConvert(25);
@@ -1699,22 +1698,22 @@ public class SuperPlayer extends RelativeLayout {
         //设置弹幕模式
         switch (type) {
             case "1":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL,mDanmakuContext);
                 break;
             case "4":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM,mDanmakuContext);
                 break;
             case "5":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP,mDanmakuContext);
                 break;
             case "6":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR,mDanmakuContext);
                 break;
             case "7":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL,mDanmakuContext);
                 break;
             default:
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL,mDanmakuContext);
                 break;
         }
         if (danmaku == null || mDanmakuView == null) {
