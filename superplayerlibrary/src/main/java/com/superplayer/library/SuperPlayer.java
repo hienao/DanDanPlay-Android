@@ -1738,8 +1738,10 @@ public class SuperPlayer extends RelativeLayout {
         }catch (NumberFormatException e){
 //            danmaku.index = -1;
         }
-        mDanmakuView.addDanmaku(danmaku);
-        mCommentsBeanList.add(danmaku);
+        if(danmaku!=null){
+            mDanmakuView.addDanmaku(danmaku);
+            mCommentsBeanList.add(danmaku);
+        }
     }
     /**
      * b站弹幕字体大小转换

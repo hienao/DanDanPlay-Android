@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
 import com.superplayer.library.SuperPlayer;
@@ -30,10 +31,12 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     RelativeLayout     mActivityVideoView;
     @BindView(R.id.view_super_player)
     SuperPlayer        mViewSuperPlayer;
-    private String            videoPath,videoTitle,file_title;
-    private int            episode_id;
-    private boolean gotDanDanPlayComment=false;//是否加载完dandanplay的弹幕源
-    private int otherCommentSourceNum=-1,otherCommentSourceCount=0;//第三方弹幕源数量，已加载第三方弹幕源数量
+    @BindView(R.id.webView)
+    WebView            mWebView;
+    private String videoPath, videoTitle, file_title;
+    private int episode_id;
+    private boolean gotDanDanPlayComment  = false;//是否加载完dandanplay的弹幕源
+    private int     otherCommentSourceNum = -1, otherCommentSourceCount = 0;//第三方弹幕源数量，已加载第三方弹幕源数量
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,28 +50,34 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 
 
     @Override
-    public void addBiliBiliDanmu(String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7,String text) {
+    public void addBiliBiliDanmu(String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7, String text) {
         mViewSuperPlayer.addBiliBiliDanmu(a0, a1, a2, a3, a4, a5, a6, a7, text);
     }
+
+    @Override
+    public String getVideoPath() {
+        return videoPath;
+    }
+
 
 
     private void initData() {
         videoPath = getIntent().getStringExtra("path");
         file_title = getIntent().getStringExtra("file_title");
         videoTitle = getIntent().getStringExtra("title");
-        episode_id =getIntent().getIntExtra("episode_id",-1);
+        episode_id = getIntent().getIntExtra("episode_id", -1);
         mVideoViewPresenter = new VideoViewPresenter(this);
     }
 
     private void initView() {
-        if (!TextUtils.isEmpty(videoTitle)){
+        if (!TextUtils.isEmpty(videoTitle)) {
             mViewSuperPlayer.setTitle(videoTitle);
-        }else {
+        } else {
             mViewSuperPlayer.setTitle(file_title);
         }
         mViewSuperPlayer.play(videoPath);
         mViewSuperPlayer.pause();
-        if (mViewSuperPlayer.getDanmakuView()!=null)
+        if (mViewSuperPlayer.getDanmakuView() != null)
             mViewSuperPlayer.getDanmakuView().hide();
     }
 
@@ -133,25 +142,25 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 
     @Override
     public void gotComment(CommentResponse commentResponse) {
-        if (commentResponse==null || commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
+        if (commentResponse == null || commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
         } else {
             List<CommentResponse.CommentsBean> commentsBeanList = commentResponse.getComments();
-            if (commentsBeanList!=null&&commentsBeanList.size()!=0){
-                for (CommentResponse.CommentsBean commentsBean:commentsBeanList){
+            if (commentsBeanList != null && commentsBeanList.size() != 0) {
+                for (CommentResponse.CommentsBean commentsBean : commentsBeanList) {
                     mViewSuperPlayer.addBiliBiliDanmu(String.valueOf(commentsBean.getTime()), String.valueOf(commentsBean.getMode()),
-                            String.valueOf(25), String.valueOf(commentsBean.getColor()),"",
-                            String.valueOf(commentsBean.getPool()),String.valueOf(commentsBean.getUId()),
-                            String.valueOf(commentsBean.getCId()),commentsBean.getMessage());
+                            String.valueOf(25), String.valueOf(commentsBean.getColor()), "",
+                            String.valueOf(commentsBean.getPool()), String.valueOf(commentsBean.getUId()),
+                            String.valueOf(commentsBean.getCId()), commentsBean.getMessage());
                 }
             }
         }
-        gotDanDanPlayComment=true;
+        gotDanDanPlayComment = true;
         judgeDanmuLoadState();
     }
 
     @Override
     public void setOtherCommentSourceNum(int num) {
-        otherCommentSourceNum=num;
+        otherCommentSourceNum = num;
     }
 
     @Override
@@ -161,7 +170,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void judgeDanmuLoadState() {
-        if (gotDanDanPlayComment&&otherCommentSourceNum>-1&&otherCommentSourceNum<=otherCommentSourceCount){
+        if (gotDanDanPlayComment && otherCommentSourceNum > -1 && otherCommentSourceNum <= otherCommentSourceCount) {
             loadFinish();
         }
     }
@@ -177,8 +186,8 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         if (mViewSuperPlayer != null) {
             mViewSuperPlayer.onResume();
         }
-        if (episode_id>0){
-            ProgressDialogUtils.showDialog(VideoViewActivity.this,getResources().getString(R.string.danmu_loading));
+        if (episode_id > 0) {
+            ProgressDialogUtils.showDialog(VideoViewActivity.this, getResources().getString(R.string.danmu_loading));
             mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
             mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
         }
@@ -245,10 +254,11 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 //            }
 //        }
     }
-    private void loadFinish(){
+
+    private void loadFinish() {
         ProgressDialogUtils.dismissDialog();
         mViewSuperPlayer.start();
-        if (mViewSuperPlayer.getDanmakuView()!=null) {
+        if (mViewSuperPlayer.getDanmakuView() != null) {
             mViewSuperPlayer.getDanmakuView().show();
         }
     }
