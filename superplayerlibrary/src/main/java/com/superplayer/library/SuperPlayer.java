@@ -133,6 +133,7 @@ public class SuperPlayer extends RelativeLayout {
     private NetChangeReceiver netChangeReceiver;
     private OnNetChangeListener onNetChangeListener;
     private OrientationEventListener orientationEventListener;
+    private OnDanmuViewPreparedListener mOnDanmuViewPreparedListener;
     private int defaultTimeout = 3000;
     private  int                                screenWidthPixels;
     /**弹幕初始化**/
@@ -194,6 +195,7 @@ public class SuperPlayer extends RelativeLayout {
             @Override
             public void prepared() {
                 mDanmakuView.start();
+                mOnDanmuViewPreparedListener.onPrepared();
             }
 
             @Override
@@ -1468,6 +1470,9 @@ public class SuperPlayer extends RelativeLayout {
     public interface OnPreparedListener {
         void onPrepared();
     }
+    public interface OnDanmuViewPreparedListener{
+        void onPrepared();
+    }
 
     public SuperPlayer onError(OnErrorListener onErrorListener) {
         this.onErrorListener = onErrorListener;
@@ -1486,6 +1491,10 @@ public class SuperPlayer extends RelativeLayout {
 
     public SuperPlayer onPrepared(OnPreparedListener onPreparedListener) {
         this.onPreparedListener = onPreparedListener;
+        return this;
+    }
+    public SuperPlayer onDanmuViewPrepared(OnDanmuViewPreparedListener onDanmuViewPreparedListener){
+        this.mOnDanmuViewPreparedListener=onDanmuViewPreparedListener;
         return this;
     }
 
@@ -1700,7 +1709,7 @@ public class SuperPlayer extends RelativeLayout {
      * @param type      弹幕类型，详见switch
      * @param textsize  弹幕字体大小 单位px
      * @param textcolor 弹幕颜色    单位int
-     * @param a4
+     * @param sendtimeunix
      * @param priority  弹幕优先级
      * @param userHash  弹幕用户hash值
      * @param index     弹幕在弹幕库中的索引
@@ -1730,6 +1739,7 @@ public class SuperPlayer extends RelativeLayout {
                 break;
         }
         if (danmaku == null || mDanmakuView == null) {
+            Log.w("SWTTAG","danmaku:"+danmaku+" mDanmakuView:"+mDanmakuView);
             return;
         }
         if (text==null){

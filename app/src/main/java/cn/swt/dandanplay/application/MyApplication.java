@@ -16,6 +16,7 @@ import com.tencent.bugly.Bugly;
  * Created by Wentao.Shi.
  */
 public class MyApplication extends Application {
+    public static String TAG="SWTTAG";
     private static Context context;
     private static LiteOrm liteOrm;
     @Override
