@@ -26,7 +26,8 @@ public class MyApplication extends Application {
         context = getApplicationContext();
         //bugly初始化
         Bugly.init(getApplicationContext(), "92428c9315", false);
-
+        //SmartTool初始化
+//        SmartToolCore.getInstance().init(this);
         //toast初始化
         ToastUtils.init(false);
         //初始化liteorm

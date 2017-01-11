@@ -200,7 +200,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void judgeDanmuLoadState() {
-        if (gotDanDanPlayComment && otherCommentSourceNum > -1 && otherCommentSourceNum <= otherCommentSourceCount&&isOffLine==false) {
+        if (gotDanDanPlayComment && otherCommentSourceNum > -1 && otherCommentSourceNum <= otherCommentSourceCount&&!isOffLine) {
             loadFinish();
         }else if (isOffLine){
             mViewSuperPlayer.start();
