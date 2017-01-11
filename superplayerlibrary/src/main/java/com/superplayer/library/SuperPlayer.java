@@ -1739,7 +1739,6 @@ public class SuperPlayer extends RelativeLayout {
                 break;
         }
         if (danmaku == null || mDanmakuView == null) {
-            Log.w("SWTTAG","danmaku:"+danmaku+" mDanmakuView:"+mDanmakuView);
             return;
         }
         if (text==null){
