@@ -14,7 +14,6 @@ import com.superplayer.library.SuperPlayer;
 import com.superplayer.library.beans.DanmakuBean;
 import com.superplayer.library.beans.DanmuStorageBean;
 import com.swt.corelib.utils.FileUtils;
-import com.swt.corelib.utils.LogUtils;
 import com.swt.corelib.utils.ProgressDialogUtils;
 
 import java.util.List;
@@ -24,7 +23,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.dandanplay.R;
-import cn.swt.dandanplay.application.MyApplication;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.play.contract.VideoViewContract;
 import cn.swt.dandanplay.play.presenter.VideoViewPresenter;
@@ -288,7 +286,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         ProgressDialogUtils.dismissDialog();
         mViewSuperPlayer.start();
         if (mViewSuperPlayer.getDanmakuView() != null) {
-            LogUtils.w(MyApplication.TAG,"getDanmakuView  == null");
             mViewSuperPlayer.getDanmakuView().show();
         }
         List<DanmakuBean> mCommentsBeanList =mViewSuperPlayer.getDanmuList();
