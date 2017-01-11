@@ -11,6 +11,8 @@ import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
 import com.superplayer.library.SuperPlayer;
+import com.superplayer.library.beans.DanmakuBean;
+import com.superplayer.library.beans.DanmuStorageBean;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.ProgressDialogUtils;
 
@@ -22,10 +24,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.dandanplay.R;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
-import cn.swt.dandanplay.play.beans.DanmuStorageBean;
 import cn.swt.dandanplay.play.contract.VideoViewContract;
 import cn.swt.dandanplay.play.presenter.VideoViewPresenter;
-import master.flame.danmaku.danmaku.model.BaseDanmaku;
 
 public class VideoViewActivity extends AppCompatActivity implements VideoViewContract.View, View.OnClickListener, SuperPlayer.OnNetChangeListener {
     @Inject
@@ -56,14 +56,10 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     @Override
-    public void addBiliBiliDanmu(BaseDanmaku baseDanmaku) {
-        mViewSuperPlayer.addBiliBiliDanmu(baseDanmaku);
-    }
-
-    @Override
     public String getVideoPath() {
         return videoPath;
     }
+
 
 
 
@@ -287,7 +283,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         if (mViewSuperPlayer.getDanmakuView() != null) {
             mViewSuperPlayer.getDanmakuView().show();
         }
-        List<BaseDanmaku> mCommentsBeanList =mViewSuperPlayer.getDanmuList();
+        List<DanmakuBean> mCommentsBeanList =mViewSuperPlayer.getDanmuList();
         if (mCommentsBeanList!=null&&mCommentsBeanList.size()!=0){
             DanmuStorageBean danmuStorageBean=new DanmuStorageBean();
             danmuStorageBean.setDanmuBeanList(mCommentsBeanList);

@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.superplayer.library.beans.DanmakuBean;
 import com.superplayer.library.mediaplayer.IRenderView;
 import com.superplayer.library.mediaplayer.IjkVideoView;
 import com.superplayer.library.utils.NetUtils;
@@ -133,12 +134,12 @@ public class SuperPlayer extends RelativeLayout {
     private OnNetChangeListener onNetChangeListener;
     private OrientationEventListener orientationEventListener;
     private int defaultTimeout = 3000;
-    private  int               screenWidthPixels;
+    private  int                                screenWidthPixels;
     /**弹幕初始化**/
-    private DanmakuView mDanmakuView;
-    private DanmakuContext    mDanmakuContext;
-    private  BaseDanmakuParser mBaseDanmakuParser;
-    private  List<BaseDanmaku> mCommentsBeanList;
+    private DanmakuView                         mDanmakuView;
+    private DanmakuContext                      mDanmakuContext;
+    private  BaseDanmakuParser                  mBaseDanmakuParser;
+    private  List<DanmakuBean> mCommentsBeanList;
     private boolean danMuShowState = true;
 
     private int initWidth = 0;
@@ -1679,7 +1680,19 @@ public class SuperPlayer extends RelativeLayout {
             danmaku.borderColor = Color.GREEN;
         }
         mDanmakuView.addDanmaku(danmaku);
-        //mDanmakuView.seekTo((long)mViewSuperPlayer.getCurrentPosition());
+        //保存弹幕到列表
+        DanmakuBean danmakuBean=new DanmakuBean();
+        danmakuBean.setType("1");
+        danmakuBean.setTime(String.valueOf(danmaku.getTime()));
+        danmakuBean.setText(content);
+        danmakuBean.setTextSize("25");
+        danmakuBean.setTextColor("FFFFFFFF");
+        danmakuBean.setSendtimeunix(null);
+        danmakuBean.setPriority("0");
+        danmakuBean.setUserHash("");
+        danmakuBean.setIndex("0");
+        danmakuBean.setPadding(5);
+        mCommentsBeanList.add(danmakuBean);
     }
 
     /**
@@ -1693,7 +1706,7 @@ public class SuperPlayer extends RelativeLayout {
      * @param index     弹幕在弹幕库中的索引
      * @param text      弹幕内容
      */
-    public void addBiliBiliDanmu(String time, String type, String textsize, String textcolor, String a4, String priority, String userHash, String index,String text) {
+    public void addBiliBiliDanmu(String time, String type, String textsize, String textcolor, String sendtimeunix, String priority, String userHash, String index,String text) {
         BaseDanmaku danmaku = null;
         //设置弹幕模式
         switch (type) {
@@ -1740,18 +1753,19 @@ public class SuperPlayer extends RelativeLayout {
         }catch (NumberFormatException e){
         }
         mDanmakuView.addDanmaku(danmaku);
-        mCommentsBeanList.add(danmaku);
-    }
-
-    /**
-     * 添加弹幕
-     * @param danmaku
-     */
-    public void addBiliBiliDanmu(BaseDanmaku danmaku){
-        if(danmaku!=null){
-            mDanmakuView.addDanmaku(danmaku);
-            mCommentsBeanList.add(danmaku);
-        }
+        //保存弹幕到列表
+        DanmakuBean danmakuBean=new DanmakuBean();
+        danmakuBean.setType(type);
+        danmakuBean.setTime(time);
+        danmakuBean.setText(text);
+        danmakuBean.setTextSize(textsize);
+        danmakuBean.setTextColor(textcolor);
+        danmakuBean.setSendtimeunix(sendtimeunix);
+        danmakuBean.setPriority(priority);
+        danmakuBean.setUserHash(userHash);
+        danmakuBean.setIndex(index);
+        danmakuBean.setPadding(5);
+        mCommentsBeanList.add(danmakuBean);
     }
     /**
      * b站弹幕字体大小转换
@@ -1776,7 +1790,7 @@ public class SuperPlayer extends RelativeLayout {
         }
         return -1;
     }
-    public  List<BaseDanmaku> getDanmuList(){
+    public  List<DanmakuBean> getDanmuList(){
         return mCommentsBeanList;
     }
 }
