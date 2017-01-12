@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-//apply plugin: 'wolearn.ajcplugin'
+apply plugin: 'wolearn.ajcplugin'
 android {
     compileSdkVersion 25
     buildToolsVersion "24.0.3"
@@ -27,5 +27,5 @@ dependencies {
     compile project(':ijkplayerlibrary')
     compile 'com.github.ctiao:DanmakuFlameMaster:0.6.2'
     compile 'com.github.ctiao:ndkbitmap-armv7a:0.6.2'
-//    compile 'com.transfar:smarttoolui:0.9.1'
+    compile 'com.transfar:smarttoolui:0.9.5'
 }

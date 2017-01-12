@@ -44,7 +44,7 @@ import retrofit2.Response;
  */
 public class VideoViewPresenter implements VideoViewContract.Present {
     private VideoViewContract.View mView;
-    private String                 videoPath;
+    private String videoPath;
 
     @Inject
     public VideoViewPresenter(VideoViewContract.View view) {
@@ -96,19 +96,19 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 
     @Override
     public void getCommentOffline(final String jsonstr, final String xmlstr) {
-        if (jsonstr!=null){
-            Gson gson=new Gson();
-            DanmuStorageBean danmuStorageBean= null;
+        if (jsonstr != null) {
+            Gson gson = new Gson();
+            DanmuStorageBean danmuStorageBean = null;
             danmuStorageBean = gson.fromJson(jsonstr, DanmuStorageBean.class);
-            List<DanmakuBean> danmakuList=danmuStorageBean.getDanmuBeanList();
-            if (danmakuList!=null&&danmakuList.size()!=0){
-                for (DanmakuBean baseDanmaku:danmakuList){
-                    mView.addBiliBiliDanmu(baseDanmaku.getTime(),baseDanmaku.getType(),baseDanmaku.getTextSize(),baseDanmaku.getTextColor(),baseDanmaku.getSendtimeunix()
-                            ,baseDanmaku.getPriority(),baseDanmaku.getUserHash(),baseDanmaku.getIndex(),baseDanmaku.getText());
+            List<DanmakuBean> danmakuList = danmuStorageBean.getDanmuBeanList();
+            if (danmakuList != null && danmakuList.size() != 0) {
+                for (DanmakuBean baseDanmaku : danmakuList) {
+                    mView.addBiliBiliDanmu(baseDanmaku.getTime(), baseDanmaku.getType(), baseDanmaku.getTextSize(), baseDanmaku.getTextColor(), baseDanmaku.getSendtimeunix()
+                            , baseDanmaku.getPriority(), baseDanmaku.getUserHash(), baseDanmaku.getIndex(), baseDanmaku.getText());
                 }
             }
             mView.addOtherCommentSourceCount();
-        }else if (xmlstr!=null){
+        } else if (xmlstr != null) {
             //延迟执行，否则看不到弹幕
             parseBiliCommentsXMLWithSAX(xmlstr);
         }
@@ -142,8 +142,10 @@ public class VideoViewPresenter implements VideoViewContract.Present {
                         @Override
                         public void onResponse(Call<CidResponse> call, Response<CidResponse> response) {
                             CidResponse cidResponse = response.body();
-                            //获取xml弹幕
-                            getBiliBiliComment(cidResponse.getCid());
+                            if (cidResponse != null) {
+                                //获取xml弹幕
+                                getBiliBiliComment(cidResponse.getCid());
+                            }
 //                            getBiliBiliComment2(cidResponse.getCid());
                         }
 
@@ -330,14 +332,14 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 //                    byte[] b = response.body().bytes();     //获取数据的bytes
 //                    String info = new String(b, "GB2312");//然后将其转为gb2312
 //                    LogUtils.e("charset",info);
-                    videoPath=mView.getVideoPath();
-                    if (videoPath!=null){
-                        String xmlfilepath=videoPath.substring(0,videoPath.lastIndexOf("."))+".xml";
-                        if (FileUtils.isFileExists(xmlfilepath)){
+                    videoPath = mView.getVideoPath();
+                    if (videoPath != null) {
+                        String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
+                        if (FileUtils.isFileExists(xmlfilepath)) {
                             FileUtils.createFileByDeleteOldFile(xmlfilepath);
                         }
-                        FileUtils.writeFileFromIS(xmlfilepath,response.body().byteStream(),true);
-                        String xmlstr=FileUtils.readFile2String(xmlfilepath,"UTF-8");
+                        FileUtils.writeFileFromIS(xmlfilepath, response.body().byteStream(), true);
+                        String xmlstr = FileUtils.readFile2String(xmlfilepath, "UTF-8");
                         parseBiliCommentsXMLWithSAX(xmlstr);
                     }
                 } else {
@@ -349,10 +351,10 @@ public class VideoViewPresenter implements VideoViewContract.Present {
     }
 
     private void getBiliBiliComment2(final String cid) {
-        OkHttpClient mOkHttpClient=new OkHttpClient();
-        Request.Builder requestBuilder = new Request.Builder().url(HttpConstant.BILIBILI_COMMENT_BASE_URL+cid+".xml");
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        Request.Builder requestBuilder = new Request.Builder().url(HttpConstant.BILIBILI_COMMENT_BASE_URL + cid + ".xml");
         Request request = requestBuilder.build();
-        okhttp3.Call mcall= mOkHttpClient.newCall(request);
+        okhttp3.Call mcall = mOkHttpClient.newCall(request);
         mcall.enqueue(new okhttp3.Callback() {
 
             @Override
@@ -363,18 +365,18 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 
             @Override
             public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
-                if (response.isSuccessful()){
-                    videoPath=mView.getVideoPath();
-                    if (videoPath!=null){
-                        String  xmlfilepath=videoPath.substring(0,videoPath.lastIndexOf("."))+".xml";
-                        if (FileUtils.isFileExists(xmlfilepath)){
+                if (response.isSuccessful()) {
+                    videoPath = mView.getVideoPath();
+                    if (videoPath != null) {
+                        String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
+                        if (FileUtils.isFileExists(xmlfilepath)) {
                             FileUtils.createFileByDeleteOldFile(xmlfilepath);
                         }
-                        FileUtils.writeFileFromIS(xmlfilepath,response.body().byteStream(),true);
+                        FileUtils.writeFileFromIS(xmlfilepath, response.body().byteStream(), true);
                         mView.addOtherCommentSourceCount();
                     }
 
-                }else {
+                } else {
                     LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
                     mView.addOtherCommentSourceCount();
                 }

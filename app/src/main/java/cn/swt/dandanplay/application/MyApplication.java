@@ -7,6 +7,7 @@ import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.DataBaseConfig;
 import com.swt.corelib.utils.ToastUtils;
 import com.tencent.bugly.Bugly;
+import com.transfar.smarttoolui.core.SmartToolCore;
 
 /**
  * Title: MyApplication <br>
@@ -27,7 +28,7 @@ public class MyApplication extends Application {
         //bugly初始化
         Bugly.init(getApplicationContext(), "92428c9315", false);
         //SmartTool初始化
-//        SmartToolCore.getInstance().init(this);
+        SmartToolCore.getInstance().init(this);
         //toast初始化
         ToastUtils.init(false);
         //初始化liteorm
