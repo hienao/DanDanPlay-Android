@@ -9,12 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
 import com.superplayer.library.SuperPlayer;
-import com.superplayer.library.beans.DanmakuBean;
-import com.superplayer.library.beans.DanmuStorageBean;
-import com.swt.corelib.utils.FileUtils;
-import com.swt.corelib.utils.ProgressDialogUtils;
 
 import java.util.List;
 
@@ -31,13 +26,13 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     @Inject
     VideoViewPresenter mVideoViewPresenter;
     @BindView(R.id.activity_video_view)
-    RelativeLayout     mActivityVideoView;
+    RelativeLayout mActivityVideoView;
     @BindView(R.id.view_super_player)
-    SuperPlayer        mViewSuperPlayer;
+    SuperPlayer mViewSuperPlayer;
     private String videoPath, videoTitle, file_title;
     private int episode_id;
-    private boolean gotDanDanPlayComment  = false,isOffLine=false;//是否加载完dandanplay的弹幕源
-    private int     otherCommentSourceNum = -1, otherCommentSourceCount = 0;//第三方弹幕源数量，已加载第三方弹幕源数量
+    private boolean gotDanDanPlayComment = false, isOffLine = false;//是否加载完dandanplay的弹幕源
+    private int otherCommentSourceNum = -1, otherCommentSourceCount = 0;//第三方弹幕源数量，已加载第三方弹幕源数量
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +56,12 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
 
-
-
     private void initData() {
         videoPath = getIntent().getStringExtra("path");
         file_title = getIntent().getStringExtra("file_title");
         videoTitle = getIntent().getStringExtra("title");
         episode_id = getIntent().getIntExtra("episode_id", -1);
-        isOffLine = getIntent().getBooleanExtra("isoffline",false);
+        isOffLine = getIntent().getBooleanExtra("isoffline", false);
         mVideoViewPresenter = new VideoViewPresenter(this);
     }
 
@@ -119,33 +112,35 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         }).onDanmuViewPrepared(new SuperPlayer.OnDanmuViewPreparedListener() {
             @Override
             public void onPrepared() {
-                if (mViewSuperPlayer.getDanmakuView() != null)
-                    mViewSuperPlayer.getDanmakuView().hide();
-                if (episode_id > 0&&!isOffLine) {
-                    ProgressDialogUtils.showDialog(VideoViewActivity.this, getResources().getString(R.string.danmu_loading));
-                    mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
-                    mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
-                }else {
-                    if (mViewSuperPlayer.getDanmakuView() != null) {
-                        mViewSuperPlayer.getDanmakuView().show();
-                    }
-                    //检查离线文件是否存在，存在则读取
-                    if (videoPath!=null){
-                        String  jsonfilepath=videoPath.substring(0,videoPath.lastIndexOf("."))+".json";
-                        String  xmlfilepath=videoPath.substring(0,videoPath.lastIndexOf("."))+".xml";
-                        String danmu_json_str = null,danmu_xml_str = null;
-                        if (FileUtils.isFileExists(jsonfilepath)){
-                            danmu_json_str=FileUtils.readFile2String(jsonfilepath,"UTF-8");
-                        }else if (FileUtils.isFileExists(xmlfilepath)){
-                            danmu_xml_str=FileUtils.readFile2String(xmlfilepath,"UTF-8");
-                        }else {
-                            mViewSuperPlayer.start();
-                        }
-                        mVideoViewPresenter.getCommentOffline(danmu_json_str,danmu_xml_str);
-                    }
-                }
+//                if (mViewSuperPlayer.getDanmakuView() != null)
+//                    mViewSuperPlayer.getDanmakuView().hide();
+//                if (episode_id > 0 && !isOffLine) {
+//                    ProgressDialogUtils.showDialog(VideoViewActivity.this, getResources().getString(R.string.danmu_loading));
+//                    mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
+//                    mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
+//                } else {
+//                    if (mViewSuperPlayer.getDanmakuView() != null) {
+//                        mViewSuperPlayer.getDanmakuView().show();
+//                    }
+//                    //检查离线文件是否存在，存在则读取
+//                    if (videoPath != null) {
+//                        String jsonfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".json";
+//                        String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
+//                        String danmu_json_str = null, danmu_xml_str = null;
+//                        if (FileUtils.isFileExists(jsonfilepath)) {
+//                            danmu_json_str = FileUtils.readFile2String(jsonfilepath, "UTF-8");
+//                        } else if (FileUtils.isFileExists(xmlfilepath)) {
+//                            danmu_xml_str = FileUtils.readFile2String(xmlfilepath, "UTF-8");
+//                        } else {
+//                            mViewSuperPlayer.start();
+//                        }
+//                        mVideoViewPresenter.getCommentOffline(danmu_json_str, danmu_xml_str);
+//                    }
+//                }
+                mViewSuperPlayer.start();
             }
         });
+        mViewSuperPlayer.initDanmuView(videoPath);
         mViewSuperPlayer.setScaleType(SuperPlayer.SCALETYPE_FITXY);
         mViewSuperPlayer.setPlayerWH(0, mViewSuperPlayer.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
     }
@@ -200,9 +195,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void judgeDanmuLoadState() {
-        if (gotDanDanPlayComment && otherCommentSourceNum > -1 && otherCommentSourceNum <= otherCommentSourceCount&&!isOffLine) {
+        if (gotDanDanPlayComment && otherCommentSourceNum > -1 && otherCommentSourceNum <= otherCommentSourceCount && !isOffLine) {
             loadFinish();
-        }else if (isOffLine){
+        } else if (isOffLine) {
             mViewSuperPlayer.start();
         }
     }
@@ -283,25 +278,25 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void loadFinish() {
-        ProgressDialogUtils.dismissDialog();
-        mViewSuperPlayer.start();
-        if (mViewSuperPlayer.getDanmakuView() != null) {
-            mViewSuperPlayer.getDanmakuView().show();
-        }
-        List<DanmakuBean> mCommentsBeanList =mViewSuperPlayer.getDanmuList();
-        if (mCommentsBeanList!=null&&mCommentsBeanList.size()!=0){
-            DanmuStorageBean danmuStorageBean=new DanmuStorageBean();
-            danmuStorageBean.setDanmuBeanList(mCommentsBeanList);
-            Gson gson=new Gson();
-            String danmu_list_json_str=gson.toJson(danmuStorageBean);
-            if (videoPath!=null){
-                String  xmlfilepath=videoPath.substring(0,videoPath.lastIndexOf("."))+".json";
-                if (FileUtils.isFileExists(xmlfilepath)){
-                    FileUtils.createFileByDeleteOldFile(xmlfilepath);
-                }
-                FileUtils.writeFileFromString(xmlfilepath,danmu_list_json_str,true);
-            }
-        }
+//        ProgressDialogUtils.dismissDialog();
+//        mViewSuperPlayer.start();
+//        if (mViewSuperPlayer.getDanmakuView() != null) {
+//            mViewSuperPlayer.getDanmakuView().show();
+//        }
+//        List<DanmakuBean> mCommentsBeanList = mViewSuperPlayer.getDanmuList();
+//        if (mCommentsBeanList != null && mCommentsBeanList.size() != 0) {
+//            DanmuStorageBean danmuStorageBean = new DanmuStorageBean();
+//            danmuStorageBean.setDanmuBeanList(mCommentsBeanList);
+//            Gson gson = new Gson();
+//            String danmu_list_json_str = gson.toJson(danmuStorageBean);
+//            if (videoPath != null) {
+//                String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".json";
+//                if (FileUtils.isFileExists(xmlfilepath)) {
+//                    FileUtils.createFileByDeleteOldFile(xmlfilepath);
+//                }
+//                FileUtils.writeFileFromString(xmlfilepath, danmu_list_json_str, true);
+//            }
+//        }
     }
 
     @Override

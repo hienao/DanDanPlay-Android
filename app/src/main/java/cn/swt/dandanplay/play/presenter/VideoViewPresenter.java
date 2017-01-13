@@ -2,9 +2,6 @@ package cn.swt.dandanplay.play.presenter;
 
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
-import com.superplayer.library.beans.DanmakuBean;
-import com.superplayer.library.beans.DanmuStorageBean;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
 
@@ -96,22 +93,22 @@ public class VideoViewPresenter implements VideoViewContract.Present {
 
     @Override
     public void getCommentOffline(final String jsonstr, final String xmlstr) {
-        if (jsonstr != null) {
-            Gson gson = new Gson();
-            DanmuStorageBean danmuStorageBean = null;
-            danmuStorageBean = gson.fromJson(jsonstr, DanmuStorageBean.class);
-            List<DanmakuBean> danmakuList = danmuStorageBean.getDanmuBeanList();
-            if (danmakuList != null && danmakuList.size() != 0) {
-                for (DanmakuBean baseDanmaku : danmakuList) {
-                    mView.addBiliBiliDanmu(baseDanmaku.getTime(), baseDanmaku.getType(), baseDanmaku.getTextSize(), baseDanmaku.getTextColor(), baseDanmaku.getSendtimeunix()
-                            , baseDanmaku.getPriority(), baseDanmaku.getUserHash(), baseDanmaku.getIndex(), baseDanmaku.getText());
-                }
-            }
-            mView.addOtherCommentSourceCount();
-        } else if (xmlstr != null) {
-            //延迟执行，否则看不到弹幕
-            parseBiliCommentsXMLWithSAX(xmlstr);
-        }
+//        if (jsonstr != null) {
+//            Gson gson = new Gson();
+//            DanmuStorageBean danmuStorageBean = null;
+//            danmuStorageBean = gson.fromJson(jsonstr, DanmuStorageBean.class);
+//            List<DanmakuBean> danmakuList = danmuStorageBean.getDanmuBeanList();
+//            if (danmakuList != null && danmakuList.size() != 0) {
+//                for (DanmakuBean baseDanmaku : danmakuList) {
+//                    mView.addBiliBiliDanmu(baseDanmaku.getTime(), baseDanmaku.getType(), baseDanmaku.getTextSize(), baseDanmaku.getTextColor(), baseDanmaku.getSendtimeunix()
+//                            , baseDanmaku.getPriority(), baseDanmaku.getUserHash(), baseDanmaku.getIndex(), baseDanmaku.getText());
+//                }
+//            }
+//            mView.addOtherCommentSourceCount();
+//        } else if (xmlstr != null) {
+//            //延迟执行，否则看不到弹幕
+//            parseBiliCommentsXMLWithSAX(xmlstr);
+//        }
 
     }
 

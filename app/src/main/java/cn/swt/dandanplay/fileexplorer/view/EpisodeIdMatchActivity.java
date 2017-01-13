@@ -39,6 +39,7 @@ import cn.swt.dandanplay.fileexplorer.component.DaggerMainComponent;
 import cn.swt.dandanplay.fileexplorer.contract.EpisodeIdMatchContract;
 import cn.swt.dandanplay.fileexplorer.module.MainModule;
 import cn.swt.dandanplay.fileexplorer.presenter.EpisodeIdMatchPresenter;
+import cn.swt.dandanplay.fileexplorer.utils.DanmuUtils;
 import cn.swt.dandanplay.play.view.VideoViewActivity;
 
 public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMatchContract.View {
@@ -146,10 +147,13 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss(); //关闭dialog
-                    startActivity(new Intent(EpisodeIdMatchActivity.this, VideoViewActivity.class)
-                            .putExtra("path",videoPath)
-                            .putExtra("file_title",videoTitle)
-                            .putExtra("title",matchesBean.getAnimeTitle()+" "+matchesBean.getEpisodeTitle()).putExtra("episode_id",matchesBean.getEpisodeId()));
+                    DanmuUtils.getInstance(EpisodeIdMatchActivity.this).setVideoPath(videoPath).setFileTitle(videoTitle)
+                            .setTitle(matchesBean.getAnimeTitle()+" "+matchesBean.getEpisodeTitle())
+                            .setEpisode_id(matchesBean.getEpisodeId()).getDanmuListByEspoisedId(matchesBean.getEpisodeId());
+//                    startActivity(new Intent(EpisodeIdMatchActivity.this, VideoViewActivity.class)
+//                            .putExtra("path",videoPath)
+//                            .putExtra("file_title",videoTitle)
+//                            .putExtra("title",matchesBean.getAnimeTitle()+" "+matchesBean.getEpisodeTitle()).putExtra("episode_id",matchesBean.getEpisodeId()));
                 }
             });
             builder.setNegativeButton(getResources().getString(R.string.match_result_wrong), new DialogInterface.OnClickListener() { //设置取消按钮
@@ -265,6 +269,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
     public void dismissProgressDialog() {
         ProgressDialogUtils.dismissDialog();
     }
+
 
     @Override
     public void error() {

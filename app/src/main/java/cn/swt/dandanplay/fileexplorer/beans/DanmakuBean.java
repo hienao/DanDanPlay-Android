@@ -1,4 +1,4 @@
-package com.superplayer.library.beans;
+package cn.swt.dandanplay.fileexplorer.beans;
 
 /**
  * Title: DanmakuBean <br>

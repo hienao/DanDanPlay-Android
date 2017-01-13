@@ -31,17 +31,23 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.superplayer.library.beans.DanmakuBean;
+import com.superplayer.library.danmu.BiliDanmukuParser;
 import com.superplayer.library.mediaplayer.IRenderView;
 import com.superplayer.library.mediaplayer.IjkVideoView;
 import com.superplayer.library.utils.NetUtils;
 import com.superplayer.library.utils.SuperPlayerUtils;
+import com.swt.corelib.utils.FileUtils;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 
 import master.flame.danmaku.controller.DrawHandler;
+import master.flame.danmaku.danmaku.loader.ILoader;
+import master.flame.danmaku.danmaku.loader.IllegalDataException;
+import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
 import master.flame.danmaku.danmaku.model.IDanmakus;
@@ -49,6 +55,7 @@ import master.flame.danmaku.danmaku.model.IDisplayer;
 import master.flame.danmaku.danmaku.model.android.DanmakuContext;
 import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.danmaku.parser.IDataSource;
 import master.flame.danmaku.ui.widget.DanmakuView;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -135,12 +142,13 @@ public class SuperPlayer extends RelativeLayout {
     private OrientationEventListener orientationEventListener;
     private OnDanmuViewPreparedListener mOnDanmuViewPreparedListener;
     private int defaultTimeout = 3000;
-    private  int                                screenWidthPixels;
-    /**弹幕初始化**/
-    private DanmakuView                         mDanmakuView;
-    private DanmakuContext                      mDanmakuContext;
-    private  BaseDanmakuParser                  mBaseDanmakuParser;
-    private  List<DanmakuBean> mCommentsBeanList;
+    private int screenWidthPixels;
+    /**
+     * 弹幕初始化
+     **/
+    private DanmakuView mDanmakuView;
+    private DanmakuContext mDanmakuContext;
+    private BaseDanmakuParser mBaseDanmakuParser;
     private boolean danMuShowState = true;
 
     private int initWidth = 0;
@@ -158,7 +166,40 @@ public class SuperPlayer extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         this.context = context;
         activity = (Activity) this.context;
-        mDanmakuContext=DanmakuContext.create();
+        //初始化view和其他相关的
+        initView();
+
+    }
+    private BaseDanmakuParser createParser(InputStream stream) {
+
+        if (stream == null) {
+            return new BaseDanmakuParser() {
+
+                @Override
+                protected Danmakus parse() {
+                    return new Danmakus();
+                }
+            };
+        }
+
+        ILoader loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_BILI);
+
+        try {
+            loader.load(stream);
+        } catch (IllegalDataException e) {
+            e.printStackTrace();
+        }
+        BaseDanmakuParser parser = new BiliDanmukuParser();
+        IDataSource<?> dataSource = loader.getDataSource();
+        parser.load(dataSource);
+        return parser;
+    }
+    public void initDanmuView(String videopath){
+        String danmuxml="";
+        if (!TextUtils.isEmpty(videopath)){
+            danmuxml=videopath.substring(0,videopath.lastIndexOf("."))+".xml";
+        }
+        mDanmakuContext = DanmakuContext.create();
         // 设置弹幕的最大显示行数
         HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
         maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 16); // 滚动弹幕最大显示3行
@@ -172,24 +213,27 @@ public class SuperPlayer extends RelativeLayout {
                 .setScaleTextSize(1.2f) //设置弹幕滚动速度系数,只对滚动弹幕有效
                 .setMaximumLines(maxLinesPair) //设置最大显示行数
                 .preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
-        //初始化view和其他相关的
-        initView();
-
-    }
-    /**
-     * 初始化视图
-     */
-    public void initView() {
-        contentView = View.inflate(context, R.layout.view_super_player, this);
         /**弹幕相关开始**/
-        mDanmakuView= (DanmakuView) findViewById(R.id.danmaku_view);
-        mBaseDanmakuParser=new BaseDanmakuParser() {
-            @Override
-            protected IDanmakus parse() {
-                return new Danmakus();
+        mDanmakuView = (DanmakuView) findViewById(R.id.danmaku_view);
+        if (!TextUtils.isEmpty(danmuxml)&&FileUtils.isFileExists(danmuxml)){
+            try {
+                mBaseDanmakuParser = createParser(new FileInputStream(new File(danmuxml)));
+            } catch (FileNotFoundException e) {
+                mBaseDanmakuParser = new BaseDanmakuParser() {
+                    @Override
+                    protected IDanmakus parse() {
+                        return new Danmakus();
+                    }
+                };
             }
-        };
-        mCommentsBeanList=new ArrayList<>();
+        }else {
+            mBaseDanmakuParser = new BaseDanmakuParser() {
+                @Override
+                protected IDanmakus parse() {
+                    return new Danmakus();
+                }
+            };
+        }
         mDanmakuView.enableDanmakuDrawingCache(true);
         mDanmakuView.setCallback(new DrawHandler.Callback() {
             @Override
@@ -213,8 +257,14 @@ public class SuperPlayer extends RelativeLayout {
 
             }
         });
-        mDanmakuView.prepare(mBaseDanmakuParser,mDanmakuContext);
+        mDanmakuView.prepare(mBaseDanmakuParser, mDanmakuContext);
         /**弹幕相关结束**/
+    }
+    /**
+     * 初始化视图
+     */
+    public void initView() {
+        contentView = View.inflate(context, R.layout.view_super_player, this);
         try {
             IjkMediaPlayer.loadLibrariesOnce(null);
             IjkMediaPlayer.native_profileBegin("libijkplayer.so");
@@ -226,12 +276,12 @@ public class SuperPlayer extends RelativeLayout {
         $ = new Query(activity);
         videoView = (IjkVideoView) contentView.findViewById(R.id.video_view);
         videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(IMediaPlayer mp) {
-                        statusChange(STATUS_COMPLETED);
-                        oncomplete.run();
-                    }
-                });
+            @Override
+            public void onCompletion(IMediaPlayer mp) {
+                statusChange(STATUS_COMPLETED);
+                oncomplete.run();
+            }
+        });
         videoView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(IMediaPlayer mp, int what, int extra) {
@@ -363,11 +413,11 @@ public class SuperPlayer extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.view_jky_player_comment) {
-                if (danMuShowState){
-                    danMuShowState=false;
+                if (danMuShowState) {
+                    danMuShowState = false;
                     mDanmakuView.hide();
-                }else {
-                    danMuShowState=true;
+                } else {
+                    danMuShowState = true;
                     mDanmakuView.show();
                 }
 //                toggleFullScreen();
@@ -442,7 +492,7 @@ public class SuperPlayer extends RelativeLayout {
 
         } else {
             //继续
-            if (mDanmakuView != null && mDanmakuView.isPrepared() ) {
+            if (mDanmakuView != null && mDanmakuView.isPrepared()) {
                 mDanmakuView.resume();
             }
             videoView.start();
@@ -549,7 +599,7 @@ public class SuperPlayer extends RelativeLayout {
                 mDanmakuView.seekTo((long) newPosition);
             }
             $.id(R.id.app_video_currentTime).text(time);
-            mDanmakuView.seekTo(duration * progress/1000);
+            mDanmakuView.seekTo(duration * progress / 1000);
         }
 
         @Override
@@ -610,7 +660,6 @@ public class SuperPlayer extends RelativeLayout {
             }
         }
     };
-
 
 
     /**
@@ -690,7 +739,7 @@ public class SuperPlayer extends RelativeLayout {
                 currentPosition = videoView.getCurrentPosition();
             }
         }
-        if (mDanmakuView!=null&&mDanmakuView.isPrepared()){
+        if (mDanmakuView != null && mDanmakuView.isPrepared()) {
             mDanmakuView.pause();
         }
     }
@@ -706,7 +755,7 @@ public class SuperPlayer extends RelativeLayout {
                 }
             }
             videoView.start();
-            if (mDanmakuView!=null&&mDanmakuView.isPrepared()){
+            if (mDanmakuView != null && mDanmakuView.isPrepared()) {
                 mDanmakuView.start();
             }
         }
@@ -809,6 +858,7 @@ public class SuperPlayer extends RelativeLayout {
         }
 
     }
+
     /**
      * 在activity中的onDestroy中需要回调
      */
@@ -1162,11 +1212,12 @@ public class SuperPlayer extends RelativeLayout {
 
     public void start() {
         videoView.start();
-        if (mDanmakuView!=null&&mDanmakuView.isPrepared()){
+        if (mDanmakuView != null && mDanmakuView.isPrepared()) {
             mDanmakuView.resume();
         }
     }
-    public DanmakuView getDanmakuView(){
+
+    public DanmakuView getDanmakuView() {
         return mDanmakuView;
     }
 
@@ -1470,7 +1521,8 @@ public class SuperPlayer extends RelativeLayout {
     public interface OnPreparedListener {
         void onPrepared();
     }
-    public interface OnDanmuViewPreparedListener{
+
+    public interface OnDanmuViewPreparedListener {
         void onPrepared();
     }
 
@@ -1493,8 +1545,9 @@ public class SuperPlayer extends RelativeLayout {
         this.onPreparedListener = onPreparedListener;
         return this;
     }
-    public SuperPlayer onDanmuViewPrepared(OnDanmuViewPreparedListener onDanmuViewPreparedListener){
-        this.mOnDanmuViewPreparedListener=onDanmuViewPreparedListener;
+
+    public SuperPlayer onDanmuViewPrepared(OnDanmuViewPreparedListener onDanmuViewPreparedListener) {
+        this.mOnDanmuViewPreparedListener = onDanmuViewPreparedListener;
         return this;
     }
 
@@ -1643,7 +1696,8 @@ public class SuperPlayer extends RelativeLayout {
 
     /**
      * 设置了竖屏的时候播放器的宽高
-     * @param width 0：默认是屏幕的宽度
+     *
+     * @param width  0：默认是屏幕的宽度
      * @param height 0：默认是宽度的16:9
      * @return
      */
@@ -1671,15 +1725,15 @@ public class SuperPlayer extends RelativeLayout {
     public View getView(int ViewId) {
         return activity.findViewById(ViewId);
     }
+
     /**
      * 向弹幕View中添加一条弹幕
-     * @param content
-     *          弹幕的具体内容
-     * @param  withBorder
-     *          弹幕是否有边框
+     *
+     * @param content    弹幕的具体内容
+     * @param withBorder 弹幕是否有边框
      */
     public void addDanmaku(String content, boolean withBorder) {
-        BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL,mDanmakuContext);
+        BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL, mDanmakuContext);
         danmaku.text = content;
         danmaku.padding = 5;
         danmaku.textSize = biliFontSizeConvert(25);
@@ -1690,92 +1744,93 @@ public class SuperPlayer extends RelativeLayout {
         }
         mDanmakuView.addDanmaku(danmaku);
         //保存弹幕到列表
-        DanmakuBean danmakuBean=new DanmakuBean();
-        danmakuBean.setType("1");
-        danmakuBean.setTime(String.valueOf(danmaku.getTime()));
-        danmakuBean.setText(content);
-        danmakuBean.setTextSize("25");
-        danmakuBean.setTextColor("FFFFFFFF");
-        danmakuBean.setSendtimeunix(null);
-        danmakuBean.setPriority("0");
-        danmakuBean.setUserHash("");
-        danmakuBean.setIndex("0");
-        danmakuBean.setPadding(5);
-        mCommentsBeanList.add(danmakuBean);
+//        DanmakuBean danmakuBean = new DanmakuBean();
+//        danmakuBean.setType("1");
+//        danmakuBean.setTime(String.valueOf(danmaku.getTime()));
+//        danmakuBean.setText(content);
+//        danmakuBean.setTextSize("25");
+//        danmakuBean.setTextColor("FFFFFFFF");
+//        danmakuBean.setSendtimeunix(null);
+//        danmakuBean.setPriority("0");
+//        danmakuBean.setUserHash("");
+//        danmakuBean.setIndex("0");
+//        danmakuBean.setPadding(5);
+//        mCommentsBeanList.add(danmakuBean);
     }
 
     /**
-     * @param time      弹幕出现时间  单位 秒
-     * @param type      弹幕类型，详见switch
-     * @param textsize  弹幕字体大小 单位px
-     * @param textcolor 弹幕颜色    单位int
+     * @param time         弹幕出现时间  单位 秒
+     * @param type         弹幕类型，详见switch
+     * @param textsize     弹幕字体大小 单位px
+     * @param textcolor    弹幕颜色    单位int
      * @param sendtimeunix
-     * @param priority  弹幕优先级
-     * @param userHash  弹幕用户hash值
-     * @param index     弹幕在弹幕库中的索引
-     * @param text      弹幕内容
+     * @param priority     弹幕优先级
+     * @param userHash     弹幕用户hash值
+     * @param index        弹幕在弹幕库中的索引
+     * @param text         弹幕内容
      */
-    public void addBiliBiliDanmu(String time, String type, String textsize, String textcolor, String sendtimeunix, String priority, String userHash, String index,String text) {
+    public void addBiliBiliDanmu(String time, String type, String textsize, String textcolor, String sendtimeunix, String priority, String userHash, String index, String text) {
         BaseDanmaku danmaku = null;
         //设置弹幕模式
         switch (type) {
             case "1":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL,mDanmakuContext);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL, mDanmakuContext);
                 break;
             case "4":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM,mDanmakuContext);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_BOTTOM, mDanmakuContext);
                 break;
             case "5":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP,mDanmakuContext);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_FIX_TOP, mDanmakuContext);
                 break;
             case "6":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR,mDanmakuContext);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_LR, mDanmakuContext);
                 break;
             case "7":
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL,mDanmakuContext);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SPECIAL, mDanmakuContext);
                 break;
             default:
-                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL,mDanmakuContext);
+                danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL, mDanmakuContext);
                 break;
         }
         if (danmaku == null || mDanmakuView == null) {
             return;
         }
-        if (text==null){
-            danmaku.text="";
-        }else {
+        if (text == null) {
+            danmaku.text = "";
+        } else {
             danmaku.text = text;
         }
         danmaku.padding = 5;
         danmaku.textSize = biliFontSizeConvert(Integer.parseInt(textsize));
         try {
             danmaku.textColor = Integer.parseInt(textcolor);
-        }catch (NumberFormatException e){
-            danmaku.textColor =bilicolor2dandancolor(textcolor);
+        } catch (NumberFormatException e) {
+            danmaku.textColor = bilicolor2dandancolor(textcolor);
         }
         danmaku.setTime((long) (Double.parseDouble(time) * 1000));
         danmaku.priority = Byte.parseByte(priority);
-        if (userHash!=null)
+        if (userHash != null)
             danmaku.userHash = userHash;
         try {
             danmaku.index = Integer.parseInt(index);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
         }
         mDanmakuView.addDanmaku(danmaku);
-        //保存弹幕到列表
-        DanmakuBean danmakuBean=new DanmakuBean();
-        danmakuBean.setType(type);
-        danmakuBean.setTime(time);
-        danmakuBean.setText(text);
-        danmakuBean.setTextSize(textsize);
-        danmakuBean.setTextColor(textcolor);
-        danmakuBean.setSendtimeunix(sendtimeunix);
-        danmakuBean.setPriority(priority);
-        danmakuBean.setUserHash(userHash);
-        danmakuBean.setIndex(index);
-        danmakuBean.setPadding(5);
-        mCommentsBeanList.add(danmakuBean);
+//        //保存弹幕到列表
+//        DanmakuBean danmakuBean = new DanmakuBean();
+//        danmakuBean.setType(type);
+//        danmakuBean.setTime(time);
+//        danmakuBean.setText(text);
+//        danmakuBean.setTextSize(textsize);
+//        danmakuBean.setTextColor(textcolor);
+//        danmakuBean.setSendtimeunix(sendtimeunix);
+//        danmakuBean.setPriority(priority);
+//        danmakuBean.setUserHash(userHash);
+//        danmakuBean.setIndex(index);
+//        danmakuBean.setPadding(5);
+//        mCommentsBeanList.add(danmakuBean);
     }
+
     /**
      * b站弹幕字体大小转换
      */
@@ -1783,23 +1838,22 @@ public class SuperPlayer extends RelativeLayout {
         final float fontScale = getResources().getDisplayMetrics().scaledDensity;
         return (int) (pxValue * fontScale * 0.6 + 0.5f);
     }
+
     /**
      * 将bilibili弹幕xml信息中的颜色字符串转化为dandanplay的颜色信息
-     * @param bilicolor        10位16进制颜色字符串
+     *
+     * @param bilicolor 10位16进制颜色字符串
      * @return 32位整形数的弹幕颜色，算法为 R*256*256 + G*256 + B。
      */
-    public static int bilicolor2dandancolor(String bilicolor){
-        if (bilicolor==null)
+    public static int bilicolor2dandancolor(String bilicolor) {
+        if (bilicolor == null)
             return -1;
-        if (TextUtils.isDigitsOnly(bilicolor)&&bilicolor.length()==8){
-            int r=Integer.parseInt(bilicolor.substring(2,4),16);
-            int g=Integer.parseInt(bilicolor.substring(4,6),16);
-            int b=Integer.parseInt(bilicolor.substring(6,8),16);
-            return r*256*256+g*256+b;
+        if (TextUtils.isDigitsOnly(bilicolor) && bilicolor.length() == 8) {
+            int r = Integer.parseInt(bilicolor.substring(2, 4), 16);
+            int g = Integer.parseInt(bilicolor.substring(4, 6), 16);
+            int b = Integer.parseInt(bilicolor.substring(6, 8), 16);
+            return r * 256 * 256 + g * 256 + b;
         }
         return -1;
-    }
-    public  List<DanmakuBean> getDanmuList(){
-        return mCommentsBeanList;
     }
 }

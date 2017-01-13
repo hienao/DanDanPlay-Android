@@ -1,9 +1,9 @@
-package com.superplayer.library.beans;
+package cn.swt.dandanplay.fileexplorer.beans;
 
 import java.util.List;
 
 /**
- * Title: com.superplayer.library.beans.DanmuStorageBean <br>
+ * Title: cn.swt.dandanplay.fileexplorer.beans.DanmuStorageBean <br>
  * Description: 本地弹幕缓存数据<br>
  * Copyright (c) 传化物流版权所有 2017 <br>
  * Created DateTime: 2017-1-10 15:27

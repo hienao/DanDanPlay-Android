@@ -1,7 +1,6 @@
 package cn.swt.dandanplay.fileexplorer.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,7 @@ import java.util.List;
 
 import cn.swt.dandanplay.R;
 import cn.swt.dandanplay.fileexplorer.beans.SearchResultInfo;
-import cn.swt.dandanplay.play.view.VideoViewActivity;
+import cn.swt.dandanplay.fileexplorer.utils.DanmuUtils;
 
 /**
  * Title: MatchResultAdapter <br>
@@ -96,10 +95,13 @@ public class MatchResultAdapter extends RecyclerView.Adapter {
             ((InfoHolder) holder).title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mContext.startActivity(new Intent(mContext, VideoViewActivity.class)
-                            .putExtra("path",videoPath)
-                            .putExtra("file_title",videoTitle)
-                            .putExtra("title",list.get(position).getMainTitle()+" "+list.get(position).getTitle()).putExtra("episode_id",list.get(position).getId()));
+                    DanmuUtils.getInstance(mContext).setVideoPath(videoPath).setFileTitle(videoTitle)
+                            .setTitle(list.get(position).getMainTitle()+" "+list.get(position).getTitle())
+                            .setEpisode_id(list.get(position).getId()).getDanmuListByEspoisedId(list.get(position).getId());
+//                    mContext.startActivity(new Intent(mContext, VideoViewActivity.class)
+//                            .putExtra("path",videoPath)
+//                            .putExtra("file_title",videoTitle)
+//                            .putExtra("title",list.get(position).getMainTitle()+" "+list.get(position).getTitle()).putExtra("episode_id",list.get(position).getId()));
                 }
             });
         }
