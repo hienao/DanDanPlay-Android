@@ -57,7 +57,7 @@ public class FileAdapter extends RecyclerView.Adapter{
         viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if ( NetworkUtils.isAvailableByPing(mContext)){
+                if ( NetworkUtils.isConnected(mContext)){
                     mContext.startActivity(new Intent(mContext, EpisodeIdMatchActivity.class)
                             .putExtra("path",list.get(position).getVideoPath())
                             .putExtra("title",list.get(position).getVideoNameWithoutSuffix()));

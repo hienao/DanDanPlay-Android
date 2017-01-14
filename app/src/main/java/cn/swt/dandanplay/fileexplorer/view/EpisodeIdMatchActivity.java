@@ -111,7 +111,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
             public void onClick(View v) {
                 startActivity(new Intent(EpisodeIdMatchActivity.this, VideoViewActivity.class)
                         .putExtra("path",videoPath)
-                        .putExtra("file_title",videoTitle));
+                        .putExtra("file_title",videoTitle).putExtra("hide_danmu",true));
             }
         });
     }
@@ -147,13 +147,10 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss(); //关闭dialog
+                    ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this,getResources().getString(R.string.danmu_loading));
                     DanmuUtils.getInstance(EpisodeIdMatchActivity.this).setVideoPath(videoPath).setFileTitle(videoTitle)
                             .setTitle(matchesBean.getAnimeTitle()+" "+matchesBean.getEpisodeTitle())
                             .setEpisode_id(matchesBean.getEpisodeId()).getDanmuListByEspoisedId(matchesBean.getEpisodeId());
-//                    startActivity(new Intent(EpisodeIdMatchActivity.this, VideoViewActivity.class)
-//                            .putExtra("path",videoPath)
-//                            .putExtra("file_title",videoTitle)
-//                            .putExtra("title",matchesBean.getAnimeTitle()+" "+matchesBean.getEpisodeTitle()).putExtra("episode_id",matchesBean.getEpisodeId()));
                 }
             });
             builder.setNegativeButton(getResources().getString(R.string.match_result_wrong), new DialogInterface.OnClickListener() { //设置取消按钮

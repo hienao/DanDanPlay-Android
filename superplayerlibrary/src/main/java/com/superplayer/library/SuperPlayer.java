@@ -194,15 +194,21 @@ public class SuperPlayer extends RelativeLayout {
         parser.load(dataSource);
         return parser;
     }
-    public void initDanmuView(String videopath){
+    public void initDanmuView(String videopath, final boolean hideDanmu){
         String danmuxml="";
         if (!TextUtils.isEmpty(videopath)){
-            danmuxml=videopath.substring(0,videopath.lastIndexOf("."))+".xml";
+            String ddxml=videopath.substring(0,videopath.lastIndexOf("."))+"dd.xml";
+            String bilixml=videopath.substring(0,videopath.lastIndexOf("."))+".xml";
+            if (FileUtils.isFileExists(ddxml)){
+                danmuxml=ddxml;
+            }else if (FileUtils.isFileExists(bilixml)){
+                danmuxml=bilixml;
+            }
         }
         mDanmakuContext = DanmakuContext.create();
         // 设置弹幕的最大显示行数
         HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
-        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 16); // 滚动弹幕最大显示3行
+        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 11); // 滚动弹幕最大显示3行
         // 设置是否禁止重叠
         HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
         overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
@@ -239,6 +245,9 @@ public class SuperPlayer extends RelativeLayout {
             @Override
             public void prepared() {
                 mDanmakuView.start();
+                if (hideDanmu){
+                    mDanmakuView.hide();
+                }
                 mOnDanmuViewPreparedListener.onPrepared();
             }
 

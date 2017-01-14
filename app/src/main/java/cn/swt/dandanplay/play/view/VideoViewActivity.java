@@ -11,14 +11,11 @@ import android.widget.RelativeLayout;
 
 import com.superplayer.library.SuperPlayer;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.dandanplay.R;
-import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.play.contract.VideoViewContract;
 import cn.swt.dandanplay.play.presenter.VideoViewPresenter;
 
@@ -30,9 +27,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     @BindView(R.id.view_super_player)
     SuperPlayer mViewSuperPlayer;
     private String videoPath, videoTitle, file_title;
-    private int episode_id;
-    private boolean gotDanDanPlayComment = false, isOffLine = false;//是否加载完dandanplay的弹幕源
-    private int otherCommentSourceNum = -1, otherCommentSourceCount = 0;//第三方弹幕源数量，已加载第三方弹幕源数量
+    private boolean hide_danmu=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +37,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         initData();
         initPlayer();
         initView();
+
     }
 
-
-    @Override
-    public void addBiliBiliDanmu(String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7, String text) {
-        mViewSuperPlayer.addBiliBiliDanmu(a0, a1, a2, a3, a4, a5, a6, a7, text);
-    }
 
     @Override
     public String getVideoPath() {
@@ -60,8 +51,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         videoPath = getIntent().getStringExtra("path");
         file_title = getIntent().getStringExtra("file_title");
         videoTitle = getIntent().getStringExtra("title");
-        episode_id = getIntent().getIntExtra("episode_id", -1);
-        isOffLine = getIntent().getBooleanExtra("isoffline", false);
+        hide_danmu=getIntent().getBooleanExtra("hide_danmu",false);
         mVideoViewPresenter = new VideoViewPresenter(this);
     }
 
@@ -112,35 +102,10 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         }).onDanmuViewPrepared(new SuperPlayer.OnDanmuViewPreparedListener() {
             @Override
             public void onPrepared() {
-//                if (mViewSuperPlayer.getDanmakuView() != null)
-//                    mViewSuperPlayer.getDanmakuView().hide();
-//                if (episode_id > 0 && !isOffLine) {
-//                    ProgressDialogUtils.showDialog(VideoViewActivity.this, getResources().getString(R.string.danmu_loading));
-//                    mVideoViewPresenter.getComment(String.valueOf(episode_id), "0");
-//                    mVideoViewPresenter.getCommentSource(String.valueOf(episode_id));
-//                } else {
-//                    if (mViewSuperPlayer.getDanmakuView() != null) {
-//                        mViewSuperPlayer.getDanmakuView().show();
-//                    }
-//                    //检查离线文件是否存在，存在则读取
-//                    if (videoPath != null) {
-//                        String jsonfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".json";
-//                        String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
-//                        String danmu_json_str = null, danmu_xml_str = null;
-//                        if (FileUtils.isFileExists(jsonfilepath)) {
-//                            danmu_json_str = FileUtils.readFile2String(jsonfilepath, "UTF-8");
-//                        } else if (FileUtils.isFileExists(xmlfilepath)) {
-//                            danmu_xml_str = FileUtils.readFile2String(xmlfilepath, "UTF-8");
-//                        } else {
-//                            mViewSuperPlayer.start();
-//                        }
-//                        mVideoViewPresenter.getCommentOffline(danmu_json_str, danmu_xml_str);
-//                    }
-//                }
                 mViewSuperPlayer.start();
             }
         });
-        mViewSuperPlayer.initDanmuView(videoPath);
+        mViewSuperPlayer.initDanmuView(videoPath,hide_danmu);
         mViewSuperPlayer.setScaleType(SuperPlayer.SCALETYPE_FITXY);
         mViewSuperPlayer.setPlayerWH(0, mViewSuperPlayer.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
     }
@@ -165,42 +130,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         return this;
     }
 
-    @Override
-    public void gotComment(CommentResponse commentResponse) {
-        if (commentResponse == null || commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
-        } else {
-            List<CommentResponse.CommentsBean> commentsBeanList = commentResponse.getComments();
-            if (commentsBeanList != null && commentsBeanList.size() != 0) {
-                for (CommentResponse.CommentsBean commentsBean : commentsBeanList) {
-                    mViewSuperPlayer.addBiliBiliDanmu(String.valueOf(commentsBean.getTime()), String.valueOf(commentsBean.getMode()),
-                            String.valueOf(25), String.valueOf(commentsBean.getColor()), "",
-                            String.valueOf(commentsBean.getPool()), String.valueOf(commentsBean.getUId()),
-                            String.valueOf(commentsBean.getCId()), commentsBean.getMessage());
-                }
-            }
-        }
-        gotDanDanPlayComment = true;
-        judgeDanmuLoadState();
-    }
 
-    @Override
-    public void setOtherCommentSourceNum(int num) {
-        otherCommentSourceNum = num;
-    }
-
-    @Override
-    public void addOtherCommentSourceCount() {
-        otherCommentSourceCount++;
-        judgeDanmuLoadState();
-    }
-
-    private void judgeDanmuLoadState() {
-        if (gotDanDanPlayComment && otherCommentSourceNum > -1 && otherCommentSourceNum <= otherCommentSourceCount && !isOffLine) {
-            loadFinish();
-        } else if (isOffLine) {
-            mViewSuperPlayer.start();
-        }
-    }
 
     @Override
     public void error() {

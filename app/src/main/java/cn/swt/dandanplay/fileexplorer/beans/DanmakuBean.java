@@ -1,5 +1,7 @@
 package cn.swt.dandanplay.fileexplorer.beans;
 
+import android.text.TextUtils;
+
 /**
  * Title: DanmakuBean <br>
  * Description:用来存储的弹幕实体类 <br>
@@ -25,16 +27,6 @@ public class DanmakuBean {
      * 字体大小
      */
     private String textSize ;
-
-    /**
-     * 框的颜色,0表示无框
-     */
-    private int borderColor = 0;
-
-    /**
-     * 内边距(像素)
-     */
-    private int padding = 0;
     /**
      * 弹幕优先级,0为低优先级,>0为高优先级不会被过滤器过滤
      */
@@ -47,16 +39,12 @@ public class DanmakuBean {
     /**
      * 弹幕发布者id, 0表示游客
      */
-    private int userId = 0;
+    private String userId;
     /**
      * 发送时间的unix时间戳
      */
     private String sendtimeunix;
 
-    /**
-     * 弹幕发布者id
-     */
-    private String userHash;
 
     public String getType() {
         return type;
@@ -98,22 +86,6 @@ public class DanmakuBean {
         this.textSize = textSize;
     }
 
-    public int getBorderColor() {
-        return borderColor;
-    }
-
-    public void setBorderColor(int borderColor) {
-        this.borderColor = borderColor;
-    }
-
-    public int getPadding() {
-        return padding;
-    }
-
-    public void setPadding(int padding) {
-        this.padding = padding;
-    }
-
     public String getPriority() {
         return priority;
     }
@@ -130,11 +102,11 @@ public class DanmakuBean {
         this.index = index;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -146,11 +118,18 @@ public class DanmakuBean {
         this.sendtimeunix = sendtimeunix;
     }
 
-    public String getUserHash() {
-        return userHash;
+    /**
+     * 是否有参数为空字符串或者为null
+     * @return
+     */
+    public boolean isFull(){
+        if (TextUtils.isEmpty(type)||TextUtils.isEmpty(time)||TextUtils.isEmpty(text)||
+                TextUtils.isEmpty(textColor)|| TextUtils.isEmpty(textSize)||TextUtils.isEmpty(priority)||
+                TextUtils.isEmpty(index)||TextUtils.isEmpty(sendtimeunix)||TextUtils.isEmpty(userId)) {
+            return false;
+        }
+        else
+            return true;
     }
 
-    public void setUserHash(String userHash) {
-        this.userHash = userHash;
-    }
 }
