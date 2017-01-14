@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.swt.corelib.utils.ToastUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,11 @@ import cn.swt.dandanplay.fileexplorer.component.DaggerMainComponent;
 import cn.swt.dandanplay.fileexplorer.contract.MainContract;
 import cn.swt.dandanplay.fileexplorer.module.MainModule;
 import cn.swt.dandanplay.fileexplorer.presenter.MainPresenter;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ContentsActivity extends BaseActivity implements MainContract.View {
 
@@ -62,6 +68,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         initData();
         initView();
         initListener();
+//        test();
     }
 
     private void initData() {
@@ -166,6 +173,31 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
             boolean status = bundle.getBoolean("scanfinish");
             getDataFromSQLite();
         }
+    }
+    private void test(){
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        Request.Builder requestBuilder = new Request.Builder().addHeader("Accept","application/xhtml+xml,application/xml")
+                .addHeader("Accept-Encoding","gzip, deflate").url("http://comment.bilibili.com/6065590.xml");
+        final Request request = requestBuilder.build();
+        okhttp3.Call mcall = mOkHttpClient.newCall(request);
+        mcall.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()){
+                    byte[] bytes = response.body().bytes(); //获取数据的bytes
+//                    InputStream inputStream=new ByteArrayInputStream(bytes);
+//                    FileUtils.writeFileFromIS("sdcard/test.xml",inputStream,true);
+                    String content = new String(bytes,"GB18030");
+//                    String content = response.body().string();
+                    System.out.println(content);
+                }
+            }
+        });
     }
 
 

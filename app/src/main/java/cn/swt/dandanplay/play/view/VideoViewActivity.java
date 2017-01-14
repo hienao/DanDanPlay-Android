@@ -207,28 +207,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 //        }
     }
 
-    private void loadFinish() {
-//        ProgressDialogUtils.dismissDialog();
-//        mViewSuperPlayer.start();
-//        if (mViewSuperPlayer.getDanmakuView() != null) {
-//            mViewSuperPlayer.getDanmakuView().show();
-//        }
-//        List<DanmakuBean> mCommentsBeanList = mViewSuperPlayer.getDanmuList();
-//        if (mCommentsBeanList != null && mCommentsBeanList.size() != 0) {
-//            DanmuStorageBean danmuStorageBean = new DanmuStorageBean();
-//            danmuStorageBean.setDanmuBeanList(mCommentsBeanList);
-//            Gson gson = new Gson();
-//            String danmu_list_json_str = gson.toJson(danmuStorageBean);
-//            if (videoPath != null) {
-//                String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".json";
-//                if (FileUtils.isFileExists(xmlfilepath)) {
-//                    FileUtils.createFileByDeleteOldFile(xmlfilepath);
-//                }
-//                FileUtils.writeFileFromString(xmlfilepath, danmu_list_json_str, true);
-//            }
-//        }
-    }
-
     @Override
     public void onWifi() {
 
