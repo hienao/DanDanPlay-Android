@@ -18,7 +18,12 @@ import android.support.v7.widget.RecyclerView;
 
 import com.swt.corelib.utils.ToastUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +73,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         initData();
         initView();
         initListener();
-//        test();
+        test();
     }
 
     private void initData() {
@@ -175,9 +180,13 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         }
     }
     private void test(){
+
+
         OkHttpClient mOkHttpClient = new OkHttpClient();
-        Request.Builder requestBuilder = new Request.Builder().addHeader("Accept","application/xhtml+xml,application/xml")
-                .addHeader("Accept-Encoding","gzip, deflate").url("http://comment.bilibili.com/6065590.xml");
+        Request.Builder requestBuilder = new Request.Builder()
+//                .removeHeader("User-Agent").addHeader("User-Agent","Mozilla/5.0 BiliDroid/4.33.3 (bbcallen@gmail.com)")
+//                .url("http://newbarrage.bilibilijj.com/api/down/9846894/2017-01-15/1/bilibilijj%40Point%40com-2016@Blank@vma%e6%9c%80%e4%bd%b3%e8%a7%86%e8%a7%89%e6%95%88%e6%9e%9c%e5%a4%a7%e5%a5%96%e2%80%94%e2%80%94coldplay@Blank@-@Blank@up%40And%40up/9BE5AFAED559CAADD0207B66FE71A81F/1484448551")
+                .url("http://192.168.1.233:8080/hello");
         final Request request = requestBuilder.build();
         okhttp3.Call mcall = mOkHttpClient.newCall(request);
         mcall.enqueue(new Callback() {
@@ -189,16 +198,49 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()){
-                    byte[] bytes = response.body().bytes(); //获取数据的bytes
+//
+//                    byte[] bytes = response.body().bytes(); //获取数据的bytes
 //                    InputStream inputStream=new ByteArrayInputStream(bytes);
+//                    FileUtils.createFileByDeleteOldFile("sdcard/test.xml");
 //                    FileUtils.writeFileFromIS("sdcard/test.xml",inputStream,true);
-                    String content = new String(bytes,"GB18030");
-//                    String content = response.body().string();
+//                    String content = FileUtils.readFile2String("sdcard/test.xml","UTF-8");
+                    String content = response.body().string();
                     System.out.println(content);
                 }
             }
         });
     }
-
+    public void test2(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection conn = null;
+                try {
+                    URL realUrl = new URL("http://comment.bilibili.com/6065590.xml");
+                    conn = (HttpURLConnection) realUrl.openConnection();
+                    conn.setRequestMethod("GET");
+                    conn.setUseCaches(false);
+                    conn.setReadTimeout(8000);
+                    conn.setConnectTimeout(8000);
+                    conn.setInstanceFollowRedirects(false);
+//            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0");
+                    conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.103 Safari/537.36");
+                    int code = conn.getResponseCode();
+                    if (code == 200) {
+                        InputStream is = conn.getInputStream();
+                        BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                        StringBuffer buffer = new StringBuffer();
+                        String line = "";
+                        while ((line = in.readLine()) != null){
+                            buffer.append(line);
+                        }
+                        String result = buffer.toString();
+                        System.out.println(result);
+                    }
+                }catch (Exception e){
+                }
+            }
+        }).start();
+    }
 
 }
