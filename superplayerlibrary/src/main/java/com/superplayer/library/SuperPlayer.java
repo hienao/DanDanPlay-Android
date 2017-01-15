@@ -245,6 +245,7 @@ public class SuperPlayer extends RelativeLayout {
             @Override
             public void prepared() {
                 mDanmakuView.start();
+                mDanmakuView.pause();
                 if (hideDanmu){
                     mDanmakuView.hide();
                 }

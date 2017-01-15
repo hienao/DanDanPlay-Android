@@ -27,7 +27,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     @BindView(R.id.view_super_player)
     SuperPlayer mViewSuperPlayer;
     private String videoPath, videoTitle, file_title;
-    private boolean hide_danmu=false;
+    private boolean hide_danmu=false,danmuPrepare=false,playerPrepare=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +75,11 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                         /**
                          * 监听视频是否已经准备完成开始播放。（可以在这里处理视频封面的显示跟隐藏）
                          */
+                        playerPrepare=true;
+                        if (danmuPrepare){
+                            mViewSuperPlayer.start();
+                            mViewSuperPlayer.getDanmakuView().resume();
+                        }
                     }
                 }).onComplete(new Runnable() {
             @Override
@@ -102,7 +107,11 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         }).onDanmuViewPrepared(new SuperPlayer.OnDanmuViewPreparedListener() {
             @Override
             public void onPrepared() {
-                mViewSuperPlayer.start();
+                danmuPrepare=true;
+                if (playerPrepare){
+                    mViewSuperPlayer.start();
+                    mViewSuperPlayer.getDanmakuView().resume();
+                }
             }
         });
         mViewSuperPlayer.initDanmuView(videoPath,hide_danmu);
