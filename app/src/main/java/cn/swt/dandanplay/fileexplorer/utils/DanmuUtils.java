@@ -233,7 +233,6 @@ public class DanmuUtils {
     public void getDanmuListByEspoisedId(int espoisedId) {
         getComment(String.valueOf(episode_id),"0");
         getCommentSource(String.valueOf(episode_id));
-
     }
 
     /**
@@ -564,7 +563,6 @@ public class DanmuUtils {
         mWebview.addJavascriptInterface(new InJavaScriptLocalObj(), "java_obj");
         mWebview.setWebViewClient(new CustomWebViewClient());
         mWebview.loadUrl(HttpConstant.BILIBILI_COMMENT_BASE_URL + cid + ".xml");
-
     }
     private void parseBiliCommentsXMLWithSAX(String xmlData) {
         try {

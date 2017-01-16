@@ -1,11 +1,8 @@
 package cn.swt.dandanplay.fileexplorer.view;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -53,7 +50,6 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     SwipeRefreshLayout mSwipRefeshLayout;
     private List<ContentInfo> mDatas;
     private ContentAdapter mContentAdapter;
-    private ScanVideoFileReceiver mScanVideoFileReceiver = null;
     private ContentResolver mContentResolver;
 
     @Override
@@ -74,11 +70,6 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     private void initData() {
         mDatas = new ArrayList<>();
         mContentAdapter = new ContentAdapter(this, mDatas);
-        //注册广播接收器
-        mScanVideoFileReceiver = new ScanVideoFileReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("cn.swt.dandanplay.ScanVideoFileService");
-        registerReceiver(mScanVideoFileReceiver, filter);
         mContentResolver = this.getContentResolver();
     }
 
@@ -137,6 +128,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
                     WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
         } else {
             getDataFromSQLite();
+            mMainPresenter.getAllVideo(mContentResolver);
         }
     }
 
@@ -162,18 +154,8 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mScanVideoFileReceiver);
     }
 
-    class ScanVideoFileReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            boolean status = bundle.getBoolean("scanfinish");
-            getDataFromSQLite();
-        }
-    }
 
     private void test() {
 

@@ -8,17 +8,10 @@
     tools:context="cn.swt.dandanplay.fileexplorer.view.FileExplorerActivity">
     <include layout="@layout/base_toobar_view"/>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swip_refesh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_files"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         </android.support.v7.widget.RecyclerView>
-    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

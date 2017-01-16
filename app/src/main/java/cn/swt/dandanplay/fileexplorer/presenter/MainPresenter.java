@@ -10,6 +10,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.litesuits.orm.db.assit.QueryBuilder;
 import com.swt.corelib.utils.ConvertUtils;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.ImageUtils;
@@ -29,6 +30,8 @@ import cn.swt.dandanplay.application.MyApplication;
 import cn.swt.dandanplay.fileexplorer.beans.ContentInfo;
 import cn.swt.dandanplay.fileexplorer.beans.VideoFileInfo;
 import cn.swt.dandanplay.fileexplorer.contract.MainContract;
+
+import static cn.swt.dandanplay.application.MyApplication.getLiteOrm;
 
 /**
  * Title: MainPresenter <br>
@@ -70,8 +73,8 @@ public class MainPresenter implements MainContract.Present {
             @Override
             public void run() {
                 if (SDCardUtils.isSDCardEnable()) {
-                    MyApplication.getLiteOrm().deleteAll(ContentInfo.class);
-                    MyApplication.getLiteOrm().deleteAll(VideoFileInfo.class);
+//                    getLiteOrm().deleteAll(ContentInfo.class);
+//                    getLiteOrm().deleteAll(VideoFileInfo.class);
                     String SDcardPath = SDCardUtils.getSDCardPath();
                     List<VideoFileInfo> videos = new ArrayList<>();
                     List<ContentInfo>contentInfoList=new ArrayList<>();
@@ -100,6 +103,18 @@ public class MainPresenter implements MainContract.Present {
                     String filePath;
                     String fileSize;
                     String videoDuration;
+                    //查询原先数据库中是否有被删除的视频，有的话删除记录
+                    List <VideoFileInfo>videolist = MyApplication.getLiteOrm().query(VideoFileInfo.class);
+                    if(videolist!=null&&videolist.size()!=0){
+                        for (VideoFileInfo v:videolist){
+                            //文件不存在
+                            if (!FileUtils.isFileExists(v.getVideoPath())){
+                                MyApplication.getLiteOrm().delete(v);
+                            }
+
+                        }
+                    }
+                    //查询原先数据库中是否有被删除的视频，有的话删除记录
                     if(cursor!=null){
                         while (cursor.moveToNext()) {
                             videoId = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media._ID));
@@ -115,6 +130,9 @@ public class MainPresenter implements MainContract.Present {
                                 contentInfoIntegerMap.put(FileUtils.getDirName(f),1);
                             }
                             Log.e("ryze_text", videoId + " -- " + videoName + " -- " + "--" + fileSize + filePath);
+                            VideoFileInfo videoFileInfoc = MyApplication.getLiteOrm().queryById(filePath,VideoFileInfo.class);
+                            if (videoFileInfoc!=null)
+                                continue;
                             //文件判断
                             VideoFileInfo videoFileInfo = new VideoFileInfo();
                             videoFileInfo.setVideoPath(filePath);
@@ -132,16 +150,33 @@ public class MainPresenter implements MainContract.Present {
                             } catch (NumberFormatException e) {
                                 videoFileInfo.setVideoLength("UnKnown");
                             }
+                            String ddxml=filePath.substring(0,filePath.lastIndexOf("."))+"dd.xml";
+                            String bilixml=filePath.substring(0,filePath.lastIndexOf("."))+".xml";
+                            if (FileUtils.isFileExists(ddxml)||FileUtils.isFileExists(bilixml)){
+                                videoFileInfo.setHaveLocalDanmu(true);
+                            }
                             videos.add(videoFileInfo);
                         }
                         for (String key:contentInfoIntegerMap.keySet()){
                             contentInfoList.add(new ContentInfo(key,contentInfoIntegerMap.get(key)));
                         }
-                        MyApplication.getLiteOrm().save(contentInfoList);
-                        MyApplication.getLiteOrm().save(videos);
+                        getLiteOrm().save(contentInfoList);
+                        getLiteOrm().save(videos);
                         cursor.close();
                         cursor = null;
                     }
+                    //查询原先数据库中是否有无视频的目录，有的话删除记录
+                    List <ContentInfo>contentInfoList1 = MyApplication.getLiteOrm().query(ContentInfo.class);
+                    if (contentInfoList1!=null&&contentInfoList1.size()!=0){
+                        for (ContentInfo c:contentInfoList1){
+                           List<VideoFileInfo> videoFileInfos= MyApplication.getLiteOrm().query(new QueryBuilder<>(VideoFileInfo.class)
+                           .where(VideoFileInfo.CONTENT_PATH +" = ?",c.getContentPath()));
+                            if (videoFileInfos==null||videoFileInfos.size()==0){
+                                MyApplication.getLiteOrm().delete(c);
+                            }
+                        }
+                    }
+                    //查询原先数据库中是否有无视频的目录，有的话删除记录
                     mHandler.sendEmptyMessage(MSG_SCAN_FINISH);
                     Message msg =new Message();
                     mHandler.sendMessage(msg);

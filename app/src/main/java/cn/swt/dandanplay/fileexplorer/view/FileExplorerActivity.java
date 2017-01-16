@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 
 import com.litesuits.orm.db.assit.QueryBuilder;
+import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -96,8 +97,23 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
         ArrayList<VideoFileInfo>list=MyApplication.getLiteOrm().query(VideoFileInfo.class);
         QueryBuilder<VideoFileInfo>qb=new QueryBuilder<>(VideoFileInfo.class).whereEquals("_contentPath",contentPath);
         ArrayList<VideoFileInfo> videoFileInfoArrayList = MyApplication.getLiteOrm().query(qb);
-        if (videoFileInfoArrayList != null)
+        if (videoFileInfoArrayList != null&&videoFileInfoArrayList.size()!=0){
+            for (VideoFileInfo v:videoFileInfoArrayList){
+                //更新数据库记录为有本地弹幕
+                VideoFileInfo vv = MyApplication.getLiteOrm().queryById(v.getVideoPath(), VideoFileInfo.class);
+                if (vv!=null){
+                    String ddxml=vv.getVideoPath().substring(0,vv.getVideoPath().lastIndexOf("."))+"dd.xml";
+                    String bilixml=vv.getVideoPath().substring(0,vv.getVideoPath().lastIndexOf("."))+".xml";
+                    if (FileUtils.isFileExists(ddxml)||FileUtils.isFileExists(bilixml)){
+                        vv.setHaveLocalDanmu(true);
+                        v.setHaveLocalDanmu(true);
+                    }
+                }
+                MyApplication.getLiteOrm().save(v);
+                //更新数据库记录为有本地弹幕
+            }
             mDatas.addAll(videoFileInfoArrayList);
+        }
         mFileAdapter.notifyDataSetChanged();
     }
 }

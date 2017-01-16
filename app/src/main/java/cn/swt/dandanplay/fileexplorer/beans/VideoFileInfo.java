@@ -1,6 +1,7 @@
 package cn.swt.dandanplay.fileexplorer.beans;
 
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Default;
 import com.litesuits.orm.db.annotation.PrimaryKey;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.enums.AssignType;
@@ -14,7 +15,7 @@ import com.litesuits.orm.db.enums.AssignType;
  */
 @Table("table_video_info")
 public class VideoFileInfo implements Comparable<VideoFileInfo>{
-
+    public static final String CONTENT_PATH = "_contentPath";
     /**
      * 视频文件路径
      */
@@ -42,6 +43,11 @@ public class VideoFileInfo implements Comparable<VideoFileInfo>{
      * 视频时长
      */
     String videoLength;
+    /**
+     * 是否有本地弹幕
+     */
+    @Default("true")
+    boolean haveLocalDanmu;
 
     public VideoFileInfo() {
     }
@@ -104,6 +110,15 @@ public class VideoFileInfo implements Comparable<VideoFileInfo>{
 
     public void setVideoLength(String videoLength) {
         this.videoLength = videoLength;
+    }
+
+
+    public boolean isHaveLocalDanmu() {
+        return haveLocalDanmu;
+    }
+
+    public void setHaveLocalDanmu(boolean haveLocalDanmu) {
+        this.haveLocalDanmu = haveLocalDanmu;
     }
 
     @Override
