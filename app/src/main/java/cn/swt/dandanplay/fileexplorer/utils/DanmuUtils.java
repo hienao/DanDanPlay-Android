@@ -2,7 +2,13 @@ package cn.swt.dandanplay.fileexplorer.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
@@ -38,6 +44,7 @@ import cn.swt.dandanplay.core.http.beans.CidResponse;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.core.http.beans.RelatedResponse;
 import cn.swt.dandanplay.fileexplorer.beans.DanmakuBean;
+import cn.swt.dandanplay.fileexplorer.view.EpisodeIdMatchActivity;
 import cn.swt.dandanplay.play.view.VideoViewActivity;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -344,7 +351,7 @@ public class DanmuUtils {
                             CidResponse cidResponse = response.body();
                             if (cidResponse != null) {
                                 //获取xml弹幕
-                                getBiliBiliComment(cidResponse.getCid());
+                                getBiliBiliComment2(cidResponse.getCid());
                             }
                         }
 
@@ -551,34 +558,13 @@ public class DanmuUtils {
             }
         });
     }
-    private void getBiliBiliComment2(final String cid) {
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        Request.Builder requestBuilder = new Request.Builder().url(HttpConstant.BILIBILI_COMMENT_BASE_URL + cid + ".xml");
-        Request request = requestBuilder.build();
-        okhttp3.Call mcall = mOkHttpClient.newCall(request);
-        mcall.enqueue(new okhttp3.Callback() {
+    private void getBiliBiliComment2( String cid) {
+        WebView mWebview= ((EpisodeIdMatchActivity) mContext).getWebview();
+        mWebview.getSettings().setJavaScriptEnabled(true);
+        mWebview.addJavascriptInterface(new InJavaScriptLocalObj(), "java_obj");
+        mWebview.setWebViewClient(new CustomWebViewClient());
+        mWebview.loadUrl(HttpConstant.BILIBILI_COMMENT_BASE_URL + cid + ".xml");
 
-            @Override
-            public void onFailure(okhttp3.Call call, IOException e) {
-                LogUtils.e("VideoViewPresenter", "bilicomment Error", e);
-            }
-
-            @Override
-            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    if (videoPath != null) {
-                        String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
-                        if (FileUtils.isFileExists(xmlfilepath)) {
-                            FileUtils.createFileByDeleteOldFile(xmlfilepath);
-                        }
-                        FileUtils.writeFileFromIS(xmlfilepath, response.body().byteStream(), true);
-                    }
-
-                } else {
-                    LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
-                }
-            }
-        });
     }
     private void parseBiliCommentsXMLWithSAX(String xmlData) {
         try {
@@ -610,6 +596,49 @@ public class DanmuUtils {
                     .putExtra("path", videoPath)
                     .putExtra("file_title", fileTitle)
                     .putExtra("title", title).putExtra("episode_id", episode_id));
+        }
+    }
+    final class CustomWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            view.loadUrl(request.toString());
+            return true;
+        }
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            view.loadUrl("javascript:window.java_obj.getSource('<i>'+" +
+                    "document.getElementsByTagName('i')[0].innerHTML+'</i>');");
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            super.onReceivedError(view, request, error);
+            otherCommentCount++;
+            judgeCommentState();
+        }
+    }
+
+    final class InJavaScriptLocalObj {
+        @JavascriptInterface
+        public void getSource(String xml) {
+            String addheadxml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xml;
+            if (videoPath != null) {
+                String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
+                if (FileUtils.isFileExists(xmlfilepath)) {
+                    FileUtils.createFileByDeleteOldFile(xmlfilepath);
+                }
+                FileUtils.writeFileFromString(xmlfilepath, addheadxml, true);
+                String xmlstr = FileUtils.readFile2String(xmlfilepath, "UTF-8");
+                parseBiliCommentsXMLWithSAX(xmlstr);
+            }
+
         }
     }
 

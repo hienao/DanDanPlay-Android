@@ -46,13 +46,13 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     @Inject
     MainPresenter mMainPresenter;
     @BindView(R.id.rv_content)
-    RecyclerView  mRvContent;
+    RecyclerView mRvContent;
 
     public static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 111;
     @BindView(R.id.swip_refesh_layout)
     SwipeRefreshLayout mSwipRefeshLayout;
     private List<ContentInfo> mDatas;
-    private ContentAdapter    mContentAdapter;
+    private ContentAdapter mContentAdapter;
     private ScanVideoFileReceiver mScanVideoFileReceiver = null;
     private ContentResolver mContentResolver;
 
@@ -68,7 +68,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         initData();
         initView();
         initListener();
-        test();
+        test2();
     }
 
     private void initData() {
@@ -114,8 +114,8 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
             mDatas.addAll(contentInfoArrayList);
         }
         mContentAdapter.notifyDataSetChanged();
-        if (mDatas.size()==0){
-            ToastUtils.showShortToast(ContentsActivity.this,R.string.no_file_notice);
+        if (mDatas.size() == 0) {
+            ToastUtils.showShortToast(ContentsActivity.this, R.string.no_file_notice);
         }
         mSwipRefeshLayout.setRefreshing(false);
     }
@@ -174,16 +174,17 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
             getDataFromSQLite();
         }
     }
-    private void test(){
+
+    private void test() {
 
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder()
 //                .removeHeader("User-Agent").addHeader("User-Agent","Mozilla/5.0 BiliDroid/4.33.3 (bbcallen@gmail.com)")
 //                .url("http://newbarrage.bilibilijj.com/api/down/9846894/2017-01-15/1/bilibilijj%40Point%40com-2016@Blank@vma%e6%9c%80%e4%bd%b3%e8%a7%86%e8%a7%89%e6%95%88%e6%9e%9c%e5%a4%a7%e5%a5%96%e2%80%94%e2%80%94coldplay@Blank@-@Blank@up%40And%40up/9BE5AFAED559CAADD0207B66FE71A81F/1484448551")
-                .url("http://192.168.1.233:8080/hello");
+                .url("https://comment.bilibili.com/6065590.xml");
         final Request request = requestBuilder.build();
-        okhttp3.Call mcall = mOkHttpClient.newCall(request);
+        Call mcall = mOkHttpClient.newCall(request);
         mcall.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -192,7 +193,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
 //
 //                    byte[] bytes = response.body().bytes(); //获取数据的bytes
 //                    InputStream inputStream=new ByteArrayInputStream(bytes);
@@ -205,7 +206,9 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
             }
         });
     }
-    public void test2(){
+
+    public void test2() {
+
     }
 
 }

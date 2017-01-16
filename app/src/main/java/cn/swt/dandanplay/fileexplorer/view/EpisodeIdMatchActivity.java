@@ -11,8 +11,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
@@ -46,17 +48,21 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
     @Inject
     EpisodeIdMatchPresenter mEpisodeIdMatchPresenter;
     @BindView(R.id.rv_match_results)
-    RecyclerView            mRvMatchResults;
+    RecyclerView mRvMatchResults;
     @BindView(R.id.edt_search_episode_title)
-    EditText                mEdtSearchEpisodeTitle;
+    EditText mEdtSearchEpisodeTitle;
     @BindView(R.id.edt_search_episode_id)
-    EditText                mEdtSearchEpisodeId;
+    EditText mEdtSearchEpisodeId;
     @BindView(R.id.btn_episode_skip)
-    Button                  mBtnEpisodeSkip;
+    Button mBtnEpisodeSkip;
     @BindView(R.id.btn_episode_search)
-    Button                  mBtnEpisodeSearch;
-    private String                 videoPath;
-    private String                 videoTitle;
+    Button mBtnEpisodeSearch;
+    @BindView(R.id.webview)
+    WebView mWebview;
+    @BindView(R.id.activity_episode_id_match)
+    LinearLayout mActivityEpisodeIdMatch;
+    private String videoPath;
+    private String videoTitle;
     private List<SearchResultInfo> mSearchBeanList;
     private MatchResultAdapter mMatchResultAdapter;
 
@@ -78,7 +84,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
         videoPath = getIntent().getStringExtra("path");
         videoTitle = getIntent().getStringExtra("title");
         mSearchBeanList = new ArrayList<>();
-        mMatchResultAdapter=new MatchResultAdapter(this,mSearchBeanList,videoPath,videoTitle);
+        mMatchResultAdapter = new MatchResultAdapter(this, mSearchBeanList, videoPath, videoTitle);
     }
 
     private void initView() {
@@ -86,7 +92,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
         mRvMatchResults.setItemAnimator(new DefaultItemAnimator());
         mRvMatchResults.setLayoutManager(new LinearLayoutManager(this));
         mRvMatchResults.setAdapter(mMatchResultAdapter);
-        ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this,getResources().getString(R.string.loading));
+        ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this, getResources().getString(R.string.loading));
         mEpisodeIdMatchPresenter.matchEpisodeId(videoPath, videoTitle, getVideoFileHash(videoPath), String.valueOf(new File(videoPath).length()), String.valueOf(getVideoDuration(videoPath)), "0");
     }
 
@@ -101,8 +107,8 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
             @Override
             public void onClick(View v) {
                 mSearchBeanList.clear();
-                ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this,getResources().getString(R.string.loading));
-                mEpisodeIdMatchPresenter.searchALLEpisodeId(mEdtSearchEpisodeTitle.getText().toString(),mEdtSearchEpisodeId.getText().toString());
+                ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this, getResources().getString(R.string.loading));
+                mEpisodeIdMatchPresenter.searchALLEpisodeId(mEdtSearchEpisodeTitle.getText().toString(), mEdtSearchEpisodeId.getText().toString());
 
             }
         });
@@ -110,8 +116,8 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(EpisodeIdMatchActivity.this, VideoViewActivity.class)
-                        .putExtra("path",videoPath)
-                        .putExtra("file_title",videoTitle).putExtra("hide_danmu",true));
+                        .putExtra("path", videoPath)
+                        .putExtra("file_title", videoTitle).putExtra("hide_danmu", true));
             }
         });
     }
@@ -125,7 +131,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
     @Override
     public void gotMatchEpisodeId(MatchResponse matchResponse) {
         dismissProgressDialog();
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);  //先得到构造器
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);  //先得到构造器
         builder.setTitle(getResources().getString(R.string.match_result)); //设置标题
         builder.setIcon(R.mipmap.ic_launcher);//设置图标，图片id即可
         if (matchResponse.getMatches() == null || matchResponse.getMatches().size() == 0) {
@@ -142,14 +148,14 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
             //检测到，提示用户判断是否正确，错误的话手工匹配
             final MatchResponse.MatchesBean matchesBean = matchResponse.getMatches().get(0);
             //弹窗提示
-            builder.setMessage(getResources().getString(R.string.match_result)+":"+matchesBean.getAnimeTitle()+"\r\n"+matchesBean.getEpisodeTitle()); //设置内容
+            builder.setMessage(getResources().getString(R.string.match_result) + ":" + matchesBean.getAnimeTitle() + "\r\n" + matchesBean.getEpisodeTitle()); //设置内容
             builder.setPositiveButton(getResources().getString(R.string.match_result_right), new DialogInterface.OnClickListener() { //设置确定按钮
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss(); //关闭dialog
-                    ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this,getResources().getString(R.string.danmu_loading));
+                    ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this, getResources().getString(R.string.danmu_loading));
                     DanmuUtils.getInstance(EpisodeIdMatchActivity.this).setVideoPath(videoPath).setFileTitle(videoTitle)
-                            .setTitle(matchesBean.getAnimeTitle()+" "+matchesBean.getEpisodeTitle())
+                            .setTitle(matchesBean.getAnimeTitle() + " " + matchesBean.getEpisodeTitle())
                             .setEpisode_id(matchesBean.getEpisodeId()).getDanmuListByEspoisedId(matchesBean.getEpisodeId());
                 }
             });
@@ -160,14 +166,14 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
                 }
             });
             builder.create().show();
-            List<MatchResponse.MatchesBean>matchesBeanList=matchResponse.getMatches();
-            for (MatchResponse.MatchesBean matchesBean1:matchesBeanList){
-                SearchResultInfo resultInfoHeader=new SearchResultInfo();
+            List<MatchResponse.MatchesBean> matchesBeanList = matchResponse.getMatches();
+            for (MatchResponse.MatchesBean matchesBean1 : matchesBeanList) {
+                SearchResultInfo resultInfoHeader = new SearchResultInfo();
                 resultInfoHeader.setHeader(true);
                 resultInfoHeader.setMainTitle(matchesBean1.getAnimeTitle());
                 resultInfoHeader.setType(matchesBean1.getType());
                 mSearchBeanList.add(resultInfoHeader);
-                SearchResultInfo resultInfo=new SearchResultInfo();
+                SearchResultInfo resultInfo = new SearchResultInfo();
                 resultInfo.setHeader(false);
                 resultInfo.setMainTitle(matchesBean1.getAnimeTitle());
                 resultInfo.setType(matchesBean1.getType());
@@ -177,14 +183,14 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
             }
             mMatchResultAdapter.notifyDataSetChanged();
             //不正确调用关键字匹配接口
-            if (videoTitle.contains(" ")){
-                if (TextUtils.isDigitsOnly(videoTitle.substring(videoTitle.lastIndexOf(" ")+1))){
-                    mEdtSearchEpisodeId.setText(videoTitle.substring(videoTitle.lastIndexOf(" ")+1));
-                    mEdtSearchEpisodeTitle.setText(videoTitle.substring(0,videoTitle.lastIndexOf(" ")));
-                }else {
+            if (videoTitle.contains(" ")) {
+                if (TextUtils.isDigitsOnly(videoTitle.substring(videoTitle.lastIndexOf(" ") + 1))) {
+                    mEdtSearchEpisodeId.setText(videoTitle.substring(videoTitle.lastIndexOf(" ") + 1));
+                    mEdtSearchEpisodeTitle.setText(videoTitle.substring(0, videoTitle.lastIndexOf(" ")));
+                } else {
                     mEdtSearchEpisodeTitle.setText(videoTitle);
                 }
-            }else {
+            } else {
                 mEdtSearchEpisodeTitle.setText(videoTitle);
             }
         }
@@ -266,6 +272,11 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
     public void dismissProgressDialog() {
         ProgressDialogUtils.dismissDialog();
     }
+
+    public WebView getWebview(){
+        return mWebview;
+    }
+
 
 
     @Override
