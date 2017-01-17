@@ -3,6 +3,7 @@ package cn.swt.dandanplay.fileexplorer.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceError;
@@ -82,7 +83,7 @@ public class DanmuUtils {
     /**
      * 判断弹幕获取完成状态
      */
-    private void judgeCommentState(){
+    public void judgeCommentState(){
         if (getDanDanComment&&getOtherCommentSource&&(otherCommentCount>=otherCommentNum)){
             if (!TextUtils.isEmpty(videoPath)){
                 String xmlpath=videoPath.substring(0, videoPath.lastIndexOf(".")) + "dd.xml";
@@ -586,15 +587,20 @@ public class DanmuUtils {
      * 弹幕获取完成之后的操作，一般为跳转
      */
     public  void danmuGetFinish() {
-        ProgressDialogUtils.dismissDialog();
-        clearDanmulist();
-        instance=null;
-        if (mContext != null) {
-            mContext.startActivity(new Intent(mContext, VideoViewActivity.class)
-                    .putExtra("path", videoPath)
-                    .putExtra("file_title", fileTitle)
-                    .putExtra("title", title).putExtra("episode_id", episode_id));
-        }
+        new Handler().postDelayed(new Runnable(){
+            public void run() {
+                ProgressDialogUtils.dismissDialog();
+                clearDanmulist();
+                instance=null;
+                if (mContext != null) {
+                    mContext.startActivity(new Intent(mContext, VideoViewActivity.class)
+                            .putExtra("path", videoPath)
+                            .putExtra("file_title", fileTitle)
+                            .putExtra("title", title).putExtra("episode_id", episode_id));
+                }
+            }
+        }, 1000);
+
     }
     final class CustomWebViewClient extends WebViewClient {
         @Override

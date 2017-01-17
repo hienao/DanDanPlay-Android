@@ -84,6 +84,11 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getDataFromSQLite();
+    }
 
     @Override
     public Context getContext() {
@@ -120,7 +125,6 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
                     WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
         } else {
-            getDataFromSQLite();
             mMainPresenter.getAllVideo(mContentResolver);
         }
     }

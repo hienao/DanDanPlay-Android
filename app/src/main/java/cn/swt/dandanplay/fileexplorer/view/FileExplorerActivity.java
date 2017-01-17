@@ -62,6 +62,12 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
         mRvFiles.setItemAnimator(new DefaultItemAnimator());
         mRvFiles.setLayoutManager(new LinearLayoutManager(this));
         mRvFiles.setAdapter(mFileAdapter);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (!TextUtils.isEmpty(contentPath)){
             getDataFromSQLite();
         }

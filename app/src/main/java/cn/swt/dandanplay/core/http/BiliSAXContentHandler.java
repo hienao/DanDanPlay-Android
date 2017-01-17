@@ -36,6 +36,7 @@ public class BiliSAXContentHandler extends DefaultHandler {
     public void endDocument() throws SAXException {
         super.endDocument();
         DanmuUtils.getInstance(mContext).addCommentCount();
+        DanmuUtils.getInstance(mContext).judgeCommentState();
     }
 
     @Override

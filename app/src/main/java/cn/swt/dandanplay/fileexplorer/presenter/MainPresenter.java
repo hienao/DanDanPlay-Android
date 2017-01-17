@@ -8,7 +8,6 @@ import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.swt.corelib.utils.ConvertUtils;
@@ -129,7 +128,6 @@ public class MainPresenter implements MainContract.Present {
                             }else {
                                 contentInfoIntegerMap.put(FileUtils.getDirName(f),1);
                             }
-                            Log.e("ryze_text", videoId + " -- " + videoName + " -- " + "--" + fileSize + filePath);
                             VideoFileInfo videoFileInfoc = MyApplication.getLiteOrm().queryById(filePath,VideoFileInfo.class);
                             if (videoFileInfoc!=null)
                                 continue;
