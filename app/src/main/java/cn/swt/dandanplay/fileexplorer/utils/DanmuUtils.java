@@ -234,6 +234,14 @@ public class DanmuUtils {
     public void getDanmuListByEspoisedId(int espoisedId) {
         getComment(String.valueOf(episode_id),"0");
         getCommentSource(String.valueOf(episode_id));
+        new Handler().postDelayed(new Runnable(){
+
+            public void run() {
+                otherCommentCount+=2;
+                judgeCommentState();
+            }
+
+        }, 4000);
     }
 
     /**
