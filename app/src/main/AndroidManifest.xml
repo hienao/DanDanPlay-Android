@@ -5,11 +5,14 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
+    <uses-permission android:name="android.permission.GET_TASKS"  />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:name=".application.MyApplication"
@@ -24,7 +27,8 @@
         <meta-data
             android:name="BUGLY_APP_CHANNEL"
             android:value="${APP_Channel}"/>
-
+        <meta-data android:name="TD_APP_ID" android:value="595AB37AB4BB4463979F0ACB9FA1D381" />
+        <meta-data android:name="TD_CHANNEL_ID" android:value="${APP_Channel}" />
         <activity
             android:name=".fileexplorer.view.ContentsActivity"
             android:screenOrientation="portrait">
