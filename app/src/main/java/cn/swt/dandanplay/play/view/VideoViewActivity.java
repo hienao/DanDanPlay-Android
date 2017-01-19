@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.superplayer.library.SuperPlayer;
+import com.swt.corelib.utils.LogUtils;
 
 import javax.inject.Inject;
 
@@ -62,7 +63,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
             mViewSuperPlayer.setTitle(file_title);
         }
         mViewSuperPlayer.play(videoPath);
+        LogUtils.e("SWTTAG","播放器设置路径");
         mViewSuperPlayer.pause();
+        LogUtils.e("SWTTAG","播放器暂停");
     }
 
     private void initPlayer() {
@@ -78,8 +81,11 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                         playerPrepare=true;
                         if (danmuPrepare){
                             mViewSuperPlayer.start();
+                            LogUtils.e("SWTTAG","播放器开始");
                             mViewSuperPlayer.getDanmakuView().resume();
+                            LogUtils.e("SWTTAG","弹幕显示");
                         }
+
                     }
                 }).onComplete(new Runnable() {
             @Override
@@ -110,10 +116,13 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 danmuPrepare=true;
                 if (playerPrepare){
                     mViewSuperPlayer.start();
+                    LogUtils.e("SWTTAG","播放器开始");
                     mViewSuperPlayer.getDanmakuView().resume();
+                    LogUtils.e("SWTTAG","弹幕显示");
                 }
+
             }
-        });
+        });;
         mViewSuperPlayer.initDanmuView(videoPath,hide_danmu);
         mViewSuperPlayer.setScaleType(SuperPlayer.SCALETYPE_FITXY);
         mViewSuperPlayer.setPlayerWH(0, mViewSuperPlayer.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置

@@ -37,6 +37,7 @@ import com.superplayer.library.mediaplayer.IjkVideoView;
 import com.superplayer.library.utils.NetUtils;
 import com.superplayer.library.utils.SuperPlayerUtils;
 import com.swt.corelib.utils.FileUtils;
+import com.swt.corelib.utils.LogUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -245,9 +246,12 @@ public class SuperPlayer extends RelativeLayout {
             @Override
             public void prepared() {
                 mDanmakuView.start();
+                LogUtils.e("SWTTAG","弹幕开始");
                 mDanmakuView.pause();
+                LogUtils.e("SWTTAG","弹幕暂停");
                 if (hideDanmu){
                     mDanmakuView.hide();
+                    LogUtils.e("SWTTAG","弹幕隐藏");
                 }
                 mOnDanmuViewPreparedListener.onPrepared();
             }

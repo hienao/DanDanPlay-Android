@@ -83,7 +83,7 @@ public class DanmuUtils {
     /**
      * 判断弹幕获取完成状态
      */
-    public void judgeCommentState(){
+    public synchronized void judgeCommentState(){
         if (getDanDanComment&&getOtherCommentSource&&(otherCommentCount>=otherCommentNum)){
             if (!TextUtils.isEmpty(videoPath)){
                 String xmlpath=videoPath.substring(0, videoPath.lastIndexOf(".")) + "dd.xml";
@@ -91,7 +91,7 @@ public class DanmuUtils {
             }
         }
     }
-    public void addCommentCount(){
+    public  synchronized void addCommentCount(){
         otherCommentCount++;
         judgeCommentState();
     }
@@ -223,7 +223,9 @@ public class DanmuUtils {
         } catch (SAXException e) {
             e.printStackTrace();
         }
+        LogUtils.e("SWTTAG","弹幕保存完成");
         danmuGetFinish();
+
     }
 
     /**
@@ -559,6 +561,7 @@ public class DanmuUtils {
      * 弹幕获取完成之后的操作，一般为跳转
      */
     public  void danmuGetFinish() {
+        LogUtils.e("SWTTAG","准备跳转到播放界面");
         new Handler().postDelayed(new Runnable(){
             public void run() {
                 ProgressDialogUtils.dismissDialog();
