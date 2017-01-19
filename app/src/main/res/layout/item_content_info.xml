@@ -3,7 +3,8 @@
               android:id="@+id/llayout_content"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="@dimen/y50">
+              android:layout_height="@dimen/y50"
+              android:background="@drawable/bg_corners">
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"

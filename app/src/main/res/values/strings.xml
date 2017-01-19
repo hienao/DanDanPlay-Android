@@ -14,4 +14,5 @@
     <string name="match_result_wrong">不正确,我要自己选</string>
     <string name="loading">加载中...</string>
     <string name="danmu_loading">弹幕获取中...</string>
+    <string name="local_danmu">本地弹幕：</string>
 </resources>

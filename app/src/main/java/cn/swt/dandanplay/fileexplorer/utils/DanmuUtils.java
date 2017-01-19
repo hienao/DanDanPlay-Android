@@ -234,14 +234,14 @@ public class DanmuUtils {
     public void getDanmuListByEspoisedId(int espoisedId) {
         getComment(String.valueOf(episode_id),"0");
         getCommentSource(String.valueOf(episode_id));
-        new Handler().postDelayed(new Runnable(){
-
-            public void run() {
-                otherCommentCount+=2;
-                judgeCommentState();
-            }
-
-        }, 4000);
+//        new Handler().postDelayed(new Runnable(){
+//
+//            public void run() {
+//                otherCommentCount+=2;
+//                judgeCommentState();
+//            }
+//
+//        }, 6000);
     }
 
     /**
@@ -340,7 +340,7 @@ public class DanmuUtils {
         if (relatedsBeanList != null && relatedsBeanList.size() != 0) {
             dereplicationDanmuSource(relatedsBeanList);
             for (RelatedResponse.RelatedsBean relatedsBean : relatedsBeanList) {
-                if (relatedsBean.getProvider().contains("BiliBili")) {
+                if (relatedsBean.getProvider().contains("BiliBili")&&relatedsBean.getUrl().contains("http://www.bilibili.com/video/")) {
                     //按bilibili解析弹幕
                     String biliVideoUrl = relatedsBean.getUrl();
                     if (TextUtils.isEmpty(biliVideoUrl))
@@ -523,48 +523,12 @@ public class DanmuUtils {
     private void dereplicationDanmuSource(List<RelatedResponse.RelatedsBean> relatedsBeanList) {
         ArrayList sourceList = new ArrayList();
         for (RelatedResponse.RelatedsBean relatedsBean : relatedsBeanList) {
-            if (sourceList.contains(relatedsBean.getProvider())) {
+            if (sourceList.contains(relatedsBean.getProvider())||relatedsBean.getUrl().contains("http://bangumi.bilibili.com/anime/v/")) {
                 relatedsBean.setProvider("repeat");
             } else {
                 sourceList.add(relatedsBean.getProvider());
             }
         }
-    }
-
-    private void getBiliBiliComment(final String cid) {
-
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        Request.Builder requestBuilder = new Request.Builder().url(HttpConstant.BILIBILIJIJI_COMMENT_BASE_URL + cid + "&n=" + cid + ".xml");
-        Request request = requestBuilder.build();
-        okhttp3.Call mcall = mOkHttpClient.newCall(request);
-        mcall.enqueue(new okhttp3.Callback() {
-
-            @Override
-            public void onFailure(okhttp3.Call call, IOException e) {
-                LogUtils.e("VideoViewPresenter", "bilicomment Error", e);
-                otherCommentCount++;
-                judgeCommentState();
-            }
-
-            @Override
-            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    if (videoPath != null) {
-                        String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
-                        if (FileUtils.isFileExists(xmlfilepath)) {
-                            FileUtils.createFileByDeleteOldFile(xmlfilepath);
-                        }
-                        FileUtils.writeFileFromIS(xmlfilepath, response.body().byteStream(), true);
-                        String xmlstr = FileUtils.readFile2String(xmlfilepath, "UTF-8");
-                        parseBiliCommentsXMLWithSAX(xmlstr);
-                    }
-                } else {
-                    otherCommentCount++;
-                    judgeCommentState();
-                    LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
-                }
-            }
-        });
     }
     private void getBiliBiliComment2( String cid) {
         WebView mWebview= ((EpisodeIdMatchActivity) mContext).getWebview();

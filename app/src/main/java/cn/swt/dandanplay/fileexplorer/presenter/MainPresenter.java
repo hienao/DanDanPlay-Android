@@ -199,7 +199,7 @@ public class MainPresenter implements MainContract.Present {
         try {
             retriever.setDataSource(filePath);
             bitmap = retriever.getFrameAtTime();
-            bitmap = ImageUtils.scale(bitmap,160,90);
+            bitmap = ImageUtils.scale(bitmap,320,180);
             result= ConvertUtils.bitmapToBase64(bitmap);
         }
         catch(IllegalArgumentException e) {

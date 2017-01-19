@@ -6,13 +6,17 @@
     <dimen name="x5">5dp</dimen>
     <dimen name="x10">10dp</dimen>
     <dimen name="x30">30dp</dimen>
+    <dimen name="x130">130dp</dimen>
+    <dimen name="x135">135dp</dimen>
     <dimen name="y5">5dp</dimen>
+    <dimen name="y10">10dp</dimen>
     <dimen name="y20">20dp</dimen>
     <dimen name="y30">30dp</dimen>
     <dimen name="y40">40dp</dimen>
     <dimen name="y50">50dp</dimen>
     <dimen name="y55">55dp</dimen>
     <dimen name="y70">70dp</dimen>
+    <dimen name="y80">80dp</dimen>
     <dimen name="text_size_14">14sp</dimen>
     <dimen name="text_size_16">16sp</dimen>
     <dimen name="text_size_20">20sp</dimen>

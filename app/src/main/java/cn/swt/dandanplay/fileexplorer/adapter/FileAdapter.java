@@ -2,6 +2,7 @@ package cn.swt.dandanplay.fileexplorer.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,7 @@ public class FileAdapter extends RecyclerView.Adapter{
         } catch (Exception e) {
             //获取缩略图失败
         }
+        viewHolder.ic_local_danmu_exist.setImageDrawable(list.get(position).isHaveLocalDanmu()? ContextCompat.getDrawable(mContext,R.drawable.ic_true): ContextCompat.getDrawable(mContext,R.drawable.ic_false));
         viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,7 +81,7 @@ public class FileAdapter extends RecyclerView.Adapter{
     private class ViewHolder extends RecyclerView.ViewHolder{
 
         private TextView text_name,text_time;
-        private ImageView iv_cover;
+        private ImageView iv_cover,ic_local_danmu_exist;
         private LinearLayout mLayout;
 
         public ViewHolder(View itemView) {
@@ -88,6 +90,7 @@ public class FileAdapter extends RecyclerView.Adapter{
             text_time = (TextView) itemView.findViewById(R.id.text_viedo_time);
             iv_cover= (ImageView) itemView.findViewById(R.id.iv_video_cover);
             mLayout = (LinearLayout) itemView.findViewById(R.id.llayout_file);
+            ic_local_danmu_exist= (ImageView) itemView.findViewById(R.id.iv_local_danmu_exist);
         }
     }
 }

@@ -113,6 +113,9 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
                     if (FileUtils.isFileExists(ddxml)||FileUtils.isFileExists(bilixml)){
                         vv.setHaveLocalDanmu(true);
                         v.setHaveLocalDanmu(true);
+                    }else {
+                        vv.setHaveLocalDanmu(false);
+                        v.setHaveLocalDanmu(false);
                     }
                 }
                 MyApplication.getLiteOrm().save(v);
