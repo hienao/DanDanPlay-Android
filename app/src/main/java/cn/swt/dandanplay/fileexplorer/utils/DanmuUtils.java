@@ -155,6 +155,7 @@ public class DanmuUtils {
      * @param xmlpath xml文件路径
      */
     private void exportDanmuList2Xml(String xmlpath) {
+        LogUtils.e("SWTTAG","开始输出xml");
         StringWriter xmlWriter = new StringWriter();
         try {
             SAXTransformerFactory factory = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
@@ -224,7 +225,6 @@ public class DanmuUtils {
         }
         LogUtils.e("SWTTAG","弹幕保存完成");
         danmuGetFinish();
-
     }
 
     /**
