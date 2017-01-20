@@ -15,4 +15,5 @@
     <string name="loading">加载中...</string>
     <string name="danmu_loading">弹幕获取中...</string>
     <string name="local_danmu">本地弹幕：</string>
+    <string name="scaning">Scaning...</string>
 </resources>

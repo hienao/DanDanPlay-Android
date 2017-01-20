@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.swt.corelib.utils.ToastUtils;
 
@@ -31,20 +31,27 @@ import cn.swt.dandanplay.fileexplorer.component.DaggerMainComponent;
 import cn.swt.dandanplay.fileexplorer.contract.MainContract;
 import cn.swt.dandanplay.fileexplorer.module.MainModule;
 import cn.swt.dandanplay.fileexplorer.presenter.MainPresenter;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrUIHandler;
+import in.srain.cube.views.ptr.header.StoreHouseHeader;
+import in.srain.cube.views.ptr.indicator.PtrIndicator;
+
 
 public class ContentsActivity extends BaseActivity implements MainContract.View {
 
     @Inject
     MainPresenter mMainPresenter;
+    public static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 111;
     @BindView(R.id.rv_content)
     RecyclerView mRvContent;
-
-    public static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 111;
-    @BindView(R.id.swip_refesh_layout)
-    SwipeRefreshLayout mSwipRefeshLayout;
+    @BindView(R.id.store_house_ptr_frame)
+    PtrFrameLayout mStoreHousePtrFrame;
     private List<ContentInfo> mDatas;
     private ContentAdapter mContentAdapter;
     private ContentResolver mContentResolver;
+    private String refreshHeader;
+    private StoreHouseHeader mHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +69,47 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
 
     private void initData() {
         mDatas = new ArrayList<>();
+        refreshHeader=getResources().getString(R.string.scaning);
         mContentAdapter = new ContentAdapter(this, mDatas);
         mContentResolver = this.getContentResolver();
+        mHeader = new StoreHouseHeader(this);
+        mHeader.setPadding(0, 15, 0, 0);
+        mHeader.setTextColor(R.color.text_black);
+        mHeader.initWithString(refreshHeader);
     }
 
     private void initView() {
         setCustomTitle(getResources().getString(R.string.app_name));
         setShowNavigationIcon(false);
+        mStoreHousePtrFrame.setHeaderView(mHeader);
+        mStoreHousePtrFrame.addPtrUIHandler(mHeader);
+        mStoreHousePtrFrame.addPtrUIHandler(new PtrUIHandler() {
+            @Override
+            public void onUIReset(PtrFrameLayout frame) {
+                mHeader.initWithString(refreshHeader);
+            }
+
+            @Override
+            public void onUIRefreshPrepare(PtrFrameLayout frame) {
+
+            }
+
+            @Override
+            public void onUIRefreshBegin(PtrFrameLayout frame) {
+
+            }
+
+            @Override
+            public void onUIRefreshComplete(PtrFrameLayout frame) {
+
+            }
+
+            @Override
+            public void onUIPositionChange(PtrFrameLayout frame, boolean isUnderTouch, byte status, PtrIndicator ptrIndicator) {
+
+            }
+        });
+
         mRvContent.setItemAnimator(new DefaultItemAnimator());
         mRvContent.setLayoutManager(new LinearLayoutManager(this));
         mRvContent.setAdapter(mContentAdapter);
@@ -76,10 +117,15 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     }
 
     private void initListener() {
-        mSwipRefeshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mStoreHousePtrFrame.setPtrHandler(new PtrDefaultHandler() {
             @Override
-            public void onRefresh() {
+            public void onRefreshBegin(PtrFrameLayout frame) {
                 mMainPresenter.getAllVideo(mContentResolver);
+            }
+
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return true;
             }
         });
     }
@@ -106,7 +152,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         if (mDatas.size() == 0) {
             ToastUtils.showShortToast(ContentsActivity.this, R.string.no_file_notice);
         }
-        mSwipRefeshLayout.setRefreshing(false);
+        mStoreHousePtrFrame.refreshComplete();
     }
 
     @Override

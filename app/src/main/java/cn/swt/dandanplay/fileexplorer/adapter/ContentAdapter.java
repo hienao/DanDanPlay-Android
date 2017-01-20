@@ -38,6 +38,7 @@ public class ContentAdapter extends RecyclerView.Adapter{
         return new ViewHolder(inflater.inflate(R.layout.item_content_info,parent,false));
     }
 
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final ViewHolder viewHolder = (ViewHolder) holder;
@@ -52,10 +53,13 @@ public class ContentAdapter extends RecyclerView.Adapter{
         });
     }
 
+
     @Override
     public int getItemCount() {
         return list.size();
     }
+
+
     private class ViewHolder extends RecyclerView.ViewHolder{
 
         private TextView text_name,text_count;
