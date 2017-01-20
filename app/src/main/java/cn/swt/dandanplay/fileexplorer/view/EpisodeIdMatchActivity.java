@@ -154,9 +154,11 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss(); //关闭dialog
                     ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this, getResources().getString(R.string.danmu_loading));
-                    DanmuUtils.getInstance(EpisodeIdMatchActivity.this).setVideoPath(videoPath).setFileTitle(videoTitle)
-                            .setTitle(matchesBean.getAnimeTitle() + " " + matchesBean.getEpisodeTitle())
-                            .setEpisode_id(matchesBean.getEpisodeId()).getDanmuListByEspoisedId(matchesBean.getEpisodeId());
+                    LogUtils.e("SWTTAG","开始获取弹幕");
+                    DanmuUtils danmuUtils =new DanmuUtils(EpisodeIdMatchActivity.this,videoPath,videoTitle,
+                            matchesBean.getAnimeTitle() + " " + matchesBean.getEpisodeTitle(),matchesBean.getEpisodeId());
+                    danmuUtils.getDanmuListByEspoisedId();
+
                 }
             });
             builder.setNegativeButton(getResources().getString(R.string.match_result_wrong), new DialogInterface.OnClickListener() { //设置取消按钮

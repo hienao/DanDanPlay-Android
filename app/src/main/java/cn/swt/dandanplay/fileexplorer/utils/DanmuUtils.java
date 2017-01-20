@@ -14,8 +14,10 @@ import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
 import com.swt.corelib.utils.ProgressDialogUtils;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,10 +38,8 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import cn.swt.dandanplay.core.http.APIService;
-import cn.swt.dandanplay.core.http.BiliSAXContentHandler;
 import cn.swt.dandanplay.core.http.HttpConstant;
 import cn.swt.dandanplay.core.http.RetrofitManager;
-import cn.swt.dandanplay.core.http.TucaoSAXContentHandler;
 import cn.swt.dandanplay.core.http.beans.CidResponse;
 import cn.swt.dandanplay.core.http.beans.CommentResponse;
 import cn.swt.dandanplay.core.http.beans.RelatedResponse;
@@ -60,29 +60,26 @@ import retrofit2.Response;
  * Created by Wentao.Shi.
  */
 public class DanmuUtils {
-    private static Context mContext;
-    private static DanmuUtils instance;
-    private static List<DanmakuBean> mDanmakuBeanList;
-    private static String videoPath, fileTitle, title;
-    private static int episode_id;
-    private static boolean getDanDanComment=false,getOtherCommentSource=false;
-    private static int otherCommentCount=0,otherCommentNum=-1;
-    private DanmuUtils() {
-    }
-
-    public static synchronized DanmuUtils getInstance(Context context) {
-        if (instance == null) {
-            instance = new DanmuUtils();
-            mDanmakuBeanList = new ArrayList<>();
-        }
-        mContext = context;
-        return instance;
+    private  Context mContext;
+    private  List<DanmakuBean> mDanmakuBeanList;
+    private  String videoPath, fileTitle, title;
+    private  int episode_id;
+    private  boolean getDanDanComment=false,getOtherCommentSource=false;
+    private  int otherCommentCount=0,otherCommentNum=-1;
+    public DanmuUtils(Context context, String videoPath, String fileTitle, String title, int episodeId) {
+        mContext=context;
+        this.videoPath=videoPath;
+        this.fileTitle=fileTitle;
+        this.title=title;
+        this.episode_id=episodeId;
+        mDanmakuBeanList = new ArrayList<>();
     }
 
     /**
      * 判断弹幕获取完成状态
      */
     public synchronized void judgeCommentState(){
+        LogUtils.e("SWTTAG","判断弹幕获取状态：dandan："+getDanDanComment+" toher:"+getOtherCommentSource+" "+otherCommentCount+"of "+otherCommentNum);
         if (getDanDanComment&&getOtherCommentSource&&(otherCommentCount>=otherCommentNum)){
             if (!TextUtils.isEmpty(videoPath)){
                 String xmlpath=videoPath.substring(0, videoPath.lastIndexOf(".")) + "dd.xml";
@@ -112,42 +109,6 @@ public class DanmuUtils {
 
     public Context getmContext() {
         return mContext;
-    }
-
-    public String getVideoPath() {
-        return videoPath;
-    }
-
-    public DanmuUtils setVideoPath(String videoPath) {
-        DanmuUtils.videoPath = videoPath;
-        return instance;
-    }
-
-    public String getFileTitle() {
-        return fileTitle;
-    }
-
-    public DanmuUtils setFileTitle(String fileTitle) {
-        DanmuUtils.fileTitle = fileTitle;
-        return instance;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public DanmuUtils setTitle(String title) {
-        DanmuUtils.title = title;
-        return instance;
-    }
-
-    public int getEpisode_id() {
-        return episode_id;
-    }
-
-    public DanmuUtils setEpisode_id(int episode_id) {
-        DanmuUtils.episode_id = episode_id;
-        return instance;
     }
     /**
      * 将弹幕列表输出到指定的xml文件
@@ -216,8 +177,12 @@ public class DanmuUtils {
             }
             handler.endElement("", "", "i");
             handler.endDocument();
-            FileUtils.createFileByDeleteOldFile(xmlpath);
-            FileUtils.writeFileFromString(FileUtils.getFileByPath(xmlpath),xmlWriter.toString(),true);
+            if(FileUtils.createFileByDeleteOldFile(xmlpath)){
+                if (FileUtils.writeFileFromString(FileUtils.getFileByPath(xmlpath),xmlWriter.toString(),true)){
+                    LogUtils.e("SWTTAG","弹幕保存完成");
+                    danmuGetFinish();
+                }
+            }
         } catch (TransformerConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
@@ -225,24 +190,16 @@ public class DanmuUtils {
         }
         LogUtils.e("SWTTAG","弹幕保存完成");
         danmuGetFinish();
+
     }
 
     /**
      * 从dandanpaly识别到的视频id获取所有网站弹幕信息
      *
-     * @param espoisedId
      */
-    public void getDanmuListByEspoisedId(int espoisedId) {
+    public void getDanmuListByEspoisedId() {
         getComment(String.valueOf(episode_id),"0");
         getCommentSource(String.valueOf(episode_id));
-//        new Handler().postDelayed(new Runnable(){
-//
-//            public void run() {
-//                otherCommentCount+=2;
-//                judgeCommentState();
-//            }
-//
-//        }, 6000);
     }
 
     /**
@@ -251,6 +208,7 @@ public class DanmuUtils {
      * @param from
      */
     private void getComment(String episodeId, String from) {
+        LogUtils.e("SWTTAG","开始获取弹弹弹幕");
         RetrofitManager retrofitManager = RetrofitManager.getInstance();
         APIService apiService = retrofitManager.create();
         retrofitManager.enqueue(apiService.getComment(episodeId, from), new Callback<CommentResponse>() {
@@ -301,6 +259,7 @@ public class DanmuUtils {
      * @param episodeId
      */
     private void getCommentSource(String episodeId) {
+        LogUtils.e("SWTTAG","开始获取第三方弹幕信息");
         RetrofitManager retrofitManager = RetrofitManager.getInstance();
         APIService apiService = retrofitManager.create();
         retrofitManager.enqueue(apiService.getCommentSource(episodeId), new Callback<RelatedResponse>() {
@@ -338,10 +297,12 @@ public class DanmuUtils {
      * @param relatedsBeanList
      */
     private void getOtherComment(List<RelatedResponse.RelatedsBean> relatedsBeanList) {
+        LogUtils.e("SWTTAG","开始获取第三方弹幕");
         if (relatedsBeanList != null && relatedsBeanList.size() != 0) {
             dereplicationDanmuSource(relatedsBeanList);
             for (RelatedResponse.RelatedsBean relatedsBean : relatedsBeanList) {
                 if (relatedsBean.getProvider().contains("BiliBili")&&relatedsBean.getUrl().contains("http://www.bilibili.com/video/")) {
+                    LogUtils.e("SWTTAG","开始获取B站弹幕信息");
                     //按bilibili解析弹幕
                     String biliVideoUrl = relatedsBean.getUrl();
                     if (TextUtils.isEmpty(biliVideoUrl))
@@ -372,46 +333,11 @@ public class DanmuUtils {
                         }
                     });
                 } else if (relatedsBean.getProvider().contains("Acfun")) {
+                    LogUtils.e("SWTTAG","开始获取A站弹幕信息");
                     otherCommentCount++;
                     judgeCommentState();
-//                    //按bilibili解析弹幕
-//                    String acVideoUrl = relatedsBean.getUrl();
-//                    if (TextUtils.isEmpty(acVideoUrl))
-//                        return;
-//                    String acnum = acVideoUrl.substring(acVideoUrl.lastIndexOf("/ac") + 3);
-//                    String page ;
-//                    if (acnum.contains("_")){
-//                        page=acnum.substring(acnum.lastIndexOf("_")+1);
-//                        acnum=acnum.substring(0,acnum.lastIndexOf("_"));
-//                    } else
-//                        page="1";
-//                    OkHttpClient mOkHttpClient=new OkHttpClient();
-//                    Request.Builder requestBuilder = new Request.Builder().url(HttpConstant.ACFUN_COMMENT_BASE_URL+"comment_list_json.aspx?isNeedAllCount=true&contentId="+acnum+"&currentPage="+page);
-//                    Request request = requestBuilder.build();
-//                    okhttp3.Call mcall= mOkHttpClient.newCall(request);
-//                    mcall.enqueue(new okhttp3.Callback() {
-//
-//                        @Override
-//                        public void onFailure(okhttp3.Call call, IOException e) {
-//                            LogUtils.e("VideoViewPresenter", "acfuncomment Request Error", e);
-//                            mView.addOtherCommentSourceCount();
-//                        }
-//
-//                        @Override
-//                        public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
-//                            if (response.isSuccessful()){
-//                                String jsonstr=response.body().string();
-//                                jsonstr=jsonstr.replace("\"commentContentArr\":{","\"commentContentArr\":[").replace("}}}}","}]}}").replaceAll("\"c\\d+\":","");
-//                                //解析
-//                                System.out.println(jsonstr);
-//                                mView.addOtherCommentSourceCount();
-//                            }else {
-//                                LogUtils.e("VideoViewPresenter", "bilicomment Error: server error");
-//                                mView.addOtherCommentSourceCount();
-//                            }
-//                        }
-//                    });
                 } else if (relatedsBean.getProvider().contains("Tucao")) {
+                    LogUtils.e("SWTTAG","开始获取c站弹幕信息");
                     getTuCaoCommentURL(relatedsBean.getUrl());
                 } else {
                     otherCommentCount++;
@@ -563,7 +489,6 @@ public class DanmuUtils {
         LogUtils.e("SWTTAG","准备跳转到播放界面");
         ProgressDialogUtils.dismissDialog();
         clearDanmulist();
-        instance=null;
         if (mContext != null) {
             mContext.startActivity(new Intent(mContext, VideoViewActivity.class)
                     .putExtra("path", videoPath)
@@ -604,14 +529,164 @@ public class DanmuUtils {
             String addheadxml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xml;
             if (videoPath != null) {
                 String xmlfilepath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
-                if (FileUtils.isFileExists(xmlfilepath)) {
-                    FileUtils.createFileByDeleteOldFile(xmlfilepath);
+                if (FileUtils.createFileByDeleteOldFile(xmlfilepath)){
+                    if (FileUtils.writeFileFromString(xmlfilepath, addheadxml, true)){
+                        String xmlstr = FileUtils.readFile2String(xmlfilepath, "UTF-8");
+                        parseBiliCommentsXMLWithSAX(xmlstr);
+                    }
                 }
-                FileUtils.writeFileFromString(xmlfilepath, addheadxml, true);
-                String xmlstr = FileUtils.readFile2String(xmlfilepath, "UTF-8");
-                parseBiliCommentsXMLWithSAX(xmlstr);
             }
 
+        }
+    }
+    class BiliSAXContentHandler extends DefaultHandler {
+        //声明标签的名称
+        public String tagName;
+        private Context mContext;
+        private DanmakuBean danmakuBean;
+
+        public BiliSAXContentHandler(Context context) {
+            mContext=context;
+        }
+
+        @Override
+        public void startDocument() throws SAXException {
+            super.startDocument();
+            danmakuBean = null;
+        }
+
+        @Override
+        public void endDocument() throws SAXException {
+            super.endDocument();
+            otherCommentCount++;
+            judgeCommentState();
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            if (localName.equals("d")) {
+                try {
+                    String attaibute = attributes.getValue(0);
+                    String[] sourceStrArray = attaibute.split(",");
+                    danmakuBean = new DanmakuBean();
+                    danmakuBean.setTime(sourceStrArray[0]);
+                    danmakuBean.setType(sourceStrArray[1]);
+                    danmakuBean.setTextSize(sourceStrArray[2]);
+                    danmakuBean.setTextColor(sourceStrArray[3]);
+                    danmakuBean.setSendtimeunix(sourceStrArray[4]);
+                    danmakuBean.setPriority(sourceStrArray[5]);
+                    danmakuBean.setUserId(sourceStrArray[6]);
+                    danmakuBean.setIndex(sourceStrArray[7]);
+                    tagName = localName;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            super.startElement(uri, localName, qName, attributes);
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (danmakuBean != null && localName.equals("d")) {
+                if (danmakuBean.isFull()){
+                    mDanmakuBeanList.add(danmakuBean);
+                }
+                danmakuBean = null;
+            }
+            super.endElement(uri, localName, qName);
+            tagName = null;
+
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            super.characters(ch, start, length);
+            //首先判断tagName是否为空
+            if (tagName != null) {
+                String data = new String(ch, start, length);
+                //判断标签是否为空
+                if (tagName.equals("d")) {
+                    if (danmakuBean != null) {
+                        danmakuBean.setText(data);
+                    }
+                }
+            }
+        }
+    }
+
+    class TucaoSAXContentHandler extends DefaultHandler {
+        //声明标签的名称
+        public String tagName;
+        private Context mContext;
+        private DanmakuBean danmakuBean;
+
+        public TucaoSAXContentHandler(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public void startDocument() throws SAXException {
+            super.startDocument();
+            danmakuBean = null;
+        }
+
+        @Override
+        public void endDocument() throws SAXException {
+            super.endDocument();
+            otherCommentCount++;
+            judgeCommentState();
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            if (localName.equals("d")) {
+                try {
+                    String attaibute = attributes.getValue(0);
+                    String[] sourceStrArray = attaibute.split(",");
+                    danmakuBean = new DanmakuBean();
+                    danmakuBean.setTime(sourceStrArray[0]);
+                    danmakuBean.setType(sourceStrArray[1]);
+                    danmakuBean.setTextSize(sourceStrArray[2]);
+                    danmakuBean.setTextColor(sourceStrArray[3]);
+                    danmakuBean.setSendtimeunix(sourceStrArray[4]);
+                    danmakuBean.setPriority("0");
+                    danmakuBean.setUserId("-1");
+                    danmakuBean.setIndex(sourceStrArray[4]);
+                    tagName = localName;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+            super.startElement(uri, localName, qName, attributes);
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (danmakuBean != null && localName.equals("d")) {
+                if (danmakuBean.isFull()){
+                    mDanmakuBeanList.add(danmakuBean);
+                }
+                danmakuBean = null;
+            }
+            super.endElement(uri, localName, qName);
+            tagName = null;
+
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            super.characters(ch, start, length);
+            //首先判断tagName是否为空
+            if (tagName != null) {
+                String data = new String(ch, start, length);
+                //判断标签是否为空
+                if (tagName.equals("d")) {
+                    if (danmakuBean != null) {
+                        danmakuBean.setText(data);
+                    }
+                }
+            }
         }
     }
 

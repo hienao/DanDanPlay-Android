@@ -98,9 +98,9 @@ public class MatchResultAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View v) {
                     ProgressDialogUtils.showDialog(mContext,mContext.getResources().getString(R.string.danmu_loading));
-                    DanmuUtils.getInstance(mContext).setVideoPath(videoPath).setFileTitle(videoTitle)
-                            .setTitle(list.get(position).getMainTitle() + " " + list.get(position).getTitle())
-                            .setEpisode_id(list.get(position).getId()).getDanmuListByEspoisedId(list.get(position).getId());
+                    DanmuUtils danmuUtils =new DanmuUtils(mContext,videoPath,videoTitle,
+                            list.get(position).getMainTitle() + " " + list.get(position).getTitle(),list.get(position).getId());
+                    danmuUtils.getDanmuListByEspoisedId();
                 }
             });
         }
