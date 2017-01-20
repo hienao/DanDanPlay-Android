@@ -31,7 +31,7 @@ public class MyApplication extends Application {
         if (isApkInDebug(context)){
             LogUtils.init(context,true,true,'v',TAG);
         }else {
-            LogUtils.init(context,false,true,'i',TAG);
+            LogUtils.init(context,false,true,'e',TAG);
         }
 
         //bugly初始化
