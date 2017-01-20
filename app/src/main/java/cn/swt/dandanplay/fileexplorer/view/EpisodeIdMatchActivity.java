@@ -154,7 +154,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss(); //关闭dialog
                     ProgressDialogUtils.showDialog(EpisodeIdMatchActivity.this, getResources().getString(R.string.danmu_loading));
-                    LogUtils.e("SWTTAG","开始获取弹幕");
+                    LogUtils.i("开始获取弹幕");
                     DanmuUtils danmuUtils =new DanmuUtils(EpisodeIdMatchActivity.this,videoPath,videoTitle,
                             matchesBean.getAnimeTitle() + " " + matchesBean.getEpisodeTitle(),matchesBean.getEpisodeId());
                     danmuUtils.getDanmuListByEspoisedId();

@@ -3,6 +3,7 @@ package cn.swt.dandanplay.fileexplorer.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceError;
@@ -486,14 +487,19 @@ public class DanmuUtils {
      */
     public  void danmuGetFinish() {
         LogUtils.i("准备跳转到播放界面");
-        ProgressDialogUtils.dismissDialog();
-        clearDanmulist();
-        if (mContext != null) {
-            mContext.startActivity(new Intent(mContext, VideoViewActivity.class)
-                    .putExtra("path", videoPath)
-                    .putExtra("file_title", fileTitle)
-                    .putExtra("title", title).putExtra("episode_id", episode_id));
-        }
+        new Handler().postDelayed(new Runnable(){
+            public void run() {
+                ProgressDialogUtils.dismissDialog();
+                clearDanmulist();
+                if (mContext != null) {
+                    mContext.startActivity(new Intent(mContext, VideoViewActivity.class)
+                            .putExtra("path", videoPath)
+                            .putExtra("file_title", fileTitle)
+                            .putExtra("title", title).putExtra("episode_id", episode_id));
+                }
+            }
+        }, 1000);
+
     }
     final class CustomWebViewClient extends WebViewClient {
         @Override

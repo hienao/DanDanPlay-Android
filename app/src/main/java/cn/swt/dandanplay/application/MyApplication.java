@@ -2,6 +2,7 @@ package cn.swt.dandanplay.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 
 import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.DataBaseConfig;
@@ -27,7 +28,12 @@ public class MyApplication extends Application {
         //获取Context
         context = getApplicationContext();
         //log开关
-        LogUtils.init(context,true,true,'v',TAG);
+        if (isApkInDebug(context)){
+            LogUtils.init(context,true,true,'v',TAG);
+        }else {
+            LogUtils.init(context,false,true,'i',TAG);
+        }
+
         //bugly初始化
         Bugly.init(getApplicationContext(), "92428c9315", false);
         //talkData初始化
@@ -56,5 +62,17 @@ public class MyApplication extends Application {
     }
     public static Context getMyApplicationContext(){
         return context;
+    }
+    /**
+     * 判断当前应用是否是debug状态
+     */
+
+    public static boolean isApkInDebug(Context context) {
+        try {
+            ApplicationInfo info = context.getApplicationInfo();
+            return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
