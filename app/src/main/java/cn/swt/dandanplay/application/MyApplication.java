@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.DataBaseConfig;
+import com.swt.corelib.utils.LogUtils;
 import com.swt.corelib.utils.ToastUtils;
 import com.tencent.bugly.Bugly;
 import com.tendcloud.tenddata.TCAgent;
@@ -25,6 +26,8 @@ public class MyApplication extends Application {
         super.onCreate();
         //获取Context
         context = getApplicationContext();
+        //log开关
+        LogUtils.init(context,true,true,'v',TAG);
         //bugly初始化
         Bugly.init(getApplicationContext(), "92428c9315", false);
         //talkData初始化

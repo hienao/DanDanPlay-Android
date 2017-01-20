@@ -246,12 +246,12 @@ public class SuperPlayer extends RelativeLayout {
             @Override
             public void prepared() {
                 mDanmakuView.start();
-                LogUtils.e("SWTTAG","弹幕开始");
+                LogUtils.i("弹幕开始");
                 mDanmakuView.pause();
-                LogUtils.e("SWTTAG","弹幕暂停");
+                LogUtils.i("弹幕暂停");
                 if (hideDanmu){
                     mDanmakuView.hide();
-                    LogUtils.e("SWTTAG","弹幕隐藏");
+                    LogUtils.i("弹幕隐藏");
                 }
                 mOnDanmuViewPreparedListener.onPrepared();
             }

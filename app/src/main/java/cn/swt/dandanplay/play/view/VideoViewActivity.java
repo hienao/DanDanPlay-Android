@@ -63,9 +63,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
             mViewSuperPlayer.setTitle(file_title);
         }
         mViewSuperPlayer.play(videoPath);
-        LogUtils.e("SWTTAG","播放器设置路径");
+        LogUtils.i("播放器设置路径");
         mViewSuperPlayer.pause();
-        LogUtils.e("SWTTAG","播放器暂停");
+        LogUtils.i("播放器暂停");
     }
 
     private void initPlayer() {
@@ -81,9 +81,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                         playerPrepare=true;
                         if (danmuPrepare){
                             mViewSuperPlayer.start();
-                            LogUtils.e("SWTTAG","播放器开始");
+                            LogUtils.i("播放器开始");
                             mViewSuperPlayer.getDanmakuView().resume();
-                            LogUtils.e("SWTTAG","弹幕显示");
+                            LogUtils.i("弹幕显示");
                         }
 
                     }
@@ -116,9 +116,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 danmuPrepare=true;
                 if (playerPrepare){
                     mViewSuperPlayer.start();
-                    LogUtils.e("SWTTAG","播放器开始");
+                    LogUtils.i("播放器开始");
                     mViewSuperPlayer.getDanmakuView().resume();
-                    LogUtils.e("SWTTAG","弹幕显示");
+                    LogUtils.i("弹幕显示");
                 }
 
             }

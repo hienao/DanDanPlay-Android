@@ -79,7 +79,7 @@ public class DanmuUtils {
      * 判断弹幕获取完成状态
      */
     public synchronized void judgeCommentState(){
-        LogUtils.e("SWTTAG","判断弹幕获取状态：dandan："+getDanDanComment+" toher:"+getOtherCommentSource+" "+otherCommentCount+"of "+otherCommentNum);
+        LogUtils.i("判断弹幕获取状态：dandan："+getDanDanComment+" toher:"+getOtherCommentSource+" "+otherCommentCount+"of "+otherCommentNum);
         if (getDanDanComment&&getOtherCommentSource&&(otherCommentCount>=otherCommentNum)){
             if (!TextUtils.isEmpty(videoPath)){
                 String xmlpath=videoPath.substring(0, videoPath.lastIndexOf(".")) + "dd.xml";
@@ -106,7 +106,6 @@ public class DanmuUtils {
         }
     }
 
-
     public Context getmContext() {
         return mContext;
     }
@@ -116,7 +115,7 @@ public class DanmuUtils {
      * @param xmlpath xml文件路径
      */
     private void exportDanmuList2Xml(String xmlpath) {
-        LogUtils.e("SWTTAG","开始输出xml");
+        LogUtils.i("开始输出xml");
         StringWriter xmlWriter = new StringWriter();
         try {
             SAXTransformerFactory factory = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
@@ -179,7 +178,7 @@ public class DanmuUtils {
             handler.endDocument();
             if(FileUtils.createFileByDeleteOldFile(xmlpath)){
                 if (FileUtils.writeFileFromString(FileUtils.getFileByPath(xmlpath),xmlWriter.toString(),true)){
-                    LogUtils.e("SWTTAG","弹幕保存完成");
+                    LogUtils.i("弹幕保存完成");
                     danmuGetFinish();
                 }
             }
@@ -188,7 +187,7 @@ public class DanmuUtils {
         } catch (SAXException e) {
             e.printStackTrace();
         }
-        LogUtils.e("SWTTAG","弹幕保存完成");
+        LogUtils.i("弹幕保存完成");
         danmuGetFinish();
 
     }
@@ -208,7 +207,7 @@ public class DanmuUtils {
      * @param from
      */
     private void getComment(String episodeId, String from) {
-        LogUtils.e("SWTTAG","开始获取弹弹弹幕");
+        LogUtils.i("开始获取弹弹弹幕");
         RetrofitManager retrofitManager = RetrofitManager.getInstance();
         APIService apiService = retrofitManager.create();
         retrofitManager.enqueue(apiService.getComment(episodeId, from), new Callback<CommentResponse>() {
@@ -249,7 +248,7 @@ public class DanmuUtils {
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                LogUtils.e("VideoViewPresenter", "commentResponse Error", t);
+                LogUtils.i("commentResponse Error", t);
             }
         });
     }
@@ -259,7 +258,7 @@ public class DanmuUtils {
      * @param episodeId
      */
     private void getCommentSource(String episodeId) {
-        LogUtils.e("SWTTAG","开始获取第三方弹幕信息");
+        LogUtils.i("开始获取第三方弹幕信息");
         RetrofitManager retrofitManager = RetrofitManager.getInstance();
         APIService apiService = retrofitManager.create();
         retrofitManager.enqueue(apiService.getCommentSource(episodeId), new Callback<RelatedResponse>() {
@@ -285,7 +284,7 @@ public class DanmuUtils {
                 otherCommentCount=0;
                 getOtherCommentSource=true;
                 judgeCommentState();
-                LogUtils.e("VideoViewPresenter", "commentResponse Error", t);
+                LogUtils.e("commentResponse Error", t);
             }
         });
 
@@ -297,12 +296,12 @@ public class DanmuUtils {
      * @param relatedsBeanList
      */
     private void getOtherComment(List<RelatedResponse.RelatedsBean> relatedsBeanList) {
-        LogUtils.e("SWTTAG","开始获取第三方弹幕");
+        LogUtils.i("开始获取第三方弹幕");
         if (relatedsBeanList != null && relatedsBeanList.size() != 0) {
             dereplicationDanmuSource(relatedsBeanList);
             for (RelatedResponse.RelatedsBean relatedsBean : relatedsBeanList) {
                 if (relatedsBean.getProvider().contains("BiliBili")&&relatedsBean.getUrl().contains("http://www.bilibili.com/video/")) {
-                    LogUtils.e("SWTTAG","开始获取B站弹幕信息");
+                    LogUtils.i("开始获取B站弹幕信息");
                     //按bilibili解析弹幕
                     String biliVideoUrl = relatedsBean.getUrl();
                     if (TextUtils.isEmpty(biliVideoUrl))
@@ -327,17 +326,17 @@ public class DanmuUtils {
 
                         @Override
                         public void onFailure(Call call, Throwable t) {
-                            LogUtils.e("VideoViewPresenter", "CidResponse Error", t);
+                            LogUtils.e("CidResponse Error", t);
                             otherCommentCount++;
                             judgeCommentState();
                         }
                     });
                 } else if (relatedsBean.getProvider().contains("Acfun")) {
-                    LogUtils.e("SWTTAG","开始获取A站弹幕信息");
+                    LogUtils.i("开始获取A站弹幕信息");
                     otherCommentCount++;
                     judgeCommentState();
                 } else if (relatedsBean.getProvider().contains("Tucao")) {
-                    LogUtils.e("SWTTAG","开始获取c站弹幕信息");
+                    LogUtils.i("开始获取c站弹幕信息");
                     getTuCaoCommentURL(relatedsBean.getUrl());
                 } else {
                     otherCommentCount++;
@@ -361,7 +360,7 @@ public class DanmuUtils {
 
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
-                LogUtils.e("VideoViewPresenter", "tucaocomment Error", e);
+                LogUtils.e("tucaocomment Error", e);
                 otherCommentCount++;
                 judgeCommentState();
             }
@@ -386,7 +385,7 @@ public class DanmuUtils {
                 } else {
                     otherCommentCount++;
                     judgeCommentState();
-                    LogUtils.e("VideoViewPresenter", "tucaocomment Error: server error");
+                    LogUtils.e("tucaocomment Error: server error");
                 }
             }
         });
@@ -405,7 +404,7 @@ public class DanmuUtils {
         mcall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
-                LogUtils.e("VideoViewPresenter", "tucaocomment Error", e);
+                LogUtils.e("tucaocomment Error", e);
                 otherCommentCount++;
                 judgeCommentState();
             }
@@ -416,7 +415,7 @@ public class DanmuUtils {
                     String xmlstr = response.body().string();
                     parseTucaoCommentsXMLWithSAX(xmlstr);
                 } else {
-                    LogUtils.e("VideoViewPresenter", "tucaocomment Error: server error");
+                    LogUtils.e( "tucaocomment Error: server error");
                     otherCommentCount++;
                     judgeCommentState();
                 }
@@ -486,7 +485,7 @@ public class DanmuUtils {
      * 弹幕获取完成之后的操作，一般为跳转
      */
     public  void danmuGetFinish() {
-        LogUtils.e("SWTTAG","准备跳转到播放界面");
+        LogUtils.i("准备跳转到播放界面");
         ProgressDialogUtils.dismissDialog();
         clearDanmulist();
         if (mContext != null) {
