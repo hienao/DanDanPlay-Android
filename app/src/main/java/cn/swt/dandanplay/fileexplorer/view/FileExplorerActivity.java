@@ -5,11 +5,15 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
+import com.swt.corelib.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +32,17 @@ import cn.swt.dandanplay.fileexplorer.contract.FileExplorerContract;
 import cn.swt.dandanplay.fileexplorer.module.MainModule;
 import cn.swt.dandanplay.fileexplorer.presenter.FileExplorerPresenter;
 
-public class FileExplorerActivity extends BaseActivity implements FileExplorerContract.View{
+public class FileExplorerActivity extends BaseActivity implements FileExplorerContract.View {
     @Inject
     FileExplorerPresenter mFileExplorerPresenter;
     @BindView(R.id.rv_files)
     RecyclerView mRvFiles;
+    @BindView(R.id.stool_toolbar)
+    Toolbar mStoolToolbar;
     private List<VideoFileInfo> mDatas;
     private FileAdapter mFileAdapter;
     private String contentPath;
+    private boolean mNetworkMode=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +59,11 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     }
 
     private void initData() {
-        mDatas=new ArrayList<>();
-        mFileAdapter=new FileAdapter(this,mDatas);
-        contentPath= getIntent().getStringExtra("contentpath");
+        mDatas = new ArrayList<>();
+        mFileAdapter = new FileAdapter(this, mDatas);
+        contentPath = getIntent().getStringExtra("contentpath");
+        mNetworkMode=MyApplication.getSP().getBoolean("network_mode",false);
+        mFileAdapter.setNetworkMode(mNetworkMode);
     }
 
     private void initView() {
@@ -68,18 +77,56 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     @Override
     protected void onStart() {
         super.onStart();
-        if (!TextUtils.isEmpty(contentPath)){
+        if (!TextUtils.isEmpty(contentPath)) {
             getDataFromSQLite();
         }
     }
 
     private void initListener() {
+        mStoolToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.action_switch_network_mode:
+                        mNetworkMode=!mNetworkMode;
+                        if (mNetworkMode){
+                            item.setIcon(R.drawable.ic_online);
+                            item.setTitle(R.string.switch_network_online);
+                            ToastUtils.showShortToastSafe(FileExplorerActivity.this,getResources().getString(R.string.switch_network_online));
+                        }else {
+                            item.setIcon(R.drawable.ic_offline);
+                            item.setTitle(R.string.switch_network_offline);
+                            ToastUtils.showShortToastSafe(FileExplorerActivity.this,getResources().getString(R.string.switch_network_offline));
+                        }
+                        MyApplication.getSP().putBoolean("network_mode",mNetworkMode);
+                        mFileAdapter.setNetworkMode(mNetworkMode);
+                        break;
+                }
+                return true;
+            }
+        });
 
     }
 
     @Override
     public Context getContext() {
         return this;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(mNetworkMode) {
+            menu.findItem(R.id.action_switch_network_mode).setIcon(R.drawable.ic_online).setTitle(R.string.switch_network_online);
+        }else {
+            menu.findItem(R.id.action_switch_network_mode).setIcon(R.drawable.ic_offline).setTitle(R.string.switch_network_offline);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
     }
 
     @Override
@@ -91,7 +138,7 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     public void setData(List<VideoFileInfo> list) {
         mDatas.clear();
         mDatas.addAll(list);
-        for (VideoFileInfo videoFileInfo:mDatas){
+        for (VideoFileInfo videoFileInfo : mDatas) {
             LogUtils.i(videoFileInfo.toString());
         }
         mFileAdapter.notifyDataSetChanged();
@@ -100,20 +147,20 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     @Override
     public void getDataFromSQLite() {
         mDatas.clear();
-        ArrayList<VideoFileInfo>list=MyApplication.getLiteOrm().query(VideoFileInfo.class);
-        QueryBuilder<VideoFileInfo>qb=new QueryBuilder<>(VideoFileInfo.class).whereEquals("_contentPath",contentPath);
+        ArrayList<VideoFileInfo> list = MyApplication.getLiteOrm().query(VideoFileInfo.class);
+        QueryBuilder<VideoFileInfo> qb = new QueryBuilder<>(VideoFileInfo.class).whereEquals("_contentPath", contentPath);
         ArrayList<VideoFileInfo> videoFileInfoArrayList = MyApplication.getLiteOrm().query(qb);
-        if (videoFileInfoArrayList != null&&videoFileInfoArrayList.size()!=0){
-            for (VideoFileInfo v:videoFileInfoArrayList){
+        if (videoFileInfoArrayList != null && videoFileInfoArrayList.size() != 0) {
+            for (VideoFileInfo v : videoFileInfoArrayList) {
                 //更新数据库记录为有本地弹幕
                 VideoFileInfo vv = MyApplication.getLiteOrm().queryById(v.getVideoPath(), VideoFileInfo.class);
-                if (vv!=null){
-                    String ddxml=vv.getVideoPath().substring(0,vv.getVideoPath().lastIndexOf("."))+"dd.xml";
-                    String bilixml=vv.getVideoPath().substring(0,vv.getVideoPath().lastIndexOf("."))+".xml";
-                    if (FileUtils.isFileExists(ddxml)||FileUtils.isFileExists(bilixml)){
+                if (vv != null) {
+                    String ddxml = vv.getVideoPath().substring(0, vv.getVideoPath().lastIndexOf(".")) + "dd.xml";
+                    String bilixml = vv.getVideoPath().substring(0, vv.getVideoPath().lastIndexOf(".")) + ".xml";
+                    if (FileUtils.isFileExists(ddxml) || FileUtils.isFileExists(bilixml)) {
                         vv.setHaveLocalDanmu(true);
                         v.setHaveLocalDanmu(true);
-                    }else {
+                    } else {
                         vv.setHaveLocalDanmu(false);
                         v.setHaveLocalDanmu(false);
                     }

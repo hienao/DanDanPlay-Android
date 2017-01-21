@@ -33,11 +33,20 @@ public class FileAdapter extends RecyclerView.Adapter{
     private LayoutInflater inflater;
     public List<VideoFileInfo> list;
     private Context mContext;
+    private boolean mNetworkMode;
 
     public FileAdapter(Context context, List<VideoFileInfo> list) {
         this.list = list;
         mContext=context;
         inflater=LayoutInflater.from(context);
+    }
+
+    /**
+     * 设置网络模式
+     * @param networkMode
+     */
+    public void setNetworkMode(boolean networkMode){
+        mNetworkMode=networkMode;
     }
 
     @Override
@@ -59,11 +68,11 @@ public class FileAdapter extends RecyclerView.Adapter{
         viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if ( NetworkUtils.isConnected(mContext)){
+                if (mNetworkMode&&NetworkUtils.isConnected(mContext)){
                     mContext.startActivity(new Intent(mContext, EpisodeIdMatchActivity.class)
                             .putExtra("path",list.get(position).getVideoPath())
                             .putExtra("title",list.get(position).getVideoNameWithoutSuffix()));
-                }else {
+                }else{
                     mContext.startActivity(new Intent(mContext, VideoViewActivity.class)
                             .putExtra("path",list.get(position).getVideoPath())
                             .putExtra("file_title",list.get(position).getVideoNameWithoutSuffix())

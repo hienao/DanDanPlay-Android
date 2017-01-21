@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.DataBaseConfig;
 import com.swt.corelib.utils.LogUtils;
+import com.swt.corelib.utils.SPUtils;
 import com.swt.corelib.utils.ToastUtils;
 import com.tencent.bugly.Bugly;
 import com.tendcloud.tenddata.TCAgent;
@@ -22,6 +23,8 @@ public class MyApplication extends Application {
     public static String TAG="SWTTAG";
     private static Context context;
     private static LiteOrm liteOrm;
+    private static SPUtils mSpUtils;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -33,6 +36,8 @@ public class MyApplication extends Application {
         }else {
             LogUtils.init(context,false,true,'e',TAG);
         }
+        //SP初始化
+        mSpUtils = new SPUtils(context,"Setting");
 
         //bugly初始化
         Bugly.init(getApplicationContext(), "92428c9315", false);
@@ -74,5 +79,8 @@ public class MyApplication extends Application {
         } catch (Exception e) {
             return false;
         }
+    }
+    public static SPUtils getSP(){
+        return mSpUtils;
     }
 }

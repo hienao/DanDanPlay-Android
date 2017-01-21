@@ -16,4 +16,6 @@
     <string name="danmu_loading">弹幕获取中...</string>
     <string name="local_danmu">本地弹幕：</string>
     <string name="scaning">Scaning...</string>
+    <string name="switch_network_online">模式切换：在线</string>
+    <string name="switch_network_offline">模式切换：离线</string>
 </resources>

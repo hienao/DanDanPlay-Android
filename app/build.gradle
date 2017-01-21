@@ -77,16 +77,6 @@ android {
     productFlavors {
         other{
         }
-        baidu {
-        }
-        huawei {
-        }
-        yingyongbao {
-        }
-        xiaomi {
-        }
-        qihu {
-        }
         kuan{
         }
     }
