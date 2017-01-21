@@ -17,9 +17,9 @@
 #}
 #-------------------------------------------定制化区域----------------------------------------------
 #---------------------------------1.实体类---------------------------------
--keep class cn.swt.dandanplay.core.http.beans.** { *; }
--keep class cn.swt.dandanplay.fileexplorer.beans.** { *; }
--keep class cn.swt.dandanplay.play.beans.** { *; }
+-keep class cn.swt.danmuplayer.core.http.beans.** { *; }
+-keep class cn.swt.danmuplayer.fileexplorer.beans.** { *; }
+-keep class cn.swt.danmuplayer.play.beans.** { *; }
 -keep class master.flame.danmaku.** {*;}
 -keep class com.superplayer.library.** {*;}
 -keep class tv.danmaku.ijk.**{*;}

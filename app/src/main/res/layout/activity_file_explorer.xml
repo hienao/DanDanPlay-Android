@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="cn.swt.dandanplay.fileexplorer.view.FileExplorerActivity">
+    tools:context="cn.swt.danmuplayer.fileexplorer.view.FileExplorerActivity">
     <include layout="@layout/base_toobar_view"/>
 
         <android.support.v7.widget.RecyclerView
