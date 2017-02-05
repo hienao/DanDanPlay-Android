@@ -334,11 +334,97 @@ public class DanmuUtils {
                     });
                 } else if (relatedsBean.getProvider().contains("Acfun")) {
                     LogUtils.i("开始获取A站弹幕信息");
-                    otherCommentCount++;
-                    judgeCommentState();
+                    RetrofitManager retrofitManager = RetrofitManager.getInstance();
+                    APIService apiService = retrofitManager.create(HttpConstant.ACPLAY_BASE_URL);
+                    retrofitManager.enqueue(apiService.getOtherCommentByVideoUrl(relatedsBean.getUrl()), new Callback<CommentResponse>() {
+                        @Override
+                        public void onResponse(Call<CommentResponse> call, Response<CommentResponse> response) {
+                            CommentResponse commentResponse = response.body();
+                            if (commentResponse != null) {
+                                if (commentResponse == null || commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
+                                    getDanDanComment=true;
+                                    judgeCommentState();
+                                } else {
+                                    List<CommentResponse.CommentsBean> commentsBeanList = commentResponse.getComments();
+                                    if (commentsBeanList != null && commentsBeanList.size() != 0) {
+                                        for (CommentResponse.CommentsBean commentsBean : commentsBeanList) {
+                                            DanmakuBean danmakuBean=new DanmakuBean();
+                                            danmakuBean.setTime(String.valueOf(commentsBean.getTime()));
+                                            danmakuBean.setType(String.valueOf(commentsBean.getMode()));
+                                            danmakuBean.setTextSize(String.valueOf(25));
+                                            danmakuBean.setTextColor(String.valueOf(commentsBean.getColor()));
+                                            danmakuBean.setSendtimeunix(String.valueOf(commentsBean.getTimestamp()));
+                                            danmakuBean.setPriority(String.valueOf(commentsBean.getPool()));
+                                            danmakuBean.setUserId(String.valueOf(commentsBean.getUId()));
+                                            danmakuBean.setIndex(String.valueOf(commentsBean.getCId()));
+                                            danmakuBean.setText(commentsBean.getMessage());
+                                            if (danmakuBean.isFull()){
+                                                mDanmakuBeanList.add(danmakuBean);
+                                            }
+                                        }
+                                        otherCommentCount++;
+                                        judgeCommentState();
+                                    }
+                                }
+                            } else {
+                                otherCommentCount++;
+                                judgeCommentState();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<CommentResponse> call, Throwable t) {
+                            otherCommentCount++;
+                            judgeCommentState();
+                        }
+                    });
                 } else if (relatedsBean.getProvider().contains("Tucao")) {
                     LogUtils.i("开始获取c站弹幕信息");
-                    getTuCaoCommentURL(relatedsBean.getUrl());
+//                    getTuCaoCommentURL(relatedsBean.getUrl());
+                    RetrofitManager retrofitManager = RetrofitManager.getInstance();
+                    APIService apiService = retrofitManager.create(HttpConstant.ACPLAY_BASE_URL);
+                    retrofitManager.enqueue(apiService.getOtherCommentByVideoUrl(relatedsBean.getUrl()), new Callback<CommentResponse>() {
+                        @Override
+                        public void onResponse(Call<CommentResponse> call, Response<CommentResponse> response) {
+                            CommentResponse commentResponse = response.body();
+                            if (commentResponse != null) {
+                                if (commentResponse == null || commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
+                                    getDanDanComment=true;
+                                    judgeCommentState();
+                                } else {
+                                    List<CommentResponse.CommentsBean> commentsBeanList = commentResponse.getComments();
+                                    if (commentsBeanList != null && commentsBeanList.size() != 0) {
+                                        for (CommentResponse.CommentsBean commentsBean : commentsBeanList) {
+                                            DanmakuBean danmakuBean=new DanmakuBean();
+                                            danmakuBean.setTime(String.valueOf(commentsBean.getTime()));
+                                            danmakuBean.setType(String.valueOf(commentsBean.getMode()));
+                                            danmakuBean.setTextSize(String.valueOf(25));
+                                            danmakuBean.setTextColor(String.valueOf(commentsBean.getColor()));
+                                            danmakuBean.setSendtimeunix(String.valueOf(commentsBean.getTimestamp()));
+                                            danmakuBean.setPriority(String.valueOf(commentsBean.getPool()));
+                                            danmakuBean.setUserId(String.valueOf(commentsBean.getUId()));
+                                            danmakuBean.setIndex(String.valueOf(commentsBean.getCId()));
+                                            danmakuBean.setText(commentsBean.getMessage());
+                                            if (danmakuBean.isFull()){
+                                                mDanmakuBeanList.add(danmakuBean);
+                                            }
+                                        }
+                                        otherCommentCount++;
+                                        judgeCommentState();
+                                    }
+                                }
+                            } else {
+                                otherCommentCount++;
+                                judgeCommentState();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<CommentResponse> call, Throwable t) {
+                            otherCommentCount++;
+                            judgeCommentState();
+                        }
+                    });
                 } else {
                     otherCommentCount++;
                     judgeCommentState();
