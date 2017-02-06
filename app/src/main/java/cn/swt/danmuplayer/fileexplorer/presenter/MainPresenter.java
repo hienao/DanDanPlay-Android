@@ -8,6 +8,7 @@ import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.swt.corelib.utils.ConvertUtils;
@@ -135,13 +136,16 @@ public class MainPresenter implements MainContract.Present {
                             VideoFileInfo videoFileInfo = new VideoFileInfo();
                             videoFileInfo.setVideoPath(filePath);
                             videoFileInfo.setVideoContentPath(filePath.substring(0,filePath.lastIndexOf("/")+1));
-                            videoFileInfo.setVideoName(videoName);
-                            if(videoName.contains(".")){
+                            if (TextUtils.isEmpty(videoName)){
+                                videoFileInfo.setVideoName(videoName);
+                                videoFileInfo.setVideoNameWithoutSuffix("Unkonwn");
+                            }else if(videoName.contains(".")){
+                                videoFileInfo.setVideoName(videoName);
                                 videoFileInfo.setVideoNameWithoutSuffix(videoName.substring(0,videoName.lastIndexOf(".")));
                             }else {
+                                videoFileInfo.setVideoName(videoName);
                                 videoFileInfo.setVideoNameWithoutSuffix(videoName);
                             }
-
                             videoFileInfo.setCover(getVideoThumbnail(filePath));
                             try {
                                 videoFileInfo.setVideoLength(TimeUtils.formatDuring(Long.parseLong(videoDuration)));

@@ -116,7 +116,7 @@ public interface APIService {
      * @param video_url
      * @return
      */
-    @GET("api/v1/extcomment?url={video_url}")
-    Call<CommentResponse> getOtherCommentByVideoUrl(@Path("video_url")String video_url);
+    @GET("api/v1/extcomment")
+    Call<CommentResponse> getOtherCommentByVideoUrl(@Query("url") String video_url);
 
 }

@@ -342,7 +342,7 @@ public class DanmuUtils {
                             CommentResponse commentResponse = response.body();
                             if (commentResponse != null) {
                                 if (commentResponse == null || commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
-                                    getDanDanComment=true;
+                                    otherCommentCount++;
                                     judgeCommentState();
                                 } else {
                                     List<CommentResponse.CommentsBean> commentsBeanList = commentResponse.getComments();
@@ -389,7 +389,7 @@ public class DanmuUtils {
                             CommentResponse commentResponse = response.body();
                             if (commentResponse != null) {
                                 if (commentResponse == null || commentResponse.getComments() == null || commentResponse.getComments().size() == 0) {
-                                    getDanDanComment=true;
+                                    otherCommentCount++;
                                     judgeCommentState();
                                 } else {
                                     List<CommentResponse.CommentsBean> commentsBeanList = commentResponse.getComments();
