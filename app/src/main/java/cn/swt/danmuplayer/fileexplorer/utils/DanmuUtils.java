@@ -116,6 +116,11 @@ public class DanmuUtils {
      * @param xmlpath xml文件路径
      */
     private void exportDanmuList2Xml(String xmlpath) {
+        if (mDanmakuBeanList==null||mDanmakuBeanList.size()==0){
+            LogUtils.i("没有获取到弹幕");
+            danmuGetFinish();
+            return;
+        }
         LogUtils.i("开始输出xml");
         StringWriter xmlWriter = new StringWriter();
         try {
