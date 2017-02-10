@@ -13,12 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.nightonke.boommenu.BoomButtons.BoomButton;
-import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
 import com.nightonke.boommenu.BoomMenuButton;
-import com.nightonke.boommenu.ButtonEnum;
-import com.nightonke.boommenu.OnBoomListener;
-import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 import com.swt.corelib.utils.ToastUtils;
 
 import java.util.ArrayList;
@@ -33,7 +28,7 @@ import cn.swt.danmuplayer.fileexplorer.adapter.ContentAdapter;
 import cn.swt.danmuplayer.fileexplorer.beans.ContentInfo;
 import cn.swt.danmuplayer.fileexplorer.contract.MainContract;
 import cn.swt.danmuplayer.fileexplorer.presenter.MainPresenter;
-import cn.swt.danmuplayer.fileexplorer.utils.BuilderManager;
+import cn.swt.danmuplayer.fileexplorer.utils.BmbUtil;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrUIHandler;
@@ -85,51 +80,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         setShowBackNavigationIcon(false);
         //菜单初始化开始
         bmb = (BoomMenuButton) findViewById(R.id.bmb);
-        assert bmb != null;
-        bmb.setButtonEnum(ButtonEnum.Ham);
-        bmb.setPiecePlaceEnum(PiecePlaceEnum.HAM_3);
-        bmb.setButtonPlaceEnum(ButtonPlaceEnum.HAM_3);
-        bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting,R.string.app_setting_desc));
-        bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting,R.string.app_setting_desc));
-        bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting,R.string.app_setting_desc));
-        bmb.setOnBoomListener(new OnBoomListener() {
-            @Override
-            public void onClicked(int index, BoomButton boomButton) {
-                switch (index){
-                    case 2:
-                        ToastUtils.showShortToastSafe(ContentsActivity.this,"点击了设置按钮");
-                        break;
-                    default:
-                        ToastUtils.showShortToastSafe(ContentsActivity.this,"点击了其他按钮");
-                        break;
-                }
-            }
-
-            @Override
-            public void onBackgroundClick() {
-
-            }
-
-            @Override
-            public void onBoomWillHide() {
-
-            }
-
-            @Override
-            public void onBoomDidHide() {
-
-            }
-
-            @Override
-            public void onBoomWillShow() {
-
-            }
-
-            @Override
-            public void onBoomDidShow() {
-
-            }
-        });
+        BmbUtil.initBoomMenuButton(bmb,ContentsActivity.this);
         //菜单初始化结束
         mStoreHousePtrFrame.setHeaderView(mHeader);
         mStoreHousePtrFrame.addPtrUIHandler(mHeader);
