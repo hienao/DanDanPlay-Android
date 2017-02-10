@@ -18,8 +18,6 @@ import com.swt.corelib.utils.ToastUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.danmuplayer.R;
@@ -27,13 +25,10 @@ import cn.swt.danmuplayer.application.MyApplication;
 import cn.swt.danmuplayer.core.base.BaseActivity;
 import cn.swt.danmuplayer.fileexplorer.adapter.FileAdapter;
 import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
-import cn.swt.danmuplayer.fileexplorer.component.DaggerMainComponent;
 import cn.swt.danmuplayer.fileexplorer.contract.FileExplorerContract;
-import cn.swt.danmuplayer.fileexplorer.module.MainModule;
 import cn.swt.danmuplayer.fileexplorer.presenter.FileExplorerPresenter;
 
 public class FileExplorerActivity extends BaseActivity implements FileExplorerContract.View {
-    @Inject
     FileExplorerPresenter mFileExplorerPresenter;
     @BindView(R.id.rv_files)
     RecyclerView mRvFiles;
@@ -49,16 +44,13 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_explorer);
         ButterKnife.bind(this);
-        DaggerMainComponent.builder()
-                .mainModule(new MainModule(this))
-                .build()
-                .inject(this);
         initData();
         initView();
         initListener();
     }
 
     private void initData() {
+        mFileExplorerPresenter=new FileExplorerPresenter(this);
         mDatas = new ArrayList<>();
         mFileAdapter = new FileAdapter(this, mDatas);
         contentPath = getIntent().getStringExtra("contentpath");
@@ -171,5 +163,11 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
             mDatas.addAll(videoFileInfoArrayList);
         }
         mFileAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mFileExplorerPresenter=null;
     }
 }

@@ -1,6 +1,7 @@
 package cn.swt.danmuplayer.core.base;
 
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -45,12 +46,20 @@ public class BaseActivity extends AppCompatActivity {
      * 设置后退按钮是否显示（默认显示）
      * @param state
      */
-    public void setShowNavigationIcon(boolean state){
+    public void setShowBackNavigationIcon(boolean state){
         if (state){
             mToolbar.setNavigationIcon(R.drawable.ic_back);
         }else {
             mToolbar.setNavigationIcon(null);
         }
+    }
+
+    /**
+     * 设置导航按钮
+     * @param resId
+     */
+    public void setNavigationIcon(@DrawableRes int resId){
+        mToolbar.setNavigationIcon(resId);
     }
     public void setCustomTitle(String title){
         sTitleTV.setText(title);

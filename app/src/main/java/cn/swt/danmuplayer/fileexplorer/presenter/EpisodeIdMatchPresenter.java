@@ -5,8 +5,6 @@ import com.swt.corelib.utils.LogUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import cn.swt.danmuplayer.core.http.APIService;
 import cn.swt.danmuplayer.core.http.RetrofitManager;
 import cn.swt.danmuplayer.core.http.beans.MatchResponse;
@@ -26,13 +24,14 @@ import retrofit2.Response;
  */
 public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
     private EpisodeIdMatchContract.View mView;
-    @Inject
-    EpisodeIdMatchPresenter(EpisodeIdMatchContract.View view){
-        mView=view;
+
+    public EpisodeIdMatchPresenter(EpisodeIdMatchContract.View view) {
+        mView = view;
     }
 
     /**
      * 使用文件匹配视频信息
+     *
      * @param filePath
      * @param title
      * @param hash
@@ -52,6 +51,7 @@ public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
                     mView.gotMatchEpisodeId(matchResponse);
                 }
             }
+
             @Override
             public void onFailure(Call call, Throwable t) {
                 LogUtils.e("VideoViewPresenter", "matchEpisodeId Error", t);
@@ -62,6 +62,7 @@ public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
 
     /**
      * 搜索视频信息
+     *
      * @param anime
      * @param episodeId
      */
@@ -69,27 +70,27 @@ public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
     public void searchALLEpisodeId(String anime, String episodeId) {
         RetrofitManager retrofitManager = RetrofitManager.getInstance();
         APIService apiService = retrofitManager.create();
-        retrofitManager.enqueue(apiService.searchALLEpisodeId(anime,episodeId), new Callback<SearchAllResponse>() {
+        retrofitManager.enqueue(apiService.searchALLEpisodeId(anime, episodeId), new Callback<SearchAllResponse>() {
             @Override
             public void onResponse(Call<SearchAllResponse> call, Response<SearchAllResponse> response) {
                 if (response.isSuccessful()) {
                     SearchAllResponse searchAllResponse = response.body();
-                    List<SearchAllResponse.AnimesBean>contentlist=searchAllResponse.getAnimes();
-                    if (contentlist!=null&&contentlist.size()!=0){
-                        List<SearchResultInfo>searchResultInfoList=new ArrayList<>();
-                        for (int i=0;i<contentlist.size();i++){
-                            SearchAllResponse.AnimesBean animesBean=contentlist.get(i);
-                            String mainTitle=animesBean.getTitle();
-                            int type=animesBean.getType();
-                            SearchResultInfo searchResultInfoHeader=new SearchResultInfo();
+                    List<SearchAllResponse.AnimesBean> contentlist = searchAllResponse.getAnimes();
+                    if (contentlist != null && contentlist.size() != 0) {
+                        List<SearchResultInfo> searchResultInfoList = new ArrayList<>();
+                        for (int i = 0; i < contentlist.size(); i++) {
+                            SearchAllResponse.AnimesBean animesBean = contentlist.get(i);
+                            String mainTitle = animesBean.getTitle();
+                            int type = animesBean.getType();
+                            SearchResultInfo searchResultInfoHeader = new SearchResultInfo();
                             searchResultInfoHeader.setMainTitle(mainTitle);
                             searchResultInfoHeader.setType(type);
                             searchResultInfoHeader.setHeader(true);
                             searchResultInfoList.add(searchResultInfoHeader);
-                            List<SearchAllResponse.AnimesBean.EpisodesBean>episodesBeanList=animesBean.getEpisodes();
-                            if (episodesBeanList!=null&&episodesBeanList.size()!=0){
-                                for (SearchAllResponse.AnimesBean.EpisodesBean episodesBean:episodesBeanList){
-                                    SearchResultInfo searchResultInfo=new SearchResultInfo();
+                            List<SearchAllResponse.AnimesBean.EpisodesBean> episodesBeanList = animesBean.getEpisodes();
+                            if (episodesBeanList != null && episodesBeanList.size() != 0) {
+                                for (SearchAllResponse.AnimesBean.EpisodesBean episodesBean : episodesBeanList) {
+                                    SearchResultInfo searchResultInfo = new SearchResultInfo();
                                     searchResultInfo.setTitle(episodesBean.getTitle());
                                     searchResultInfo.setId(episodesBean.getId());
                                     searchResultInfo.setMainTitle(mainTitle);
@@ -100,10 +101,10 @@ public class EpisodeIdMatchPresenter implements EpisodeIdMatchContract.Present {
                             }
                         }
                         mView.gotSearchALLEpisodeId(searchResultInfoList);
-                    }else {
+                    } else {
                         mView.gotSearchALLEpisodeId(null);
                     }
-                }else {
+                } else {
                     mView.gotSearchALLEpisodeId(null);
                 }
             }

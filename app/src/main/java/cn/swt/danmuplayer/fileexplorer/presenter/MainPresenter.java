@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.inject.Inject;
-
 import cn.swt.danmuplayer.application.MyApplication;
 import cn.swt.danmuplayer.fileexplorer.beans.ContentInfo;
 import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
@@ -59,8 +57,7 @@ public class MainPresenter implements MainContract.Present {
         }
 
     };
-    @Inject
-    MainPresenter(MainContract.View view) {
+    public  MainPresenter(MainContract.View view) {
         mView = view;
     }
 

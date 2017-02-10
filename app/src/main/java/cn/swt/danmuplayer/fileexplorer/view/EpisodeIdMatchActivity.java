@@ -28,8 +28,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.danmuplayer.R;
@@ -37,15 +35,12 @@ import cn.swt.danmuplayer.core.base.BaseActivity;
 import cn.swt.danmuplayer.core.http.beans.MatchResponse;
 import cn.swt.danmuplayer.fileexplorer.adapter.MatchResultAdapter;
 import cn.swt.danmuplayer.fileexplorer.beans.SearchResultInfo;
-import cn.swt.danmuplayer.fileexplorer.component.DaggerMainComponent;
 import cn.swt.danmuplayer.fileexplorer.contract.EpisodeIdMatchContract;
-import cn.swt.danmuplayer.fileexplorer.module.MainModule;
 import cn.swt.danmuplayer.fileexplorer.presenter.EpisodeIdMatchPresenter;
 import cn.swt.danmuplayer.fileexplorer.utils.DanmuUtils;
 import cn.swt.danmuplayer.play.view.VideoViewActivity;
 
 public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMatchContract.View {
-    @Inject
     EpisodeIdMatchPresenter mEpisodeIdMatchPresenter;
     @BindView(R.id.rv_match_results)
     RecyclerView mRvMatchResults;
@@ -71,16 +66,13 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_episode_id_match);
         ButterKnife.bind(this);
-        DaggerMainComponent.builder()
-                .mainModule(new MainModule(this))
-                .build()
-                .inject(this);
         initData();
         initView();
         inintListener();
     }
 
     private void initData() {
+        mEpisodeIdMatchPresenter=new EpisodeIdMatchPresenter(this);
         videoPath = getIntent().getStringExtra("path");
         videoTitle = getIntent().getStringExtra("title");
         mSearchBeanList = new ArrayList<>();
@@ -284,5 +276,11 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
     @Override
     public void error() {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mEpisodeIdMatchPresenter=null;
     }
 }

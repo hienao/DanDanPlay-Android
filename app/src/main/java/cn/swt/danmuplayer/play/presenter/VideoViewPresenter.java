@@ -1,7 +1,5 @@
 package cn.swt.danmuplayer.play.presenter;
 
-import javax.inject.Inject;
-
 import cn.swt.danmuplayer.play.contract.VideoViewContract;
 
 /**
@@ -14,8 +12,6 @@ import cn.swt.danmuplayer.play.contract.VideoViewContract;
 public class VideoViewPresenter implements VideoViewContract.Present {
     private VideoViewContract.View mView;
     private String videoPath;
-
-    @Inject
     public VideoViewPresenter(VideoViewContract.View view) {
         mView = view;
     }

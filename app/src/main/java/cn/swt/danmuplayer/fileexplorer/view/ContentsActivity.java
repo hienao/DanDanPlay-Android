@@ -18,8 +18,6 @@ import com.swt.corelib.utils.ToastUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.danmuplayer.R;
@@ -27,9 +25,7 @@ import cn.swt.danmuplayer.application.MyApplication;
 import cn.swt.danmuplayer.core.base.BaseActivity;
 import cn.swt.danmuplayer.fileexplorer.adapter.ContentAdapter;
 import cn.swt.danmuplayer.fileexplorer.beans.ContentInfo;
-import cn.swt.danmuplayer.fileexplorer.component.DaggerMainComponent;
 import cn.swt.danmuplayer.fileexplorer.contract.MainContract;
-import cn.swt.danmuplayer.fileexplorer.module.MainModule;
 import cn.swt.danmuplayer.fileexplorer.presenter.MainPresenter;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -40,7 +36,6 @@ import in.srain.cube.views.ptr.indicator.PtrIndicator;
 
 public class ContentsActivity extends BaseActivity implements MainContract.View {
 
-    @Inject
     MainPresenter mMainPresenter;
     public static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 111;
     @BindView(R.id.rv_content)
@@ -58,16 +53,17 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contents);
         ButterKnife.bind(this);
-        DaggerMainComponent.builder()
-                .mainModule(new MainModule(this))
-                .build()
-                .inject(this);
+//        DaggerMainComponent.builder()
+//                .mainModule(new MainModule(this))
+//                .build()
+//                .inject(this);
         initData();
         initView();
         initListener();
     }
 
     private void initData() {
+        mMainPresenter=new MainPresenter(this);
         mDatas = new ArrayList<>();
         refreshHeader=getResources().getString(R.string.scaning);
         mContentAdapter = new ContentAdapter(this, mDatas);
@@ -80,7 +76,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
 
     private void initView() {
         setCustomTitle(getResources().getString(R.string.app_name));
-        setShowNavigationIcon(false);
+        setShowBackNavigationIcon(false);
         mStoreHousePtrFrame.setHeaderView(mHeader);
         mStoreHousePtrFrame.addPtrUIHandler(mHeader);
         mStoreHousePtrFrame.addPtrUIHandler(new PtrUIHandler() {
@@ -197,6 +193,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mMainPresenter=null;
     }
 
 }

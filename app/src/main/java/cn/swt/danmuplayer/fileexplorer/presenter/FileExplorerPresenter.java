@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
 import cn.swt.danmuplayer.fileexplorer.contract.FileExplorerContract;
 import cn.swt.danmuplayer.others.VideoFileNameFilter;
@@ -28,8 +26,7 @@ import cn.swt.danmuplayer.others.VideoFileNameFilter;
  */
 public class FileExplorerPresenter implements FileExplorerContract.Present {
     private FileExplorerContract.View mView;
-    @Inject
-    FileExplorerPresenter(FileExplorerContract.View view){
+    public FileExplorerPresenter(FileExplorerContract.View view){
         mView=view;
     }
 

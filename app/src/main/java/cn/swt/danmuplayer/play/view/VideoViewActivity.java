@@ -12,8 +12,6 @@ import android.widget.RelativeLayout;
 import com.superplayer.library.SuperPlayer;
 import com.swt.corelib.utils.LogUtils;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.danmuplayer.R;
@@ -21,7 +19,6 @@ import cn.swt.danmuplayer.play.contract.VideoViewContract;
 import cn.swt.danmuplayer.play.presenter.VideoViewPresenter;
 
 public class VideoViewActivity extends AppCompatActivity implements VideoViewContract.View, View.OnClickListener, SuperPlayer.OnNetChangeListener {
-    @Inject
     VideoViewPresenter mVideoViewPresenter;
     @BindView(R.id.activity_video_view)
     RelativeLayout mActivityVideoView;
@@ -49,6 +46,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 
 
     private void initData() {
+        mVideoViewPresenter=new VideoViewPresenter(this);
         videoPath = getIntent().getStringExtra("path");
         file_title = getIntent().getStringExtra("file_title");
         videoTitle = getIntent().getStringExtra("title");
