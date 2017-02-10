@@ -19,4 +19,6 @@
     <string name="switch_network_online">模式切换：在线</string>
     <string name="switch_network_offline">模式切换：离线</string>
     <string name="menu">菜单</string>
+    <string name="app_setting">设置</string>
+    <string name="app_setting_desc">设置描述</string>
 </resources>
