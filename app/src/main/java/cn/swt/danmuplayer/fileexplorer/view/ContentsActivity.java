@@ -11,6 +11,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.swt.corelib.utils.ToastUtils;
@@ -42,6 +45,8 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     RecyclerView mRvContent;
     @BindView(R.id.store_house_ptr_frame)
     PtrFrameLayout mStoreHousePtrFrame;
+    @BindView(R.id.stool_toolbar)
+    Toolbar mStoolToolbar;
     private List<ContentInfo> mDatas;
     private ContentAdapter mContentAdapter;
     private ContentResolver mContentResolver;
@@ -63,9 +68,9 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     }
 
     private void initData() {
-        mMainPresenter=new MainPresenter(this);
+        mMainPresenter = new MainPresenter(this);
         mDatas = new ArrayList<>();
-        refreshHeader=getResources().getString(R.string.scaning);
+        refreshHeader = getResources().getString(R.string.scaning);
         mContentAdapter = new ContentAdapter(this, mDatas);
         mContentResolver = this.getContentResolver();
         mHeader = new StoreHouseHeader(this);
@@ -121,6 +126,17 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
 
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return true;
+            }
+        });
+        mStoolToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.action_menu:
+                       ToastUtils.showShortToastSafe(ContentsActivity.this,"弹出菜单");
+                        break;
+                }
                 return true;
             }
         });
@@ -191,9 +207,21 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_menu).setIcon(R.drawable.ic_menu).setTitle(R.string.menu);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        mMainPresenter=null;
+        mMainPresenter = null;
     }
 
 }

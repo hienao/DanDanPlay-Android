@@ -117,7 +117,7 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        getMenuInflater().inflate(R.menu.menu_toolbar_switch_network, menu);
         return true;
     }
 
