@@ -11,9 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.nightonke.boommenu.BoomButtons.BoomButton;
@@ -53,8 +50,6 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     RecyclerView mRvContent;
     @BindView(R.id.store_house_ptr_frame)
     PtrFrameLayout mStoreHousePtrFrame;
-    @BindView(R.id.stool_toolbar)
-    Toolbar mStoolToolbar;
     private List<ContentInfo> mDatas;
     private ContentAdapter mContentAdapter;
     private ContentResolver mContentResolver;
@@ -100,7 +95,14 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         bmb.setOnBoomListener(new OnBoomListener() {
             @Override
             public void onClicked(int index, BoomButton boomButton) {
-                System.out.println(index);
+                switch (index){
+                    case 2:
+                        ToastUtils.showShortToastSafe(ContentsActivity.this,"点击了设置按钮");
+                        break;
+                    default:
+                        ToastUtils.showShortToastSafe(ContentsActivity.this,"点击了其他按钮");
+                        break;
+                }
             }
 
             @Override
@@ -176,17 +178,6 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
                 return true;
             }
         });
-        mStoolToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.action_menu:
-                       ToastUtils.showShortToastSafe(ContentsActivity.this,"弹出菜单");
-                        break;
-                }
-                return true;
-            }
-        });
     }
 
     @Override
@@ -253,17 +244,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         }
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_menu).setIcon(R.drawable.ic_menu).setTitle(R.string.menu);
-        return super.onPrepareOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar_menu, menu);
-        return true;
-    }
 
     @Override
     protected void onDestroy() {
