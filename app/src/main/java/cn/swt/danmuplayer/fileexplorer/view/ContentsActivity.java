@@ -157,14 +157,6 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         mStoreHousePtrFrame.refreshComplete();
     }
 
-    /**
-     * 未设置扫描路径
-     */
-    @Override
-    public void nodefScanPath() {
-
-    }
-
     @Override
     public void error() {
 

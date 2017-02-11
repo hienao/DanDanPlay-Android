@@ -73,10 +73,6 @@ public class MainPresenter implements MainContract.Present {
 //                    getLiteOrm().deleteAll(ContentInfo.class);
 //                    getLiteOrm().deleteAll(VideoFileInfo.class);
                     String sp_scan_path=MyApplication.getSP().getString("scan_path","external");
-                    if (TextUtils.isEmpty(sp_scan_path)){
-                        mView.nodefScanPath();
-                        return;
-                    }
                     String SDcardPath = SDCardUtils.getSDCardPath();
                     List<VideoFileInfo> videos = new ArrayList<>();
                     List<ContentInfo>contentInfoList=new ArrayList<>();

@@ -17,7 +17,6 @@ public class MainContract {
     public interface View extends BaseView{
         Context getContext();
         void getDataFromSQLite();
-        void nodefScanPath();
     }
 
     public interface Present extends BasePresenter {
