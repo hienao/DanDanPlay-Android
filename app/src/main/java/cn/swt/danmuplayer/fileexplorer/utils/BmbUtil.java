@@ -1,6 +1,8 @@
 package cn.swt.danmuplayer.fileexplorer.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import com.nightonke.boommenu.BoomButtons.BoomButton;
 import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
@@ -11,6 +13,8 @@ import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 import com.swt.corelib.utils.ToastUtils;
 
 import cn.swt.danmuplayer.R;
+import cn.swt.danmuplayer.fileexplorer.view.ContentsActivity;
+import cn.swt.danmuplayer.setting.SettingActivity;
 
 /**
  * Title: BmbUtil <br>
@@ -24,25 +28,29 @@ public class BmbUtil {
     /**
      * 初始化菜单
      * @param bmb
-     * @param context
+     * @param activitycontext
      */
-    public static void initBoomMenuButton(BoomMenuButton bmb, final Context context){
+    public static void initBoomMenuButton(BoomMenuButton bmb, final Context activitycontext){
         assert bmb != null;
         bmb.setButtonEnum(ButtonEnum.Ham);
-        bmb.setPiecePlaceEnum(PiecePlaceEnum.HAM_3);
-        bmb.setButtonPlaceEnum(ButtonPlaceEnum.HAM_3);
-        bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting,R.string.app_setting_desc));
-        bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting,R.string.app_setting_desc));
+        bmb.setPiecePlaceEnum(PiecePlaceEnum.HAM_2);
+        bmb.setButtonPlaceEnum(ButtonPlaceEnum.HAM_2);
+        bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting_danmuplayer,R.string.app_setting_danmuplayer_desc));
         bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting,R.string.app_setting_desc));
         bmb.setOnBoomListener(new OnBoomListener() {
             @Override
             public void onClicked(int index, BoomButton boomButton) {
+                Intent intent;
                 switch (index){
-                    case 2:
-                        ToastUtils.showShortToastSafe(context,"点击了设置按钮");
+                    case 0:
+                        Activity activity= (Activity) activitycontext;
+                        if(!(activity  instanceof ContentsActivity)){
+                            ToastUtils.showShortToastSafe(activitycontext,"点击了视频播放按钮");
+                        }
                         break;
                     default:
-                        ToastUtils.showShortToastSafe(context,"点击了其他按钮");
+                        intent=new Intent(activitycontext, SettingActivity.class);
+                        activitycontext.startActivity(intent);
                         break;
                 }
             }

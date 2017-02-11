@@ -485,7 +485,9 @@ public class FileUtils {
         if (isRecursive) return listFilesInDir(dir);
         if (dir == null || !isDir(dir)) return null;
         List<File> list = new ArrayList<>();
-        Collections.addAll(list, dir.listFiles());
+        if (dir.listFiles()!=null){
+            Collections.addAll(list, dir.listFiles());
+        }
         return list;
     }
 

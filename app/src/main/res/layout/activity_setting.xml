@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_setting"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cn.swt.danmuplayer.setting.SettingActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/base_toobar_view"/>
+
+        <com.z.settingitemlib.SettingItem
+            android:id="@+id/set_scan_path"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            app:left_image="@drawable/ic_folder"
+            app:left_text="@string/app_setting_scan_path"
+            app:right_image="@drawable/ic_right_arrow"
+            app:tag_text_visible="false"/>
+        <TextView
+            android:id="@+id/text_scan_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/bg_gray_999999"
+            android:text=""/>
+    </LinearLayout>
+
+</RelativeLayout>

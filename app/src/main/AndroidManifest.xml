@@ -8,14 +8,14 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
-    <uses-permission android:name="android.permission.GET_TASKS"  />
+    <uses-permission android:name="android.permission.GET_TASKS"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
-        android:name="cn.swt.danmuplayer.application.MyApplication"
+        android:name=".application.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -27,10 +27,15 @@
         <meta-data
             android:name="BUGLY_APP_CHANNEL"
             android:value="${APP_Channel}"/>
-        <meta-data android:name="TD_APP_ID" android:value="595AB37AB4BB4463979F0ACB9FA1D381" />
-        <meta-data android:name="TD_CHANNEL_ID" android:value="${APP_Channel}" />
+        <meta-data
+            android:name="TD_APP_ID"
+            android:value="595AB37AB4BB4463979F0ACB9FA1D381"/>
+        <meta-data
+            android:name="TD_CHANNEL_ID"
+            android:value="${APP_Channel}"/>
+
         <activity
-            android:name="cn.swt.danmuplayer.fileexplorer.view.ContentsActivity"
+            android:name=".fileexplorer.view.ContentsActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -39,11 +44,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="cn.swt.danmuplayer.fileexplorer.view.FileExplorerActivity"
+            android:name=".fileexplorer.view.FileExplorerActivity"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="cn.swt.danmuplayer.play.view.VideoViewActivity"
+            android:name=".play.view.VideoViewActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden">
@@ -62,11 +67,16 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
-        <activity android:name="cn.swt.danmuplayer.core.base.BaseActivity">
+        <activity android:name=".core.base.BaseActivity">
         </activity>
-        <activity android:name="cn.swt.danmuplayer.fileexplorer.view.EpisodeIdMatchActivity"
-                  android:windowSoftInputMode="stateHidden"
-                  android:screenOrientation="portrait">
+        <activity
+            android:name=".fileexplorer.view.EpisodeIdMatchActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity android:name=".setting.SettingActivity">
+        </activity>
+        <activity android:name=".setting.SetScanPathActivity">
         </activity>
     </application>
 

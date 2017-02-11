@@ -72,6 +72,11 @@ public class MainPresenter implements MainContract.Present {
                 if (SDCardUtils.isSDCardEnable()) {
 //                    getLiteOrm().deleteAll(ContentInfo.class);
 //                    getLiteOrm().deleteAll(VideoFileInfo.class);
+                    String sp_scan_path=MyApplication.getSP().getString("scan_path","external");
+                    if (TextUtils.isEmpty(sp_scan_path)){
+                        mView.nodefScanPath();
+                        return;
+                    }
                     String SDcardPath = SDCardUtils.getSDCardPath();
                     List<VideoFileInfo> videos = new ArrayList<>();
                     List<ContentInfo>contentInfoList=new ArrayList<>();
@@ -91,7 +96,7 @@ public class MainPresenter implements MainContract.Present {
 //
 //            String[] selectionArgs = new String[]{"text/plain", "application/msword", "application/pdf", "application/vnd.ms-powerpoint", "application/vnd.ms-excel"};
 
-                    Cursor cursor = contentResolver.query(MediaStore.Video.Media.getContentUri("external"), projection, /*selection*/null, /*selectionArgs*/null,  MediaStore.Video.Media.DISPLAY_NAME + " desc");
+                    Cursor cursor = contentResolver.query(MediaStore.Video.Media.getContentUri(sp_scan_path), projection, /*selection*/null, /*selectionArgs*/null,  MediaStore.Video.Media.DISPLAY_NAME + " desc");
 
                     String videoId;
 

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">弹幕播放器</string>
     <string name="danmu_match">弹幕匹配</string>
-    <string name="no_file_notice">无文件，如果是第一次安装请下拉刷新文件列表</string>
+    <string name="no_file_notice">无文件，如果是第一次安装或者切换过扫描路径请下拉刷新文件列表,如果仍然没有检测到请到设置中切换存储路径</string>
     <string name="video">视频</string>
     <string name="search_episode_title">视频标题:</string>
     <string name="search_episode_id">视频集数:</string>
@@ -20,5 +20,11 @@
     <string name="switch_network_offline">模式切换：离线</string>
     <string name="menu">菜单</string>
     <string name="app_setting">设置</string>
-    <string name="app_setting_desc">设置描述</string>
+    <string name="app_setting_desc">软件设置</string>
+    <string name="app_setting_danmuplayer">视频播放</string>
+    <string name="app_setting_danmuplayer_desc">打开弹幕播放器</string>
+    <string name="app_setting_scan_path_select">文件扫描路径选择</string>
+    <string name="app_setting_scan_path">扫描路径</string>
+    <string name="app_setting_external">外置存储</string>
+    <string name="app_setting_internal">内置存储</string>
 </resources>

@@ -8,6 +8,8 @@
     <dimen name="x30">30dp</dimen>
     <dimen name="x130">130dp</dimen>
     <dimen name="x135">135dp</dimen>
+    <dimen name="y1">1dp</dimen>
+    <dimen name="y3">3dp</dimen>
     <dimen name="y5">5dp</dimen>
     <dimen name="y10">10dp</dimen>
     <dimen name="y20">20dp</dimen>
@@ -20,4 +22,6 @@
     <dimen name="text_size_14">14sp</dimen>
     <dimen name="text_size_16">16sp</dimen>
     <dimen name="text_size_20">20sp</dimen>
+
+
 </resources>

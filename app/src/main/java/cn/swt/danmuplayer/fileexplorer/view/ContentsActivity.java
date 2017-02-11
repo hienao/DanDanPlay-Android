@@ -121,7 +121,8 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         mStoreHousePtrFrame.setPtrHandler(new PtrDefaultHandler() {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
-                mMainPresenter.getAllVideo(mContentResolver);
+//                mMainPresenter.getAllVideo(mContentResolver);
+                requestPremission();
             }
 
             @Override
@@ -154,6 +155,14 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
             ToastUtils.showShortToast(ContentsActivity.this, R.string.no_file_notice);
         }
         mStoreHousePtrFrame.refreshComplete();
+    }
+
+    /**
+     * 未设置扫描路径
+     */
+    @Override
+    public void nodefScanPath() {
+
     }
 
     @Override

@@ -16,6 +16,7 @@ import com.swt.corelib.utils.LogUtils;
 import com.swt.corelib.utils.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -162,6 +163,7 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
             }
             mDatas.addAll(videoFileInfoArrayList);
         }
+        Collections.reverse(mDatas);
         mFileAdapter.notifyDataSetChanged();
     }
 
