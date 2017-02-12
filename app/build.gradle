@@ -93,7 +93,6 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'org.glassfish:javax.annotation:3.1.1-b02'
     compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile project(path: ':superplayerlibrary')
     compile 'com.squareup.okhttp3:okhttp:3.4.2'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'io.reactivex:rxandroid:1.2.1'
@@ -111,4 +110,6 @@ dependencies {
     //设置
     compile 'com.z:SettingItem:2.0'
     compile files('libs/TalkingData_Analytics_Android_SDK_V2.2.48.jar')
+    compile project(':corelib')
+    compile project(':playerview')
 }

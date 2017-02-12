@@ -25,8 +25,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile project(':ijkplayerlibrary')
-    compile 'com.github.ctiao:DanmakuFlameMaster:0.6.2'
-    compile 'com.github.ctiao:ndkbitmap-armv7a:0.6.2'
+    compile 'com.github.ctiao:DanmakuFlameMaster:0.6.4'
+    compile 'com.github.ctiao:ndkbitmap-armv7a:0.6.4'
 //    compile 'com.transfar:smarttoolui:0.9.7'
     compile project(':corelib')
 }

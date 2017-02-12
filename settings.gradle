@@ -1,1 +1,1 @@
-include ':app', ':corelib', ':ijkplayerlibrary', ':superplayerlibrary'
+include ':app', ':corelib', ':ijkplayerlibrary', ':superplayerlibrary', ':playerview'
