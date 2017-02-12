@@ -21,7 +21,7 @@
 -keep class cn.swt.danmuplayer.fileexplorer.beans.** { *; }
 -keep class cn.swt.danmuplayer.play.beans.** { *; }
 -keep class master.flame.danmaku.** {*;}
--keep class com.superplayer.library.** {*;}
+-keep class com.dl7.player.** {*;}
 -keep class tv.danmaku.ijk.**{*;}
 -keep class tv.cjump.**{*;}
 #-------------------------------------------------------------------------
