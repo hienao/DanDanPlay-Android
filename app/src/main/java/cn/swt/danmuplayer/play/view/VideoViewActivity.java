@@ -8,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 
+import com.dl7.player.danmaku.OnDanmakuListener;
 import com.dl7.player.media.IjkPlayerView;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
+import com.swt.corelib.utils.ToastUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,6 +21,7 @@ import java.io.InputStream;
 
 import cn.swt.danmuplayer.play.contract.VideoViewContract;
 import cn.swt.danmuplayer.play.presenter.VideoViewPresenter;
+import master.flame.danmaku.danmaku.model.BaseDanmaku;
 
 public class VideoViewActivity extends AppCompatActivity implements VideoViewContract.View {
     VideoViewPresenter mVideoViewPresenter;
@@ -100,67 +103,60 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 .showOrHideDanmaku(!hide_danmu)
                 .setTitle(file_title)      // set title
                 .setQualityButtonVisibility(false)//需要在全屏后使用生效
-           ;
+        .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
+            @Override
+            public boolean isValid() {
+                return true;
+            }
 
+            @Override
+            public void onDataObtain(BaseDanmaku data) {
+                long color=-1;
+                switch (data.textColor){
+                    case -1://白色
+                        color=16777215;
+                        break;
+                    case -1638382://红色
+                        color=15138834;
+                        break;
+                    case -69374://浅黄色
+                        color=16707842;
+                        break;
+                    case -16738237://绿色
+                        color=38979;
+                        break;
+                    case -16736022://浅蓝色
+                        color=41194;
+                        break;
+                    case -1965441://粉红
+                        color=14811775;
+                        break;
+                    case -7290080://青色
+                        color=9487136;
+                        break;
+                    case -16765326://深蓝色
+                        color=11890;
+                        break;
+                    case -1004758://棕黄色
+                        color=15772458;
+                        break;
+                    case -9946501://紫色
+                        color=6830715;
+                        break;
+                    case -8077109://青灰色
+                        color=8700107;
+                        break;
+                    case -7177927://灰黄色
+                        color=9599289;
+                        break;
+                    default:
+                        color=16777215;
+                        break;
+                }
+                ToastUtils.showShortToastSafe(VideoViewActivity.this,data.text+" "+String.valueOf(color)+" "+String.valueOf(data.getType()));
+            }
 
-//        mViewSuperPlayer.setLive(false);//设置该地址是直播的地址
-//        mViewSuperPlayer.setNetChangeListener(true)//设置监听手机网络的变化
-//                .setOnNetChangeListener(this)//实现网络变化的回调
-//                .onPrepared(new SuperPlayer.OnPreparedListener() {
-//                    @Override
-//                    public void onPrepared() {
-//                        /**
-//                         * 监听视频是否已经准备完成开始播放。（可以在这里处理视频封面的显示跟隐藏）
-//                         */
-//                        playerPrepare = true;
-//                        if (danmuPrepare) {
-//                            mViewSuperPlayer.start();
-//                            LogUtils.i("播放器开始");
-//                            mViewSuperPlayer.getDanmakuView().resume();
-//                            LogUtils.i("弹幕显示");
-//                        }
-//
-//                    }
-//                }).onComplete(new Runnable() {
-//            @Override
-//            public void run() {
-//                /**
-//                 * 监听视频是否已经播放完成了。（可以在这里处理视频播放完成进行的操作）
-//                 */
-//            }
-//        }).onInfo(new SuperPlayer.OnInfoListener() {
-//            @Override
-//            public void onInfo(int what, int extra) {
-//                /**
-//                 * 监听视频的相关信息。
-//                 */
-//
-//            }
-//        }).onError(new SuperPlayer.OnErrorListener() {
-//            @Override
-//            public void onError(int what, int extra) {
-//                /**
-//                 * 监听视频播放失败的回调
-//                 */
-//
-//            }
-//        }).onDanmuViewPrepared(new SuperPlayer.OnDanmuViewPreparedListener() {
-//            @Override
-//            public void onPrepared() {
-//                danmuPrepare = true;
-//                if (playerPrepare) {
-//                    mViewSuperPlayer.start();
-//                    LogUtils.i("播放器开始");
-//                    mViewSuperPlayer.getDanmakuView().resume();
-//                    LogUtils.i("弹幕显示");
-//                }
-//
-//            }
-//        });
-//        ;
-//        mViewSuperPlayer.initDanmuView(videoPath, hide_danmu);
-//        mViewSuperPlayer.setScaleType(SuperPlayer.SCALETYPE_FITXY);
-//        mViewSuperPlayer.setPlayerWH(0, mViewSuperPlayer.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
+        });
     }
 
 
