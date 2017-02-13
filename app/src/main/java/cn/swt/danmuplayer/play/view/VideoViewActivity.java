@@ -108,7 +108,10 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
                     @Override
                     public boolean isValid() {
-                        return true;
+                        if (episode_id>-1){
+                            return true;
+                        }
+                        return false;
                     }
 
                     @Override
@@ -158,7 +161,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                         if (episode_id>-1){
                             mVideoViewPresenter.sendDanmu(episode_id,data.getTime(),data.getType(),color,data.text.toString());
                         }else {
-                            ToastUtils.showShortToastSafe(VideoViewActivity.this, "未识别到有效的视频ID,无法发送弹幕到服务器");
+                            ToastUtils.showShortToastSafe(VideoViewActivity.this, "未识别到有效的视频ID,无法发送弹幕到服务器,请检查是否是以在线模式加载");
                         }
                     }
 

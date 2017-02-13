@@ -33,16 +33,18 @@ public class BmbUtil {
     public static void initBoomMenuButton(BoomMenuButton bmb, final Context activitycontext){
         assert bmb != null;
         bmb.setButtonEnum(ButtonEnum.Ham);
-        bmb.setPiecePlaceEnum(PiecePlaceEnum.HAM_2);
-        bmb.setButtonPlaceEnum(ButtonPlaceEnum.HAM_2);
-        bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting_danmuplayer,R.string.app_setting_danmuplayer_desc));
+        bmb.setPiecePlaceEnum(PiecePlaceEnum.HAM_1);
+        bmb.setButtonPlaceEnum(ButtonPlaceEnum.HAM_1);
+//        bmb.setPiecePlaceEnum(PiecePlaceEnum.HAM_2);
+//        bmb.setButtonPlaceEnum(ButtonPlaceEnum.HAM_2);
+//        bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting_danmuplayer,R.string.app_setting_danmuplayer_desc));
         bmb.addBuilder(BuilderManager.getHamButtonBuilder(R.string.app_setting,R.string.app_setting_desc));
         bmb.setOnBoomListener(new OnBoomListener() {
             @Override
             public void onClicked(int index, BoomButton boomButton) {
                 Intent intent;
                 switch (index){
-                    case 0:
+                    case -1:
                         Activity activity= (Activity) activitycontext;
                         if(!(activity  instanceof ContentsActivity)){
                             ToastUtils.showShortToastSafe(activitycontext,"点击了视频播放按钮");
