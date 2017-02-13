@@ -19,5 +19,6 @@ public class VideoViewContract {
     }
 
     public interface Present extends BasePresenter {
+        void sendDanmu(int episodeId,double time,int type,int color,String msg);
     }
 }

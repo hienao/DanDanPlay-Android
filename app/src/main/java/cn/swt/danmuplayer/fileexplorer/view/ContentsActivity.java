@@ -144,6 +144,11 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     }
 
     @Override
+    public void error(String msg) {
+
+    }
+
+    @Override
     public void getDataFromSQLite() {
         mDatas.clear();
         ArrayList<ContentInfo> contentInfoArrayList = MyApplication.getLiteOrm().query(ContentInfo.class);
@@ -155,11 +160,6 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
             ToastUtils.showShortToast(ContentsActivity.this, R.string.no_file_notice);
         }
         mStoreHousePtrFrame.refreshComplete();
-    }
-
-    @Override
-    public void error() {
-
     }
 
     /**

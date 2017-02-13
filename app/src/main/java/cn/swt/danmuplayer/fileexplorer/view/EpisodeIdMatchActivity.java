@@ -274,7 +274,7 @@ public class EpisodeIdMatchActivity extends BaseActivity implements EpisodeIdMat
 
 
     @Override
-    public void error() {
+    public void error(String msg) {
 
     }
 

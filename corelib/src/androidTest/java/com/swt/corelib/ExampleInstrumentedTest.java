@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.swt.corelib.utils.EncryptUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -22,5 +24,7 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("com.swt.corelib.test", appContext.getPackageName());
+        System.out.println("------------------------------------------------------------------"+EncryptUtils.getEncryptDanmu("12345"));
+        System.out.println("------------------------------------------------------------------"+EncryptUtils.getEncryptDanmu("中文测试"));
     }
 }

@@ -1,6 +1,17 @@
 package cn.swt.danmuplayer.play.presenter;
 
+import com.swt.corelib.utils.EncryptUtils;
+import com.swt.corelib.utils.LogUtils;
+
+import cn.swt.danmuplayer.core.http.APIService;
+import cn.swt.danmuplayer.core.http.GsonManager;
+import cn.swt.danmuplayer.core.http.RetrofitManager;
+import cn.swt.danmuplayer.core.http.beans.SendCommentResponse;
+import cn.swt.danmuplayer.play.beans.SendCommentBean;
 import cn.swt.danmuplayer.play.contract.VideoViewContract;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Title: VideoViewPresenter <br>
@@ -11,12 +22,41 @@ import cn.swt.danmuplayer.play.contract.VideoViewContract;
  */
 public class VideoViewPresenter implements VideoViewContract.Present {
     private VideoViewContract.View mView;
-    private String videoPath;
+
     public VideoViewPresenter(VideoViewContract.View view) {
         mView = view;
     }
 
+    @Override
+    public void sendDanmu(int episodeId, double time, int type, int color, String msg) {
+        SendCommentBean sendCommentBean=new SendCommentBean();
+        sendCommentBean.setTime(time);
+        sendCommentBean.setMode(type);
+        sendCommentBean.setColor(color);
+        sendCommentBean.setMessage(msg);
+        String commentJsonstr=GsonManager.getInstance().toJson(sendCommentBean);
+        String encryptedText= EncryptUtils.getEncryptDanmu(commentJsonstr);
+        LogUtils.i("识别到视频id"+episodeId+"  弹幕内容："+encryptedText);
+        RetrofitManager retrofitManager = RetrofitManager.getInstance();
+        APIService apiService = retrofitManager.create();
+        retrofitManager.enqueue(apiService.sendComment(String.valueOf(episodeId), "ddplayandroid", encryptedText), new Callback<SendCommentResponse>() {
+            @Override
+            public void onResponse(Call<SendCommentResponse> call, Response<SendCommentResponse> response) {
+                if (response.isSuccessful()) {
+                    SendCommentResponse sendCommentResponse = response.body();
+                    if (!sendCommentResponse.isSuccess()){
+                        mView.error("弹幕发送失败，失败原因："+sendCommentResponse.getError());
+                    }
+                }else {
+                    mView.error("弹幕发送失败，失败原因："+response.message());
+                }
+            }
 
-
-
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                LogUtils.e("VideoViewPresenter", "sendcomment Error", t);
+                mView.error("弹幕发送失败，请检查网络");
+            }
+        });
+    }
 }

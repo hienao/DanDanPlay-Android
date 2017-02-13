@@ -48,9 +48,9 @@ public interface APIService {
      * @param encryptedText         加密后的json字符串
      * @return
      */
-    @PUT("api/v1/comment/{episodeId}?clientId={clientId}")
+    @PUT("api/v1/comment/{episodeId}")
     @Headers("Content-Type: application/json") //如果无法获取结果把这条去掉试试
-    Call<SendCommentResponse> sendComment(@Path("episodeId") String episodeId, @Path("clientId") String clientId,
+    Call<SendCommentResponse> sendComment(@Path("episodeId") String episodeId, @Query("clientId") String clientId,
                                           @Query("encryptedText") String encryptedText);
 
     /**

@@ -27,7 +27,8 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     VideoViewPresenter mVideoViewPresenter;
     com.dl7.player.media.IjkPlayerView mViewSuperPlayer;
     private String videoPath, videoTitle, file_title;
-    private boolean hide_danmu = false;
+    private boolean hide_danmu = false, isOffLine = false;
+    private int episode_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         file_title = getIntent().getStringExtra("file_title");
         videoTitle = getIntent().getStringExtra("title");
         hide_danmu = getIntent().getBooleanExtra("hide_danmu", false);
+        episode_id=getIntent().getIntExtra("episode_id", -1);
     }
 
     private void initView() {
@@ -66,7 +68,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     private void initPlayer() {
 
         String danmuxml = "";
-        InputStream inputStream=null;
+        InputStream inputStream = null;
         if (!TextUtils.isEmpty(videoPath)) {
             String ddxml = videoPath.substring(0, videoPath.lastIndexOf(".")) + "dd.xml";
             String bilixml = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
@@ -103,60 +105,64 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 .showOrHideDanmaku(!hide_danmu)
                 .setTitle(file_title)      // set title
                 .setQualityButtonVisibility(false)//需要在全屏后使用生效
-        .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
-            @Override
-            public boolean isValid() {
-                return true;
-            }
+                .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
+                    @Override
+                    public boolean isValid() {
+                        return true;
+                    }
 
-            @Override
-            public void onDataObtain(BaseDanmaku data) {
-                long color=-1;
-                switch (data.textColor){
-                    case -1://白色
-                        color=16777215;
-                        break;
-                    case -1638382://红色
-                        color=15138834;
-                        break;
-                    case -69374://浅黄色
-                        color=16707842;
-                        break;
-                    case -16738237://绿色
-                        color=38979;
-                        break;
-                    case -16736022://浅蓝色
-                        color=41194;
-                        break;
-                    case -1965441://粉红
-                        color=14811775;
-                        break;
-                    case -7290080://青色
-                        color=9487136;
-                        break;
-                    case -16765326://深蓝色
-                        color=11890;
-                        break;
-                    case -1004758://棕黄色
-                        color=15772458;
-                        break;
-                    case -9946501://紫色
-                        color=6830715;
-                        break;
-                    case -8077109://青灰色
-                        color=8700107;
-                        break;
-                    case -7177927://灰黄色
-                        color=9599289;
-                        break;
-                    default:
-                        color=16777215;
-                        break;
-                }
-                ToastUtils.showShortToastSafe(VideoViewActivity.this,data.text+" "+String.valueOf(color)+" "+String.valueOf(data.getType()));
-            }
+                    @Override
+                    public void onDataObtain(BaseDanmaku data) {
+                        int color = -1;
+                        switch (data.textColor) {
+                            case -1://白色
+                                color = 16777215;
+                                break;
+                            case -1638382://红色
+                                color = 15138834;
+                                break;
+                            case -69374://浅黄色
+                                color = 16707842;
+                                break;
+                            case -16738237://绿色
+                                color = 38979;
+                                break;
+                            case -16736022://浅蓝色
+                                color = 41194;
+                                break;
+                            case -1965441://粉红
+                                color = 14811775;
+                                break;
+                            case -7290080://青色
+                                color = 9487136;
+                                break;
+                            case -16765326://深蓝色
+                                color = 11890;
+                                break;
+                            case -1004758://棕黄色
+                                color = 15772458;
+                                break;
+                            case -9946501://紫色
+                                color = 6830715;
+                                break;
+                            case -8077109://青灰色
+                                color = 8700107;
+                                break;
+                            case -7177927://灰黄色
+                                color = 9599289;
+                                break;
+                            default:
+                                color = 16777215;
+                                break;
+                        }
+                        if (episode_id>-1){
+                            mVideoViewPresenter.sendDanmu(episode_id,data.getTime(),data.getType(),color,data.text.toString());
+                        }else {
+                            ToastUtils.showShortToastSafe(VideoViewActivity.this, "未识别到有效的视频ID,无法发送弹幕到服务器");
+                        }
+                    }
 
-        });
+                });
     }
 
 
@@ -167,8 +173,8 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 
 
     @Override
-    public void error() {
-
+    public void error(String msg) {
+        ToastUtils.showShortToastSafe(VideoViewActivity.this,msg);
     }
 
     @Override

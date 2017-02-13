@@ -123,7 +123,7 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     }
 
     @Override
-    public void error() {
+    public void error(String msg) {
 
     }
 
