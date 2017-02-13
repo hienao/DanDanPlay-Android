@@ -29,7 +29,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 24
         versionCode 11
-        versionName "2.1.0 beta"
+        versionName "2.2.0beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             // 设置支持的SO库架构
