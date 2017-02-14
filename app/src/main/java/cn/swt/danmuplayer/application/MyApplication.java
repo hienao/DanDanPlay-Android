@@ -29,7 +29,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         //获取Context
-        context = getApplicationContext();
+        context = this;
         //log开关
         if (isApkInDebug(context)){
             LogUtils.init(context,true,true,'v',TAG);
