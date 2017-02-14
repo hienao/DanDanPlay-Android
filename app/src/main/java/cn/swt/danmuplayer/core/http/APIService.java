@@ -7,7 +7,9 @@ import cn.swt.danmuplayer.core.http.beans.MatchResponse;
 import cn.swt.danmuplayer.core.http.beans.RelatedResponse;
 import cn.swt.danmuplayer.core.http.beans.SearchAllResponse;
 import cn.swt.danmuplayer.core.http.beans.SendCommentResponse;
+import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -51,7 +53,7 @@ public interface APIService {
     @PUT("api/v1/comment/{episodeId}")
     @Headers("Content-Type: application/json") //如果无法获取结果把这条去掉试试
     Call<SendCommentResponse> sendComment(@Path("episodeId") String episodeId, @Query("clientId") String clientId,
-                                          @Query("encryptedText") String encryptedText);
+                                          @Body RequestBody  encryptedText);
 
     /**
      * 向指定的流媒体频道或私有频道发送弹幕

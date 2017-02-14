@@ -9,6 +9,7 @@ import cn.swt.danmuplayer.core.http.RetrofitManager;
 import cn.swt.danmuplayer.core.http.beans.SendCommentResponse;
 import cn.swt.danmuplayer.play.beans.SendCommentBean;
 import cn.swt.danmuplayer.play.contract.VideoViewContract;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,11 +36,12 @@ public class VideoViewPresenter implements VideoViewContract.Present {
         sendCommentBean.setColor(color);
         sendCommentBean.setMessage(msg);
         String commentJsonstr=GsonManager.getInstance().toJson(sendCommentBean);
-        String encryptedText= EncryptUtils.getEncryptDanmu(commentJsonstr);
+        String encryptedText="\""+ EncryptUtils.getEncryptDanmu(commentJsonstr)+"\"";
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),encryptedText);
         LogUtils.i("识别到视频id"+episodeId+"  弹幕内容："+encryptedText);
         RetrofitManager retrofitManager = RetrofitManager.getInstance();
         APIService apiService = retrofitManager.create();
-        retrofitManager.enqueue(apiService.sendComment(String.valueOf(episodeId), "ddplayandroid", encryptedText), new Callback<SendCommentResponse>() {
+        retrofitManager.enqueue(apiService.sendComment(String.valueOf(episodeId), "ddplayandroid", body), new Callback<SendCommentResponse>() {
             @Override
             public void onResponse(Call<SendCommentResponse> call, Response<SendCommentResponse> response) {
                 if (response.isSuccessful()) {
