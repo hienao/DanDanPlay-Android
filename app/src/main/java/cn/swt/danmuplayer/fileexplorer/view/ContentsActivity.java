@@ -3,8 +3,13 @@ package cn.swt.danmuplayer.fileexplorer.view;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,6 +21,7 @@ import android.view.View;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.swt.corelib.utils.ToastUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +41,7 @@ import in.srain.cube.views.ptr.PtrUIHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 import in.srain.cube.views.ptr.indicator.PtrIndicator;
 
+import static com.tendcloud.tenddata.ab.mContext;
 
 
 public class ContentsActivity extends BaseActivity implements MainContract.View {
@@ -73,6 +80,32 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         mHeader.setPadding(0, 15, 0, 0);
         mHeader.setTextColor(R.color.text_black);
         mHeader.initWithString(refreshHeader);
+    }
+    private void notifyFileSystemChanged(String path) {
+        if (path == null)
+            return;
+        final File f = new File(path);
+        if (Build.VERSION.SDK_INT >= 19 /*Build.VERSION_CODES.KITKAT*/) { //添加此判断，判断SDK版本是不是4.4或者高于4.4
+            String[] paths = new String[]{path};
+            MediaScannerConnection.scanFile(mContext, paths, null, null);
+        } else {
+            final Intent intent;
+            if (f.isDirectory()) {
+                intent = new Intent(Intent.ACTION_MEDIA_MOUNTED);
+                intent.setClassName("com.android.providers.media", "com.android.providers.media.MediaScannerReceiver");
+                intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
+            } else {
+                intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                intent.setData(Uri.fromFile(new File(path)));
+            }
+            mContext.sendBroadcast(intent);
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //通知媒体库更新文件夹
+//        notifyFileSystemChanged(Environment.getExternalStorageDirectory().toString());
     }
 
     private void initView() {
