@@ -3,6 +3,7 @@ package cn.swt.danmuplayer.core.http;
 import cn.swt.danmuplayer.core.http.beans.AcFunVideoNumResponse;
 import cn.swt.danmuplayer.core.http.beans.CidResponse;
 import cn.swt.danmuplayer.core.http.beans.CommentResponse;
+import cn.swt.danmuplayer.core.http.beans.HomePageResponse;
 import cn.swt.danmuplayer.core.http.beans.MatchResponse;
 import cn.swt.danmuplayer.core.http.beans.RelatedResponse;
 import cn.swt.danmuplayer.core.http.beans.SearchAllResponse;
@@ -25,6 +26,12 @@ import retrofit2.http.Query;
  * Created by Wentao.Shi.
  */
 public interface APIService {
+    /**
+     * 获取dandan首页内容
+     * @return
+     */
+    @GET("api/v1/homepage")
+    Call<HomePageResponse> getHomePage();
 
     /**
      * 获取指定节目编号对应的所有第三方弹幕源信息

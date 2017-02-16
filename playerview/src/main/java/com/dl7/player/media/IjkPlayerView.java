@@ -72,6 +72,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import master.flame.danmaku.controller.DrawHandler;
@@ -1999,6 +2000,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         if (mIsEnableDanmaku) {
             // 设置弹幕
             mDanmakuContext = DanmakuContext.create();
+            // 设置是否禁止重叠
+            HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
+            overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
+            overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
+            mDanmakuContext.setDuplicateMergingEnabled(false);//是否启用合并重复弹幕
+            mDanmakuContext.preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
             //同步弹幕和video，貌似没法保持同步，可能我用的有问题，先注释掉- -
 //            mDanmakuContext.setDanmakuSync(new VideoDanmakuSync(this));
             //自己的设
