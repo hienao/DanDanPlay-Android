@@ -87,11 +87,16 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 LogUtils.e("cuowu", e);
             }
         }
-        //缩略图
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(videoPath);
-        Bitmap bitmap = retriever.getFrameAtTime();
-        mViewSuperPlayer.mPlayerThumb.setImageBitmap(bitmap);
+        try {
+            //缩略图
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(videoPath);
+            Bitmap bitmap = retriever.getFrameAtTime();
+            mViewSuperPlayer.mPlayerThumb.setImageBitmap(bitmap);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            LogUtils.i("获取缩略图失败");
+        }
         //        Glide.with(this).load(IMAGE_URL).fitCenter().into(mPlayerView.mPlayerThumb); // Show the thumb before play
         mViewSuperPlayer.init()              // Initialize, the first to use
                 .alwaysFullScreen()//始终全屏
