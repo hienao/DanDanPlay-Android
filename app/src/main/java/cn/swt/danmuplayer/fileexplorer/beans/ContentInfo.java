@@ -1,10 +1,8 @@
 package cn.swt.danmuplayer.fileexplorer.beans;
 
 
-import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.PrimaryKey;
-import com.litesuits.orm.db.annotation.Table;
-import com.litesuits.orm.db.enums.AssignType;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 import static android.R.attr.id;
 
@@ -15,12 +13,9 @@ import static android.R.attr.id;
  * Created DateTime: 2016/10/22 0022 18:35
  * Created by Wentao.Shi.
  */
-@Table("table_content_info")
-public class ContentInfo implements Comparable<ContentInfo>{
-    @PrimaryKey(AssignType.BY_MYSELF)
-    @Column("_contentPath")
+public class ContentInfo extends RealmObject implements Comparable<ContentInfo>{
+    @PrimaryKey
     private String contentPath;//目录路径
-    @Column("_contentName")
     private String contentName;//目录名
     // 非空字段
     private int count;

@@ -1,10 +1,8 @@
 package cn.swt.danmuplayer.fileexplorer.beans;
 
-import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Default;
-import com.litesuits.orm.db.annotation.PrimaryKey;
-import com.litesuits.orm.db.annotation.Table;
-import com.litesuits.orm.db.enums.AssignType;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Title: VideoFileInfo <br>
@@ -13,14 +11,11 @@ import com.litesuits.orm.db.enums.AssignType;
  * Created DateTime: 2016/10/22 0022 18:37
  * Created by Wentao.Shi.
  */
-@Table("table_video_info")
-public class VideoFileInfo implements Comparable<VideoFileInfo>{
-    public static final String CONTENT_PATH = "_contentPath";
+public class VideoFileInfo extends RealmObject implements Comparable<VideoFileInfo>{
     /**
      * 视频文件路径
      */
-    @PrimaryKey(AssignType.BY_MYSELF)
-    @Column("_path")
+    @PrimaryKey
     String videoPath;
     /**
      * 视频名称(不含后缀)
@@ -33,7 +28,6 @@ public class VideoFileInfo implements Comparable<VideoFileInfo>{
     /**
      * 视频所在目录Path
      */
-    @Column("_contentPath")
     String videoContentPath;
     /**
      * 视频封面bitmap的base64 字符串
@@ -46,7 +40,6 @@ public class VideoFileInfo implements Comparable<VideoFileInfo>{
     /**
      * 是否有本地弹幕
      */
-    @Default("true")
     boolean haveLocalDanmu;
 
     public VideoFileInfo() {

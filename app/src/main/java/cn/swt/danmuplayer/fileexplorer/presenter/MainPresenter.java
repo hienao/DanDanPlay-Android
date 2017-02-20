@@ -109,7 +109,6 @@ public class MainPresenter implements MainContract.Present {
                             if (!FileUtils.isFileExists(v.getVideoPath())){
                                 MyApplication.getLiteOrm().delete(v);
                             }
-
                         }
                     }
                     //查询原先数据库中是否有被删除的视频，有的话删除记录
@@ -186,6 +185,9 @@ public class MainPresenter implements MainContract.Present {
             }
 
         }).start();
+
+    }
+    public void restoreContentTable(){
 
     }
 

@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'android-apt'
+//realm数据库
+apply plugin: 'realm-android'
 //apply plugin: 'wolearn.ajcplugin'
 def releaseTime() {
     return new Date().format("yyyy.MM.dd", TimeZone.getTimeZone("UTC"))
@@ -109,6 +111,7 @@ dependencies {
     compile 'com.nightonke:boommenu:2.0.7'
     //设置
     compile 'com.z:SettingItem:2.0'
+
     compile files('libs/TalkingData_Analytics_Android_SDK_V2.2.48.jar')
     compile project(':corelib')
     compile project(':playerview')

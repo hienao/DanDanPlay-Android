@@ -4,13 +4,14 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 
-import com.litesuits.orm.LiteOrm;
-import com.litesuits.orm.db.DataBaseConfig;
 import com.swt.corelib.utils.LogUtils;
 import com.swt.corelib.utils.SPUtils;
 import com.swt.corelib.utils.ToastUtils;
 import com.tencent.bugly.Bugly;
 import com.tendcloud.tenddata.TCAgent;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Title: MyApplication <br>
@@ -22,7 +23,6 @@ import com.tendcloud.tenddata.TCAgent;
 public class MyApplication extends Application {
     public static String TAG="SWTTAG";
     private static Context context;
-    private static LiteOrm liteOrm;
     private static SPUtils mSpUtils;
 
     @Override
@@ -52,18 +52,13 @@ public class MyApplication extends Application {
 //        SmartToolCore.getInstance().init(this);
         //toast初始化
         ToastUtils.init(false);
-        //初始化liteorm
-        if (liteOrm == null) {
-            DataBaseConfig config = new DataBaseConfig(this, "liteorm.db");
-            config.debugged = true; // open the log
-            config.dbVersion = 1; // set database version
-            config.onUpdateListener = null; // set database update listener
-            liteOrm = LiteOrm.newSingleInstance(config);
-        }
-    }
-
-    public static LiteOrm getLiteOrm(){
-        return liteOrm;
+        //初始化realm数据库
+        Realm.init(this);
+        RealmConfiguration realmconfig = new RealmConfiguration.Builder()
+                .name("danmuplayer")
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(realmconfig);
     }
     public static Context getMyApplicationContext(){
         return context;
