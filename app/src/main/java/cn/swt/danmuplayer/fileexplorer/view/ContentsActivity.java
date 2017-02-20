@@ -40,6 +40,8 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrUIHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 import in.srain.cube.views.ptr.indicator.PtrIndicator;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 import static com.tendcloud.tenddata.ab.mContext;
 
@@ -57,6 +59,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     private ContentResolver mContentResolver;
     private String refreshHeader;
     private StoreHouseHeader mHeader;
+    private Realm realm;
     //菜单
     private BoomMenuButton bmb;
 
@@ -71,6 +74,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     }
 
     private void initData() {
+        realm = MyApplication.getRealmInstance();
         mMainPresenter = new MainPresenter(this);
         mDatas = new ArrayList<>();
         refreshHeader = getResources().getString(R.string.scaning);
@@ -184,7 +188,8 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     @Override
     public void getDataFromSQLite() {
         mDatas.clear();
-        ArrayList<ContentInfo> contentInfoArrayList = MyApplication.getLiteOrm().query(ContentInfo.class);
+        RealmResults<ContentInfo> contentInfos = realm.where(ContentInfo.class).findAll();
+        List<ContentInfo> contentInfoArrayList  = realm.copyFromRealm(contentInfos);
         if (contentInfoArrayList != null) {
             mDatas.addAll(contentInfoArrayList);
         }

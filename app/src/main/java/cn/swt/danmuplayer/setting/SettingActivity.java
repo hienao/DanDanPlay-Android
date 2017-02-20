@@ -11,10 +11,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.danmuplayer.R;
 import cn.swt.danmuplayer.core.base.BaseActivity;
-import cn.swt.danmuplayer.fileexplorer.beans.ContentInfo;
-import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
 
-import static cn.swt.danmuplayer.application.MyApplication.getLiteOrm;
 import static cn.swt.danmuplayer.application.MyApplication.getSP;
 
 public class SettingActivity extends BaseActivity {
@@ -58,8 +55,6 @@ public class SettingActivity extends BaseActivity {
                     getSP().putString("scan_path", "external");
                     mSetScanPath.rightText.setText(getResources().getString(R.string.app_setting_external));
                 }
-                getLiteOrm().deleteAll(ContentInfo.class);
-                getLiteOrm().deleteAll(VideoFileInfo.class);
             }
         });
     }

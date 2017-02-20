@@ -60,6 +60,14 @@ public class MyApplication extends Application {
                 .build();
         Realm.setDefaultConfiguration(realmconfig);
     }
+
+    /**
+     * 获取realm实例
+     * @return
+     */
+    public static Realm getRealmInstance(){
+        return Realm.getDefaultInstance();
+    }
     public static Context getMyApplicationContext(){
         return context;
     }

@@ -10,8 +10,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.litesuits.orm.db.assit.QueryBuilder;
-import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.LogUtils;
 import com.swt.corelib.utils.ToastUtils;
 
@@ -28,6 +26,8 @@ import cn.swt.danmuplayer.fileexplorer.adapter.FileAdapter;
 import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
 import cn.swt.danmuplayer.fileexplorer.contract.FileExplorerContract;
 import cn.swt.danmuplayer.fileexplorer.presenter.FileExplorerPresenter;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class FileExplorerActivity extends BaseActivity implements FileExplorerContract.View {
     FileExplorerPresenter mFileExplorerPresenter;
@@ -39,7 +39,7 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     private FileAdapter mFileAdapter;
     private String contentPath;
     private boolean mNetworkMode=true;
-
+    private Realm realm ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +51,7 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     }
 
     private void initData() {
+        realm = MyApplication.getRealmInstance();
         mFileExplorerPresenter=new FileExplorerPresenter(this);
         mDatas = new ArrayList<>();
         mFileAdapter = new FileAdapter(this, mDatas);
@@ -140,28 +141,10 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     @Override
     public void getDataFromSQLite() {
         mDatas.clear();
-        ArrayList<VideoFileInfo> list = MyApplication.getLiteOrm().query(VideoFileInfo.class);
-        QueryBuilder<VideoFileInfo> qb = new QueryBuilder<>(VideoFileInfo.class).whereEquals("_contentPath", contentPath);
-        ArrayList<VideoFileInfo> videoFileInfoArrayList = MyApplication.getLiteOrm().query(qb);
-        if (videoFileInfoArrayList != null && videoFileInfoArrayList.size() != 0) {
-            for (VideoFileInfo v : videoFileInfoArrayList) {
-                //更新数据库记录为有本地弹幕
-                VideoFileInfo vv = MyApplication.getLiteOrm().queryById(v.getVideoPath(), VideoFileInfo.class);
-                if (vv != null) {
-                    String ddxml = vv.getVideoPath().substring(0, vv.getVideoPath().lastIndexOf(".")) + "dd.xml";
-                    String bilixml = vv.getVideoPath().substring(0, vv.getVideoPath().lastIndexOf(".")) + ".xml";
-                    if (FileUtils.isFileExists(ddxml) || FileUtils.isFileExists(bilixml)) {
-                        vv.setHaveLocalDanmu(true);
-                        v.setHaveLocalDanmu(true);
-                    } else {
-                        vv.setHaveLocalDanmu(false);
-                        v.setHaveLocalDanmu(false);
-                    }
-                }
-                MyApplication.getLiteOrm().save(v);
-                //更新数据库记录为有本地弹幕
-            }
-            mDatas.addAll(videoFileInfoArrayList);
+        RealmResults<VideoFileInfo> videoFileInfos = realm.where(VideoFileInfo.class).equalTo("videoContentPath",contentPath).findAll();
+        List<VideoFileInfo> videolist = realm.copyFromRealm(videoFileInfos);
+        if (videolist != null && videolist.size() != 0) {
+            mDatas.addAll(videolist);
         }
         Collections.reverse(mDatas);
         mFileAdapter.notifyDataSetChanged();

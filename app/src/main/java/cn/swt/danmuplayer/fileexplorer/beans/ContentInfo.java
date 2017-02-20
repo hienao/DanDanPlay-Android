@@ -20,11 +20,7 @@ public class ContentInfo extends RealmObject implements Comparable<ContentInfo>{
     // 非空字段
     private int count;
 
-    public ContentInfo(String contentPath,int count) {
-        this.contentPath = contentPath;
-        if (contentPath!=null&&contentPath.contains("/"))
-        this.contentName=contentPath.split("/")[contentPath.split("/").length-1];
-        this.count=count;
+    public ContentInfo() {
     }
 
     public int getCount() {
@@ -41,6 +37,8 @@ public class ContentInfo extends RealmObject implements Comparable<ContentInfo>{
 
     public void setContentPath(String contentPath) {
         this.contentPath = contentPath;
+        if (contentPath!=null&&contentPath.contains("/"))
+            this.contentName=contentPath.split("/")[contentPath.split("/").length-1];
     }
 
     public String getContentName() {
