@@ -97,18 +97,13 @@ public class MainPresenter implements MainContract.Present {
                     //查询原先数据库中是否有被删除的视频，有的话删除记录
 
                     RealmResults<VideoFileInfo> videolist = realm.where(VideoFileInfo.class).findAll();
-//                    List<VideoFileInfo> videolist = realm.copyFromRealm(videoFileInfos);
                     if (videolist != null && videolist.size() != 0) {
                         for (final VideoFileInfo v : videolist) {
                             //文件不存在
                             if (!FileUtils.isFileExists(v.getVideoPath())) {
-                                realm.executeTransaction(new Realm.Transaction() {
-
-                                    @Override
-                                    public void execute(Realm realm) {
-                                        v.deleteFromRealm();
-                                    }
-                                });
+                                realm.beginTransaction();
+                                v.deleteFromRealm();
+                                realm.commitTransaction();
                             }
                         }
                     }
@@ -190,38 +185,49 @@ public class MainPresenter implements MainContract.Present {
     }
 
     /**
-     * 重建目录信息数据库
+     * 更新目录信息数据库
      */
     public static void restoreContentTable(Realm realm) {
         //删除原来的目录信息
-        final RealmResults<ContentInfo> contentInfos=  realm.where(ContentInfo.class).findAll();
-        realm.executeTransaction(new Realm.Transaction(){
 
-            @Override
-            public void execute(Realm realm) {
-                contentInfos.deleteAllFromRealm();
-            }
-        });
         //重建目录信息
         RealmResults<VideoFileInfo> videoFileInfos = realm.where(VideoFileInfo.class).findAll();
         List<VideoFileInfo> videolist = realm.copyFromRealm(videoFileInfos);
         List<String> pathlist=new ArrayList<>();
-        if (videolist!=null&&videolist.size()!=0){
+        if (videolist!=null&&videolist.size()>0){
             for (VideoFileInfo v:videolist){
                 if (pathlist.contains(v.getVideoContentPath()))
                     continue;
                 pathlist.add(v.getVideoContentPath());
             }
         }
+        //删除为空的目录
+        RealmResults<ContentInfo> contentInfos=  realm.where(ContentInfo.class).findAll();
+        if (contentInfos!=null&&contentInfos.size()>0){
+            for (ContentInfo c:contentInfos){
+                if (!pathlist.contains(c.getContentPath())){
+                    realm.beginTransaction();
+                    c.deleteFromRealm();
+                    realm.commitTransaction();
+                }
+            }
+        }
         if (pathlist!=null&&pathlist.size()!=0){
             for (int i=0;i<pathlist.size();i++){
                 videoFileInfos = realm.where(VideoFileInfo.class).equalTo("videoContentPath",pathlist.get(i)).findAll();
-                ContentInfo contentInfo=new ContentInfo();
-                contentInfo.setContentPath(pathlist.get(i));
-                contentInfo.setCount(videoFileInfos.size());
-                realm.beginTransaction();
-                realm.copyToRealm(contentInfo);
-                realm.commitTransaction();
+                ContentInfo contentInfo=realm.where(ContentInfo.class).equalTo("contentPath",pathlist.get(i)).findFirst();
+                if (contentInfo==null){
+                    contentInfo=new ContentInfo();
+                    contentInfo.setContentPath(pathlist.get(i));
+                    contentInfo.setCount(videoFileInfos.size());
+                    realm.beginTransaction();
+                    realm.copyToRealm(contentInfo);
+                    realm.commitTransaction();
+                }else {
+                    realm.beginTransaction();
+                    contentInfo.setCount(videoFileInfos.size());
+                    realm.commitTransaction();
+                }
             }
         }
     }

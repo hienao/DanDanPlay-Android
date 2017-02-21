@@ -1,5 +1,6 @@
 package cn.swt.danmuplayer.fileexplorer.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -147,6 +148,9 @@ public class FileAdapter extends RecyclerView.Adapter{
                 }
                 notifyDataSetChanged();
                 dialog.dismiss();
+                if (list==null||list.size()==0){
+                    ((Activity)mContext).finish();
+                }
             }
         });
         builder.create().show();
@@ -156,16 +160,12 @@ public class FileAdapter extends RecyclerView.Adapter{
             FileUtils.deleteFile(filePath);
         }
         Realm realm = MyApplication.getRealmInstance();
-        final VideoFileInfo videoFileInfoc = realm.where(VideoFileInfo.class).equalTo("videoPath", filePath).findFirst();
+        VideoFileInfo videoFileInfoc = realm.where(VideoFileInfo.class).equalTo("videoPath", filePath).findFirst();
+        realm.beginTransaction();
         if (videoFileInfoc != null){
-            realm.executeTransaction(new Realm.Transaction(){
-
-                @Override
-                public void execute(Realm realm) {
-                    videoFileInfoc.deleteFromRealm();
-                }
-            });
+            videoFileInfoc.deleteFromRealm();
         }
+        realm.commitTransaction();
         VideoFileArgInfo videoFileArgInfo = realm.where(VideoFileArgInfo.class).equalTo("videoPath", filePath).findFirst();
         realm.beginTransaction();
         if (videoFileArgInfo!=null){
