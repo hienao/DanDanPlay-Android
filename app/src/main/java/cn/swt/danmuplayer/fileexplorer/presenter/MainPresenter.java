@@ -23,6 +23,7 @@ import java.util.List;
 
 import cn.swt.danmuplayer.application.MyApplication;
 import cn.swt.danmuplayer.fileexplorer.beans.ContentInfo;
+import cn.swt.danmuplayer.fileexplorer.beans.VideoFileArgInfo;
 import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
 import cn.swt.danmuplayer.fileexplorer.contract.MainContract;
 import io.realm.Realm;
@@ -120,9 +121,34 @@ public class MainPresenter implements MainContract.Present {
                             videoDuration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
                             File f = new File(filePath);
                             VideoFileInfo videoFileInfoc = realm.where(VideoFileInfo.class).equalTo("videoPath", filePath).findFirst();
+                            //保存弹幕信息到数据库
+                            VideoFileArgInfo videoFileArgInfo=realm.where(VideoFileArgInfo.class).equalTo("videoPath", filePath).findFirst();
+                            String ddxml = filePath.substring(0, filePath.lastIndexOf(".")) + "dd.xml";
+                            String bilixml = filePath.substring(0, filePath.lastIndexOf(".")) + ".xml";
+                            realm.beginTransaction();
+                            if (videoFileArgInfo==null){
+                                videoFileArgInfo=new VideoFileArgInfo();
+                                videoFileArgInfo.setVideoPath(filePath);
+                                videoFileArgInfo.setSawProgress(0);
+                                if (FileUtils.isFileExists(ddxml) || FileUtils.isFileExists(bilixml)) {
+                                    videoFileArgInfo.setHaveLocalDanmu(true);
+                                }else {
+                                    videoFileArgInfo.setHaveLocalDanmu(false);
+                                }
+                                realm.copyToRealm(videoFileArgInfo);
+                            }else {
+                                if (FileUtils.isFileExists(ddxml) || FileUtils.isFileExists(bilixml)) {
+                                    videoFileArgInfo.setHaveLocalDanmu(true);
+                                }else {
+                                    videoFileArgInfo.setHaveLocalDanmu(false);
+                                }
+
+                            }
+                            realm.commitTransaction();
+                            //文件已存在，跳过
                             if (videoFileInfoc != null)
                                 continue;
-                            //文件判断
+                            //文件不存在，添加
                             VideoFileInfo videoFileInfo = new VideoFileInfo();
                             videoFileInfo.setVideoPath(filePath);
                             videoFileInfo.setVideoContentPath(filePath.substring(0, filePath.lastIndexOf("/") + 1));
@@ -142,11 +168,7 @@ public class MainPresenter implements MainContract.Present {
                             } catch (NumberFormatException e) {
                                 videoFileInfo.setVideoLength("UnKnown");
                             }
-                            String ddxml = filePath.substring(0, filePath.lastIndexOf(".")) + "dd.xml";
-                            String bilixml = filePath.substring(0, filePath.lastIndexOf(".")) + ".xml";
-                            if (FileUtils.isFileExists(ddxml) || FileUtils.isFileExists(bilixml)) {
-                                videoFileInfo.setHaveLocalDanmu(true);
-                            }
+
                             realm.beginTransaction();
                             realm.copyToRealm(videoFileInfo);
                             realm.commitTransaction();

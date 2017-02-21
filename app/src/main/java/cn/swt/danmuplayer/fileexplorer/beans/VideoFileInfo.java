@@ -37,10 +37,6 @@ public class VideoFileInfo extends RealmObject implements Comparable<VideoFileIn
      * 视频时长
      */
     String videoLength;
-    /**
-     * 是否有本地弹幕
-     */
-    boolean haveLocalDanmu;
 
     public VideoFileInfo() {
     }
@@ -103,15 +99,6 @@ public class VideoFileInfo extends RealmObject implements Comparable<VideoFileIn
 
     public void setVideoLength(String videoLength) {
         this.videoLength = videoLength;
-    }
-
-
-    public boolean isHaveLocalDanmu() {
-        return haveLocalDanmu;
-    }
-
-    public void setHaveLocalDanmu(boolean haveLocalDanmu) {
-        this.haveLocalDanmu = haveLocalDanmu;
     }
 
     @Override

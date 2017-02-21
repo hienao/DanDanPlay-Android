@@ -17,9 +17,12 @@ import com.swt.corelib.utils.NetworkUtils;
 import java.util.List;
 
 import cn.swt.danmuplayer.R;
+import cn.swt.danmuplayer.application.MyApplication;
+import cn.swt.danmuplayer.fileexplorer.beans.VideoFileArgInfo;
 import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
 import cn.swt.danmuplayer.fileexplorer.view.EpisodeIdMatchActivity;
 import cn.swt.danmuplayer.play.view.VideoViewActivity;
+import io.realm.Realm;
 
 /**
  * Title: ContentAdapter <br>
@@ -64,7 +67,11 @@ public class FileAdapter extends RecyclerView.Adapter{
         } catch (Exception e) {
             //获取缩略图失败
         }
-        viewHolder.ic_local_danmu_exist.setImageDrawable(list.get(position).isHaveLocalDanmu()? ContextCompat.getDrawable(mContext,R.drawable.ic_true): ContextCompat.getDrawable(mContext,R.drawable.ic_false));
+        Realm realm = MyApplication.getRealmInstance();
+        VideoFileArgInfo videoFileArgInfo=realm.where(VideoFileArgInfo.class).equalTo("videoPath", list.get(position).getVideoPath()).findFirst();
+        if (videoFileArgInfo!=null){
+            viewHolder.ic_local_danmu_exist.setImageDrawable(videoFileArgInfo.isHaveLocalDanmu()? ContextCompat.getDrawable(mContext,R.drawable.ic_true): ContextCompat.getDrawable(mContext,R.drawable.ic_false));
+        }
         viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

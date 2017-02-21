@@ -38,6 +38,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import cn.swt.danmuplayer.application.MyApplication;
 import cn.swt.danmuplayer.core.http.APIService;
 import cn.swt.danmuplayer.core.http.HttpConstant;
 import cn.swt.danmuplayer.core.http.RetrofitManager;
@@ -45,8 +46,10 @@ import cn.swt.danmuplayer.core.http.beans.CidResponse;
 import cn.swt.danmuplayer.core.http.beans.CommentResponse;
 import cn.swt.danmuplayer.core.http.beans.RelatedResponse;
 import cn.swt.danmuplayer.fileexplorer.beans.DanmakuBean;
+import cn.swt.danmuplayer.fileexplorer.beans.VideoFileArgInfo;
 import cn.swt.danmuplayer.fileexplorer.view.EpisodeIdMatchActivity;
 import cn.swt.danmuplayer.play.view.VideoViewActivity;
+import io.realm.Realm;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Call;
@@ -185,6 +188,19 @@ public class DanmuUtils {
             if(FileUtils.createFileByDeleteOldFile(xmlpath)){
                 if (FileUtils.writeFileFromString(FileUtils.getFileByPath(xmlpath),xmlWriter.toString(),true)){
                     LogUtils.i("弹幕保存完成");
+                    Realm realm = MyApplication.getRealmInstance();
+                    VideoFileArgInfo videoFileArgInfo=realm.where(VideoFileArgInfo.class).equalTo("videoPath", videoPath).findFirst();
+                    realm.beginTransaction();
+                    if (videoFileArgInfo==null){
+                        videoFileArgInfo=new VideoFileArgInfo();
+                        videoFileArgInfo.setVideoPath(videoPath);
+                        videoFileArgInfo.setSawProgress(0);
+                        videoFileArgInfo.setHaveLocalDanmu(true);
+                        realm.copyToRealm(videoFileArgInfo);
+                    }else {
+                        videoFileArgInfo.setHaveLocalDanmu(true);
+                    }
+                    realm.commitTransaction();
                     danmuGetFinish();
                 }
             }
@@ -193,7 +209,6 @@ public class DanmuUtils {
         } catch (SAXException e) {
             e.printStackTrace();
         }
-        LogUtils.i("弹幕保存完成");
         danmuGetFinish();
 
     }
