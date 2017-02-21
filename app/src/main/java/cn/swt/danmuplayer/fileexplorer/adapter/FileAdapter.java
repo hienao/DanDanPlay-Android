@@ -1,8 +1,10 @@
 package cn.swt.danmuplayer.fileexplorer.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.swt.corelib.utils.ConvertUtils;
+import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.NetworkUtils;
 
 import java.util.List;
@@ -88,6 +91,13 @@ public class FileAdapter extends RecyclerView.Adapter{
 
             }
         });
+        viewHolder.mLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showMenuDialog(position);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -108,5 +118,77 @@ public class FileAdapter extends RecyclerView.Adapter{
             mLayout = (LinearLayout) itemView.findViewById(R.id.llayout_file);
             ic_local_danmu_exist= (ImageView) itemView.findViewById(R.id.iv_local_danmu_exist);
         }
+    }
+    private void showMenuDialog(final int position){
+        final String items[]={mContext.getResources().getString(R.string.only_del_file),mContext.getResources().getString(R.string.only_del_danmu),
+                mContext.getResources().getString(R.string.del_file_danmu)};
+        //dialog参数设置
+        AlertDialog.Builder builder=new AlertDialog.Builder(mContext);  //先得到构造器
+        builder.setTitle(list.get(position).getVideoNameWithoutSuffix()); //设置标题
+        builder.setIcon(R.mipmap.ic_launcher);//设置图标，图片id即可
+        //设置列表显示，注意设置了列表显示就不要设置builder.setMessage()了，否则列表不起作用。
+        builder.setItems(items,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String filePath = list.get(position).getVideoPath();
+                String ddxml = filePath.substring(0, filePath.lastIndexOf(".")) + "dd.xml";
+                String bilixml = filePath.substring(0, filePath.lastIndexOf(".")) + ".xml";
+                switch (which){
+                    case 0:
+                        deletevideofile(filePath,position);
+                        break;
+                    case 1:
+                        deletedanmufile(filePath);
+                        break;
+                    case 2:
+                        deletevideofile(filePath,position);
+                        deletedanmufile(filePath);
+                        break;
+                }
+                notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+    private void deletevideofile(String filePath,int position){
+        if (FileUtils.isFileExists(filePath)){
+            FileUtils.deleteFile(filePath);
+        }
+        Realm realm = MyApplication.getRealmInstance();
+        final VideoFileInfo videoFileInfoc = realm.where(VideoFileInfo.class).equalTo("videoPath", filePath).findFirst();
+        if (videoFileInfoc != null){
+            realm.executeTransaction(new Realm.Transaction(){
+
+                @Override
+                public void execute(Realm realm) {
+                    videoFileInfoc.deleteFromRealm();
+                }
+            });
+        }
+        VideoFileArgInfo videoFileArgInfo = realm.where(VideoFileArgInfo.class).equalTo("videoPath", filePath).findFirst();
+        realm.beginTransaction();
+        if (videoFileArgInfo!=null){
+            videoFileArgInfo.setSawProgress(0);
+        }
+        realm.commitTransaction();
+        list.remove(position);
+    }
+    private void deletedanmufile(String videoFilePath){
+        String ddxml = videoFilePath.substring(0, videoFilePath.lastIndexOf(".")) + "dd.xml";
+        String bilixml = videoFilePath.substring(0, videoFilePath.lastIndexOf(".")) + ".xml";
+        if (FileUtils.isFileExists(ddxml)){
+            FileUtils.deleteFile(ddxml);
+        }
+        if (FileUtils.isFileExists(bilixml)){
+            FileUtils.deleteFile(bilixml);
+        }
+        Realm realm = MyApplication.getRealmInstance();
+        VideoFileArgInfo videoFileArgInfo = realm.where(VideoFileArgInfo.class).equalTo("videoPath", videoFilePath).findFirst();
+        realm.beginTransaction();
+        if (videoFileArgInfo!=null){
+            videoFileArgInfo.setHaveLocalDanmu(false);
+        }
+        realm.commitTransaction();
     }
 }

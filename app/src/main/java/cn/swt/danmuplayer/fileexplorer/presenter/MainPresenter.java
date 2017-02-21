@@ -177,7 +177,6 @@ public class MainPresenter implements MainContract.Present {
                         cursor = null;
                     }
                     restoreContentTable(realm);
-                    //查询原先数据库中是否有无视频的目录，有的话删除记录
                     mHandler.sendEmptyMessage(MSG_SCAN_FINISH);
                     Message msg = new Message();
                     mHandler.sendMessage(msg);

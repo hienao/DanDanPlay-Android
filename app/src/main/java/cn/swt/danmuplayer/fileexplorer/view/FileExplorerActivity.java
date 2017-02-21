@@ -7,8 +7,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.swt.corelib.utils.LogUtils;
 import com.swt.corelib.utils.ToastUtils;
@@ -65,7 +67,8 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
         mRvFiles.setItemAnimator(new DefaultItemAnimator());
         mRvFiles.setLayoutManager(new LinearLayoutManager(this));
         mRvFiles.setAdapter(mFileAdapter);
-
+        //注册需要上下文菜单的View
+//        registerForContextMenu(mRvFiles);
     }
 
     @Override
@@ -105,6 +108,16 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     @Override
     public Context getContext() {
         return this;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return super.onContextItemSelected(item);
     }
 
     @Override
