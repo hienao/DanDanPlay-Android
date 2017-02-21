@@ -56,7 +56,7 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
         mDatas = new ArrayList<>();
         mFileAdapter = new FileAdapter(this, mDatas);
         contentPath = getIntent().getStringExtra("contentpath");
-        mNetworkMode=MyApplication.getSP().getBoolean("network_mode",false);
+        mNetworkMode=MyApplication.getSP().getBoolean("network_mode",true);
         mFileAdapter.setNetworkMode(mNetworkMode);
     }
 
