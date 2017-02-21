@@ -96,8 +96,8 @@ public class MainPresenter implements MainContract.Present {
                     String videoDuration;
                     //查询原先数据库中是否有被删除的视频，有的话删除记录
 
-                    RealmResults<VideoFileInfo> videoFileInfos = realm.where(VideoFileInfo.class).findAll();
-                    List<VideoFileInfo> videolist = realm.copyFromRealm(videoFileInfos);
+                    RealmResults<VideoFileInfo> videolist = realm.where(VideoFileInfo.class).findAll();
+//                    List<VideoFileInfo> videolist = realm.copyFromRealm(videoFileInfos);
                     if (videolist != null && videolist.size() != 0) {
                         for (final VideoFileInfo v : videolist) {
                             //文件不存在
@@ -193,7 +193,7 @@ public class MainPresenter implements MainContract.Present {
     /**
      * 重建目录信息数据库
      */
-    public void restoreContentTable(Realm realm) {
+    public static void restoreContentTable(Realm realm) {
         //删除原来的目录信息
         final RealmResults<ContentInfo> contentInfos=  realm.where(ContentInfo.class).findAll();
         realm.executeTransaction(new Realm.Transaction(){
@@ -233,7 +233,7 @@ public class MainPresenter implements MainContract.Present {
      * @param filePath
      * @return
      */
-    public String getVideoThumbnail(String filePath) {
+    public static String getVideoThumbnail(String filePath) {
         String result = "";
         Bitmap bitmap = null;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();

@@ -16,6 +16,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.nightonke.boommenu.BoomMenuButton;
@@ -35,6 +38,7 @@ import cn.swt.danmuplayer.fileexplorer.beans.ContentInfo;
 import cn.swt.danmuplayer.fileexplorer.contract.MainContract;
 import cn.swt.danmuplayer.fileexplorer.presenter.MainPresenter;
 import cn.swt.danmuplayer.fileexplorer.utils.BmbUtil;
+import cn.swt.danmuplayer.setting.AddVideoFileManualActivity;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrUIHandler;
@@ -54,6 +58,8 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     RecyclerView mRvContent;
     @BindView(R.id.store_house_ptr_frame)
     PtrFrameLayout mStoreHousePtrFrame;
+    @BindView(R.id.stool_toolbar)
+    Toolbar mStoolToolbar;
     private List<ContentInfo> mDatas;
     private ContentAdapter mContentAdapter;
     private ContentResolver mContentResolver;
@@ -73,6 +79,25 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         initListener();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getDataFromSQLite();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //通知媒体库更新文件夹
+//        notifyFileSystemChanged(Environment.getExternalStorageDirectory().toString());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mMainPresenter = null;
+    }
+
     private void initData() {
         realm = MyApplication.getRealmInstance();
         mMainPresenter = new MainPresenter(this);
@@ -85,6 +110,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         mHeader.setTextColor(R.color.text_black);
         mHeader.initWithString(refreshHeader);
     }
+
     private void notifyFileSystemChanged(String path) {
         if (path == null)
             return;
@@ -105,19 +131,13 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
             mContext.sendBroadcast(intent);
         }
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //通知媒体库更新文件夹
-//        notifyFileSystemChanged(Environment.getExternalStorageDirectory().toString());
-    }
 
     private void initView() {
         setCustomTitle(getResources().getString(R.string.app_name));
         setShowBackNavigationIcon(false);
         //菜单初始化开始
         bmb = (BoomMenuButton) findViewById(R.id.bmb);
-        BmbUtil.initBoomMenuButton(bmb,ContentsActivity.this);
+        BmbUtil.initBoomMenuButton(bmb, ContentsActivity.this);
         //菜单初始化结束
         mStoreHousePtrFrame.setHeaderView(mHeader);
         mStoreHousePtrFrame.addPtrUIHandler(mHeader);
@@ -158,7 +178,6 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         mStoreHousePtrFrame.setPtrHandler(new PtrDefaultHandler() {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
-//                mMainPresenter.getAllVideo(mContentResolver);
                 requestPremission();
             }
 
@@ -167,12 +186,17 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
                 return true;
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        getDataFromSQLite();
+        mStoolToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.action_add:
+                        startActivity(new Intent(ContentsActivity.this, AddVideoFileManualActivity.class));
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -189,7 +213,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     public void getDataFromSQLite() {
         mDatas.clear();
         RealmResults<ContentInfo> contentInfos = realm.where(ContentInfo.class).findAll();
-        List<ContentInfo> contentInfoArrayList  = realm.copyFromRealm(contentInfos);
+        List<ContentInfo> contentInfoArrayList = realm.copyFromRealm(contentInfos);
         if (contentInfoArrayList != null) {
             mDatas.addAll(contentInfoArrayList);
         }
@@ -235,11 +259,10 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     }
 
 
-
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mMainPresenter = null;
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar_add, menu);
+        return true;
     }
 
 }

@@ -23,8 +23,9 @@
     <string name="app_setting_desc">软件设置</string>
     <string name="app_setting_danmuplayer">视频播放</string>
     <string name="app_setting_danmuplayer_desc">打开弹幕播放器</string>
-    <string name="app_setting_scan_path_select">文件扫描路径选择</string>
+    <string name="app_video_file_select">视频文件选择</string>
     <string name="app_setting_scan_path">扫描路径</string>
     <string name="app_setting_external">外置存储</string>
     <string name="app_setting_internal">内置存储</string>
+    <string name="add">添加</string>
 </resources>
