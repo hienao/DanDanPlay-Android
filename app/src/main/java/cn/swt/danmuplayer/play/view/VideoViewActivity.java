@@ -181,7 +181,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                     }
 
                 });
-        if (MyApplication.getSP().getBoolean("auto_play")) {
+        if (MyApplication.getSP().getBoolean("auto_play",true)) {
             mViewSuperPlayer.start();
         }
     }
