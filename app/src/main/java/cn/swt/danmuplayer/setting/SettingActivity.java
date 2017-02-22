@@ -22,9 +22,9 @@ public class SettingActivity extends BaseActivity {
     Toolbar mStoolToolbar;
     @BindView(R.id.set_scan_path)
     SettingItem mSetScanPath;
-    @BindView(R.id.text_scan_path)
-    TextView mTextScanPath;
-    private String mScanpath;
+    @BindView(R.id.set_auto_play)
+    SettingItem mSetAutoPlay;
+    private boolean auto_play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,7 @@ public class SettingActivity extends BaseActivity {
 
     private void initData() {
         mSetScanPath.rightText.setText(getSP().getString("scan_path", "external"));
+        auto_play=getSP().getBoolean("auto_play",true);
     }
 
     private void initView() {
@@ -57,6 +58,20 @@ public class SettingActivity extends BaseActivity {
                 }
             }
         });
+        mSetAutoPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (auto_play){
+                    getSP().putBoolean("auto_play",false);
+                    auto_play=false;
+                    mSetAutoPlay.rightText.setText(getResources().getString(R.string.app_setting_no));
+                }else {
+                    getSP().putBoolean("auto_play",true);
+                    auto_play=true;
+                    mSetAutoPlay.rightText.setText(getResources().getString(R.string.app_setting_yes));
+                }
+            }
+        });
     }
 
     @Override
@@ -66,6 +81,11 @@ public class SettingActivity extends BaseActivity {
             mSetScanPath.rightText.setText(getResources().getString(R.string.app_setting_external));
         } else {
             mSetScanPath.rightText.setText(getResources().getString(R.string.app_setting_internal));
+        }
+        if (auto_play){
+            mSetAutoPlay.rightText.setText(getResources().getString(R.string.app_setting_yes));
+        }else {
+            mSetAutoPlay.rightText.setText(getResources().getString(R.string.app_setting_no));
         }
     }
 }

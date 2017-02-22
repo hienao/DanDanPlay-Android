@@ -107,11 +107,11 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         //        Glide.with(this).load(IMAGE_URL).fitCenter().into(mPlayerView.mPlayerThumb); // Show the thumb before play
         mViewSuperPlayer.init()              // Initialize, the first to use
                 .alwaysFullScreen();//始终全屏
-        if (currentPosition>0){
+        if (currentPosition > 0) {
             mViewSuperPlayer.setSkipTip(currentPosition);
         }
 //                .setSkipTip(1000 * 60 * 0)  // set the position you want to skip
-        mViewSuperPlayer .enableOrientation()    // enable orientation
+        mViewSuperPlayer.enableOrientation()    // enable orientation
                 .setVideoPath(videoPath)    // set video url
 //                .setVideoSource(null, VIDEO_URL, VIDEO_URL, VIDEO_URL, null) // set multiple video url
 //                .setMediaQuality(IjkPlayerView.MEDIA_QUALITY_HIGH)  // set the initial video url
@@ -181,6 +181,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                     }
 
                 });
+        if (MyApplication.getSP().getBoolean("auto_play")) {
+            mViewSuperPlayer.start();
+        }
     }
 
 

@@ -32,4 +32,7 @@
     <string name="only_del_file">仅删除文件</string>
     <string name="only_del_danmu">仅删除弹幕</string>
     <string name="del_file_danmu">删除视频文件和弹幕</string>
+    <string name="app_setting_auto_play">自动播放</string>
+    <string name="app_setting_yes">是</string>
+    <string name="app_setting_no">否</string>
 </resources>
