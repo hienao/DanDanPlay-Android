@@ -19,8 +19,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import cn.swt.danmuplayer.application.MyApplication;
+import cn.swt.danmuplayer.fileexplorer.beans.VideoFileArgInfo;
 import cn.swt.danmuplayer.play.contract.VideoViewContract;
 import cn.swt.danmuplayer.play.presenter.VideoViewPresenter;
+import io.realm.Realm;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 
 public class VideoViewActivity extends AppCompatActivity implements VideoViewContract.View {
@@ -28,7 +31,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     com.dl7.player.media.IjkPlayerView mViewSuperPlayer;
     private String videoPath, videoTitle, file_title;
     private boolean hide_danmu = false, isOffLine = false;
-    private int episode_id;
+    private int episode_id, currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,11 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         file_title = getIntent().getStringExtra("file_title");
         videoTitle = getIntent().getStringExtra("title");
         hide_danmu = getIntent().getBooleanExtra("hide_danmu", false);
-        episode_id=getIntent().getIntExtra("episode_id", -1);
+        episode_id = getIntent().getIntExtra("episode_id", -1);
+        //读取播放进度
+        Realm realm = MyApplication.getRealmInstance();
+        VideoFileArgInfo videoFileArgInfo = realm.where(VideoFileArgInfo.class).equalTo("videoPath", videoPath).findFirst();
+        currentPosition = videoFileArgInfo.getSawProgress();
     }
 
     private void initView() {
@@ -99,9 +106,12 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         }
         //        Glide.with(this).load(IMAGE_URL).fitCenter().into(mPlayerView.mPlayerThumb); // Show the thumb before play
         mViewSuperPlayer.init()              // Initialize, the first to use
-                .alwaysFullScreen()//始终全屏
+                .alwaysFullScreen();//始终全屏
+        if (currentPosition>0){
+            mViewSuperPlayer.setSkipTip(currentPosition);
+        }
 //                .setSkipTip(1000 * 60 * 0)  // set the position you want to skip
-                .enableOrientation()    // enable orientation
+        mViewSuperPlayer .enableOrientation()    // enable orientation
                 .setVideoPath(videoPath)    // set video url
 //                .setVideoSource(null, VIDEO_URL, VIDEO_URL, VIDEO_URL, null) // set multiple video url
 //                .setMediaQuality(IjkPlayerView.MEDIA_QUALITY_HIGH)  // set the initial video url
@@ -113,7 +123,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                 .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
                     @Override
                     public boolean isValid() {
-                        if (episode_id>-1){
+                        if (episode_id > -1) {
                             return true;
                         }
                         return false;
@@ -163,9 +173,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
                                 color = 16777215;
                                 break;
                         }
-                        if (episode_id>-1){
-                            mVideoViewPresenter.sendDanmu(episode_id,data.getTime(),data.getType(),color,data.text.toString());
-                        }else {
+                        if (episode_id > -1) {
+                            mVideoViewPresenter.sendDanmu(episode_id, data.getTime(), data.getType(), color, data.text.toString());
+                        } else {
                             ToastUtils.showShortToastSafe(VideoViewActivity.this, "未识别到有效的视频ID,无法发送弹幕到服务器,请检查是否是以在线模式加载");
                         }
                     }
@@ -182,7 +192,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
 
     @Override
     public void error(String msg) {
-        ToastUtils.showShortToastSafe(VideoViewActivity.this,msg);
+        ToastUtils.showShortToastSafe(VideoViewActivity.this, msg);
     }
 
     @Override
@@ -194,6 +204,14 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     @Override
     protected void onPause() {
         super.onPause();
+        //保存播放进度
+        Realm realm = MyApplication.getRealmInstance();
+        VideoFileArgInfo videoFileArgInfo = realm.where(VideoFileArgInfo.class).equalTo("videoPath", videoPath).findFirst();
+        realm.beginTransaction();
+        if (videoFileArgInfo != null) {
+            videoFileArgInfo.setSawProgress(mViewSuperPlayer.getCurPosition());
+        }
+        realm.commitTransaction();
         mViewSuperPlayer.onPause();
     }
 

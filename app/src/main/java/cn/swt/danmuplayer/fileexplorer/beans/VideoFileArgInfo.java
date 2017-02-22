@@ -20,7 +20,7 @@ public class VideoFileArgInfo extends RealmObject {
      * 是否有本地弹幕
      */
     boolean haveLocalDanmu;
-    long sawProgress;
+    int sawProgress;
 
     public String getVideoPath() {
         return videoPath;
@@ -38,11 +38,11 @@ public class VideoFileArgInfo extends RealmObject {
         this.haveLocalDanmu = haveLocalDanmu;
     }
 
-    public long getSawProgress() {
+    public int getSawProgress() {
         return sawProgress;
     }
 
-    public void setSawProgress(long sawProgress) {
+    public void setSawProgress(int sawProgress) {
         this.sawProgress = sawProgress;
     }
 }
