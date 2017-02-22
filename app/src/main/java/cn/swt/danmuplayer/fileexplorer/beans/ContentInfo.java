@@ -4,8 +4,6 @@ package cn.swt.danmuplayer.fileexplorer.beans;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-import static android.R.attr.id;
-
 /**
  * Title: ContentInfo <br>
  * Description: <br>
@@ -49,15 +47,6 @@ public class ContentInfo extends RealmObject implements Comparable<ContentInfo>{
         this.contentName = contentName;
     }
 
-    @Override
-    public String toString() {
-        return "ContentInfo{" +
-                "id=" + id +
-                ", contentName='" + contentName + '\'' +
-                ", contentPath='" + contentPath + '\'' +
-                ", count=" + count +
-                '}';
-    }
 
     @Override
     public int compareTo(ContentInfo contentInfo) {

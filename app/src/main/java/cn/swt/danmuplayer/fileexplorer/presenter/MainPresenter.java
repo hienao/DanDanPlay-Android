@@ -94,19 +94,6 @@ public class MainPresenter implements MainContract.Present {
                     String filePath;
                     String fileSize;
                     String videoDuration;
-                    //查询原先数据库中是否有被删除的视频，有的话删除记录
-
-                    RealmResults<VideoFileInfo> videolist = realm.where(VideoFileInfo.class).findAll();
-                    if (videolist != null && videolist.size() != 0) {
-                        for (final VideoFileInfo v : videolist) {
-                            //文件不存在
-                            if (!FileUtils.isFileExists(v.getVideoPath())) {
-                                realm.beginTransaction();
-                                v.deleteFromRealm();
-                                realm.commitTransaction();
-                            }
-                        }
-                    }
                     if (cursor != null) {
                         while (cursor.moveToNext()) {
                             videoId = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media._ID));
@@ -163,7 +150,6 @@ public class MainPresenter implements MainContract.Present {
                             } catch (NumberFormatException e) {
                                 videoFileInfo.setVideoLength("UnKnown");
                             }
-
                             realm.beginTransaction();
                             realm.copyToRealm(videoFileInfo);
                             realm.commitTransaction();
@@ -171,7 +157,19 @@ public class MainPresenter implements MainContract.Present {
                         cursor.close();
                         cursor = null;
                     }
-                    restoreContentTable(realm);
+                    //查询数据库中是否有被删除的视频，有的话删除记录
+                    RealmResults<VideoFileInfo> videolist = realm.where(VideoFileInfo.class).findAll();
+                    if (videolist != null && videolist.size() != 0) {
+                        for (final VideoFileInfo v : videolist) {
+                            //文件不存在
+                            if (!FileUtils.isFileExists(v.getVideoPath())) {
+                                realm.beginTransaction();
+                                v.deleteFromRealm();
+                                realm.commitTransaction();
+                            }
+                        }
+                    }
+                    restoreContentTable();
                     mHandler.sendEmptyMessage(MSG_SCAN_FINISH);
                     Message msg = new Message();
                     mHandler.sendMessage(msg);
@@ -187,9 +185,8 @@ public class MainPresenter implements MainContract.Present {
     /**
      * 更新目录信息数据库
      */
-    public static void restoreContentTable(Realm realm) {
-        //删除原来的目录信息
-
+    public static void restoreContentTable() {
+        Realm realm=MyApplication.getRealmInstance();
         //重建目录信息
         RealmResults<VideoFileInfo> videoFileInfos = realm.where(VideoFileInfo.class).findAll();
         List<VideoFileInfo> videolist = realm.copyFromRealm(videoFileInfos);

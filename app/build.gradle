@@ -3,7 +3,6 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'android-apt'
 //realm数据库
 apply plugin: 'realm-android'
-//apply plugin: 'wolearn.ajcplugin'
 def releaseTime() {
     return new Date().format("yyyy.MM.dd", TimeZone.getTimeZone("UTC"))
 }

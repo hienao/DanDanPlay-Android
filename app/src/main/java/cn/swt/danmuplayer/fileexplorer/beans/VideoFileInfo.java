@@ -101,17 +101,6 @@ public class VideoFileInfo extends RealmObject implements Comparable<VideoFileIn
         this.videoLength = videoLength;
     }
 
-    @Override
-    public String toString() {
-        return "VideoFileInfo{" +
-                "videoNameWithoutSuffix='" + videoNameWithoutSuffix + '\'' +
-                ", videoName='" + videoName + '\'' +
-                ", videoContentPath='" + videoContentPath + '\'' +
-                ", videoPath='" + videoPath + '\'' +
-                ", cover=" + cover +
-                ", videoLength='" + videoLength + '\'' +
-                '}';
-    }
 
     @Override
     public int compareTo(VideoFileInfo videoFileInfo) {

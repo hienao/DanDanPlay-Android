@@ -158,7 +158,7 @@ public class AddVideoFileManualActivity extends BaseActivity {
                                 realm.beginTransaction();
                                 realm.copyToRealm(videoFileInfo);
                                 realm.commitTransaction();
-                                restoreContentTable(realm);
+                                restoreContentTable();
                             } else {
                                 ToastUtils.showShortToastSafe(AddVideoFileManualActivity.this, "数据库中已存在该数据，无法添加");
                             }
