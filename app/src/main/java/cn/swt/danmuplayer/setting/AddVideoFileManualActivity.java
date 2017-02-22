@@ -1,5 +1,6 @@
 package cn.swt.danmuplayer.setting;
 
+import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Environment;
@@ -52,6 +53,14 @@ public class AddVideoFileManualActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video_file_manual);
         ButterKnife.bind(this);
+        //直接打开文件
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if(intent.ACTION_VIEW.equals(action)){
+//            Uri uri = (Uri) intent.getData();
+//            String filename = uri.getPath();
+//            System.out.println(filename);
+        }
         initData();
         initView();
         initListener();
