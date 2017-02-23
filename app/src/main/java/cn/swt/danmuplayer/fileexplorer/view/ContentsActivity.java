@@ -170,7 +170,6 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         mRvContent.setItemAnimator(new DefaultItemAnimator());
         mRvContent.setLayoutManager(new LinearLayoutManager(this));
         mRvContent.setAdapter(mContentAdapter);
-        requestPremission();
     }
 
     private void initListener() {
