@@ -102,7 +102,6 @@ public class MainPresenter implements MainContract.Present {
                             fileSize = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.SIZE));
                             videoDuration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
                             File f = new File(filePath);
-                            VideoFileInfo videoFileInfoc = realm.where(VideoFileInfo.class).equalTo("videoPath", filePath).findFirst();
                             //保存弹幕信息到数据库
                             VideoFileArgInfo videoFileArgInfo=realm.where(VideoFileArgInfo.class).equalTo("videoPath", filePath).findFirst();
                             String ddxml = filePath.substring(0, filePath.lastIndexOf(".")) + "dd.xml";
@@ -127,6 +126,7 @@ public class MainPresenter implements MainContract.Present {
 
                             }
                             realm.commitTransaction();
+                            VideoFileInfo videoFileInfoc = realm.where(VideoFileInfo.class).equalTo("videoPath", filePath).findFirst();
                             //文件已存在，跳过
                             if (videoFileInfoc != null)
                                 continue;

@@ -182,7 +182,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
 
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return true;
+                return !frame.isRefreshing();
             }
         });
         mStoolToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {

@@ -36,8 +36,8 @@ public void *(***);
 }
 -keep class com.talkingdata.sdk.TalkingDataSDK {public *;}
 -keep class com.apptalkingdata.** {*;}
-#LiteOrm
--keep class com.litesuits.orm.db.** { *;}
+# boommenu
+-keep class com.nightonke.boommenu.** {*;}
 # (2)Simple XML
 -keep public class org.simpleframework.**{ *; }
 -keep class org.simpleframework.xml.**{ *; }

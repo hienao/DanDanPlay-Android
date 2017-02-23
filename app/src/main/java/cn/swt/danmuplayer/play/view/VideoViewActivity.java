@@ -61,7 +61,9 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         //读取播放进度
         Realm realm = MyApplication.getRealmInstance();
         VideoFileArgInfo videoFileArgInfo = realm.where(VideoFileArgInfo.class).equalTo("videoPath", videoPath).findFirst();
-        currentPosition = videoFileArgInfo.getSawProgress();
+        if (videoFileArgInfo!=null){
+            currentPosition = videoFileArgInfo.getSawProgress();
+        }
     }
 
     private void initView() {

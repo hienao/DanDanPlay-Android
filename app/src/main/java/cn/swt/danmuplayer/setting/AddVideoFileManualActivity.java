@@ -125,25 +125,29 @@ public class AddVideoFileManualActivity extends BaseActivity {
             holder.textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Realm realm = MyApplication.getRealmInstance();
-                    if ("......".equals(mList.get(position))) {
-                        String parentpath = mTextScanpathStr.getText().toString().substring(0, mTextScanpathStr.getText().toString().length() - 1);
-                        parentpath = parentpath.substring(0, parentpath.lastIndexOf("/") + 1);
-                        mTextScanpathStr.setText(parentpath);
-                        mList.clear();
-                        getFolderAndFileList(parentpath);
-                    } else {
-                        String newfilepath = mTextScanpathStr.getText().toString() + mList.get(position);
-                        if (FileUtils.isDir(newfilepath)) {
-                            mTextScanpathStr.setText(newfilepath + "/");
+                    try {
+                        Realm realm = MyApplication.getRealmInstance();
+                        if ("......".equals(mList.get(position))) {
+                            String parentpath = mTextScanpathStr.getText().toString().substring(0, mTextScanpathStr.getText().toString().length() - 1);
+                            parentpath = parentpath.substring(0, parentpath.lastIndexOf("/") + 1);
+                            mTextScanpathStr.setText(parentpath);
                             mList.clear();
-                            getFolderAndFileList(newfilepath + "/");
+                            getFolderAndFileList(parentpath);
                         } else {
-                            ProgressDialogUtils.showDialog(AddVideoFileManualActivity.this, getResources().getString(R.string.loading));
-                            checkAndAddVideoInfo(realm,newfilepath);
-                            ProgressDialogUtils.dismissDialog();
-                            finish();
+                            String newfilepath = mTextScanpathStr.getText().toString() + mList.get(position);
+                            if (FileUtils.isDir(newfilepath)) {
+                                mTextScanpathStr.setText(newfilepath + "/");
+                                mList.clear();
+                                getFolderAndFileList(newfilepath + "/");
+                            } else {
+                                ProgressDialogUtils.showDialog(AddVideoFileManualActivity.this, getResources().getString(R.string.loading));
+                                checkAndAddVideoInfo(realm,newfilepath);
+                                ProgressDialogUtils.dismissDialog();
+                                finish();
+                            }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });
