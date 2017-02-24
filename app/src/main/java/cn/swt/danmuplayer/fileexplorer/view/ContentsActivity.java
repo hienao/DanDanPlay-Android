@@ -60,14 +60,14 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
     PtrFrameLayout mStoreHousePtrFrame;
     @BindView(R.id.stool_toolbar)
     Toolbar mStoolToolbar;
+    @BindView(R.id.bmb)
+    BoomMenuButton mBmb;
     private List<ContentInfo> mDatas;
     private ContentAdapter mContentAdapter;
     private ContentResolver mContentResolver;
     private String refreshHeader;
     private StoreHouseHeader mHeader;
     private Realm realm;
-    //菜单
-    private BoomMenuButton bmb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,8 +136,8 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         setCustomTitle(getResources().getString(R.string.app_name));
         setShowBackNavigationIcon(false);
         //菜单初始化开始
-        bmb = (BoomMenuButton) findViewById(R.id.bmb);
-        BmbUtil.initBoomMenuButton(bmb, ContentsActivity.this);
+        mBmb = (BoomMenuButton) findViewById(R.id.bmb);
+        BmbUtil.initBoomMenuButton(mBmb, ContentsActivity.this);
         //菜单初始化结束
         mStoreHousePtrFrame.setHeaderView(mHeader);
         mStoreHousePtrFrame.addPtrUIHandler(mHeader);
@@ -187,7 +187,7 @@ public class ContentsActivity extends BaseActivity implements MainContract.View 
         mStoolToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.action_add:
                         startActivity(new Intent(ContentsActivity.this, AddVideoFileManualActivity.class));
                         break;
