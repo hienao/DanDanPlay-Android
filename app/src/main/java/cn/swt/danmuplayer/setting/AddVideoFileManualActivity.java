@@ -65,9 +65,13 @@ public class AddVideoFileManualActivity extends BaseActivity {
         String action = intent.getAction();
         if(intent.ACTION_VIEW.equals(action)){
             Uri uri = (Uri) intent.getData();
-            String filePath=getPathByUri4kitkat(AddVideoFileManualActivity.this,uri);
-            Realm realm=MyApplication.getRealmInstance();
-            checkAndAddVideoInfo(realm,filePath);
+            try {
+                String filePath=getPathByUri4kitkat(AddVideoFileManualActivity.this,uri);
+                Realm realm=MyApplication.getRealmInstance();
+                checkAndAddVideoInfo(realm,filePath);
+            } catch (Exception e) {
+                ToastUtils.showShortToastSafe(AddVideoFileManualActivity.this, "系统未识别出视频文件，无法添加");
+            }
         }
         initData();
         initView();
