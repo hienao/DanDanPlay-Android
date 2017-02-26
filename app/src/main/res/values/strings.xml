@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">弹幕播放器</string>
+    <string name="app_name">弹弹Play</string>
     <string name="danmu_match">弹幕匹配</string>
     <string name="no_file_notice">无文件，如果是第一次安装或者切换过扫描路径请下拉刷新文件列表,如果仍然没有检测到请到设置中切换存储路径</string>
     <string name="video">视频</string>
