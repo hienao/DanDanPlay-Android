@@ -78,7 +78,7 @@ android {
     productFlavors {
         other{
         }
-        kuan{
+        coolapk{
         }
     }
 }
