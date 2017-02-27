@@ -122,17 +122,17 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(mNetworkMode) {
-            menu.findItem(R.id.action_switch_network_mode).setIcon(R.drawable.ic_online).setTitle(R.string.switch_network_online);
-        }else {
-            menu.findItem(R.id.action_switch_network_mode).setIcon(R.drawable.ic_offline).setTitle(R.string.switch_network_offline);
-        }
+//        if(mNetworkMode) {
+//            menu.findItem(R.id.action_switch_network_mode).setIcon(R.drawable.ic_online).setTitle(R.string.switch_network_online);
+//        }else {
+//            menu.findItem(R.id.action_switch_network_mode).setIcon(R.drawable.ic_offline).setTitle(R.string.switch_network_offline);
+//        }
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar_switch_network, menu);
+//        getMenuInflater().inflate(R.menu.menu_toolbar_switch_network, menu);
         return true;
     }
 
