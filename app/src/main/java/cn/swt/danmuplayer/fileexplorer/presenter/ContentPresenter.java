@@ -30,13 +30,13 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
- * Title: MainPresenter <br>
+ * Title: ContentPresenter <br>
  * Description: <br>
  * Copyright (c) 传化物流版权所有 2016 <br>
  * Created DateTime: 2016/10/17 10:55
  * Created by Wentao.Shi.
  */
-public class MainPresenter implements MainContract.Present {
+public class ContentPresenter implements MainContract.Present {
     private static final int MSG_SCAN_FINISH = 0;
     private MainContract.View mView;
     Handler mHandler = new Handler() {
@@ -55,7 +55,7 @@ public class MainPresenter implements MainContract.Present {
 
     };
 
-    public MainPresenter(MainContract.View view) {
+    public ContentPresenter(MainContract.View view) {
         mView = view;
     }
 

@@ -16,8 +16,8 @@
     <string name="danmu_loading">弹幕获取中...</string>
     <string name="local_danmu">本地弹幕：</string>
     <string name="scaning">Scaning...</string>
-    <string name="switch_network_online">模式切换：在线</string>
-    <string name="switch_network_offline">模式切换：离线</string>
+    <string name="switch_network_online">网络模式：在线</string>
+    <string name="switch_network_offline">网络模式：离线</string>
     <string name="menu">菜单</string>
     <string name="app_setting">设置</string>
     <string name="app_setting_desc">软件设置</string>
@@ -35,4 +35,15 @@
     <string name="app_setting_auto_play">自动播放</string>
     <string name="app_setting_yes">是</string>
     <string name="app_setting_no">否</string>
+
+    <string name="navigation_drawer_open">打开抽屉</string>
+    <string name="navigation_drawer_close">关闭抽屉</string>
+    <string name="label_feed_back">反馈请联系微博Swart6</string>
+    <string name="drawer_exit">退出</string>
+    <string name="drawer_other">其他</string>
+    <string name="drawer_about">关于</string>
+    <string name="network_mode">网络模式</string>
+    <string name="click2switch">点击切换</string>
+    <string name="play_video">播放视频</string>
+    <string name="add_video">添加视频</string>
 </resources>

@@ -1,33 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_set_scan_path"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cn.swt.danmuplayer.setting.AddVideoFileManualActivity">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/text_scanpath_str"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:textColor="@color/bg_black"
+        android:textSize="@dimen/text_size_20"/>
 
-        <include layout="@layout/base_toobar_view"/>
-        <TextView
-            android:id="@+id/text_scanpath_str"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/bg_black"
-            android:textSize="@dimen/text_size_20"/>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/y3"
-            android:background="@color/bg_gray_999999"/>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_file_contents"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </android.support.v7.widget.RecyclerView>
-    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/y3"
+        android:background="@color/bg_gray_999999"/>
 
-</RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_file_contents"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

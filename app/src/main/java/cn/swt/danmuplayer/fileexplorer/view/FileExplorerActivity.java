@@ -35,7 +35,7 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     FileExplorerPresenter mFileExplorerPresenter;
     @BindView(R.id.rv_files)
     RecyclerView mRvFiles;
-    @BindView(R.id.stool_toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mStoolToolbar;
     private List<VideoFileInfo> mDatas;
     private FileAdapter mFileAdapter;

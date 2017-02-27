@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_switch_network_title"
+        android:title="@string/network_mode">
+        <menu>
+           <item
+               android:id="@+id/nav_switch_network"
+               android:icon="@drawable/ic_online"
+               android:title="@string/click2switch"/>
+        </menu>
+    </item>
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_play"
+            android:icon="@drawable/ic_play"
+            android:title="@string/play_video"/>
+        <item
+            android:id="@+id/nav_add"
+            android:icon="@drawable/ic_add"
+            android:title="@string/add_video"/>
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_setting"
+            android:title="@string/app_setting"/>
+    </group>
+
+    <item android:title="@string/drawer_other">
+        <menu>
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/drawer_about"
+                android:title="@string/drawer_about"/>
+            <item
+                android:id="@+id/nav_exit"
+                android:icon="@drawable/drawer_exit"
+                android:title="@string/drawer_exit"/>
+        </menu>
+    </item>
+
+</menu>

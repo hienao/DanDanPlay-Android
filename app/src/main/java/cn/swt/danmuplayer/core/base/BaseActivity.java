@@ -25,12 +25,12 @@ public class BaseActivity extends AppCompatActivity {
         initToolbar();
     }
     private void initToolbar() {
-        mToolbar = (Toolbar) findViewById(R.id.stool_toolbar);
-        sTitleTV = (TextView)findViewById(R.id.stool_toolbar_title);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        sTitleTV = (TextView)findViewById(R.id.toolbar_title);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
             getSupportActionBar().setTitle("");
-            mToolbar.setTitleTextColor(ContextCompat.getColor(this,R.color.base_color_toolbar));
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
             mToolbar.setNavigationIcon(R.drawable.ic_back);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override

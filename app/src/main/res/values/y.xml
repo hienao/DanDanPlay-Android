@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="y1">1dp</dimen>
+    <dimen name="y3">3dp</dimen>
+    <dimen name="y5">5dp</dimen>
+    <dimen name="y10">10dp</dimen>
+    <dimen name="y20">20dp</dimen>
+    <dimen name="y30">30dp</dimen>
+    <dimen name="y40">40dp</dimen>
+    <dimen name="y50">50dp</dimen>
+    <dimen name="y55">55dp</dimen>
+    <dimen name="y70">70dp</dimen>
+    <dimen name="y80">80dp</dimen>
+</resources>

@@ -24,7 +24,7 @@ import cn.swt.danmuplayer.R;
 import cn.swt.danmuplayer.application.MyApplication;
 import cn.swt.danmuplayer.fileexplorer.beans.VideoFileArgInfo;
 import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
-import cn.swt.danmuplayer.fileexplorer.presenter.MainPresenter;
+import cn.swt.danmuplayer.fileexplorer.presenter.ContentPresenter;
 import cn.swt.danmuplayer.fileexplorer.view.EpisodeIdMatchActivity;
 import cn.swt.danmuplayer.play.view.VideoViewActivity;
 import io.realm.Realm;
@@ -179,7 +179,7 @@ public class FileAdapter extends RecyclerView.Adapter {
             videoFileArgInfo.deleteFromRealm();
         }
         realm.commitTransaction();
-        MainPresenter.restoreContentTable();
+        ContentPresenter.restoreContentTable();
         list.remove(position);
     }
 

@@ -1,4 +1,4 @@
-package cn.swt.danmuplayer.setting;
+package cn.swt.danmuplayer.main;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -11,168 +11,206 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.ProgressDialogUtils;
 import com.swt.corelib.utils.TimeUtils;
 import com.swt.corelib.utils.ToastUtils;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import cn.swt.danmuplayer.R;
 import cn.swt.danmuplayer.application.MyApplication;
 import cn.swt.danmuplayer.core.base.BaseActivity;
 import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
 import cn.swt.danmuplayer.fileexplorer.utils.JudgeVideoUtil;
+import cn.swt.danmuplayer.fileexplorer.view.ContentsFragment;
+import cn.swt.danmuplayer.main.bean.FragmentTag;
+import cn.swt.danmuplayer.setting.AddVideoFileManualFragment;
+import cn.swt.danmuplayer.setting.SettingFragment;
 import io.realm.Realm;
 
-import static cn.swt.danmuplayer.fileexplorer.presenter.MainPresenter.getVideoThumbnail;
-import static cn.swt.danmuplayer.fileexplorer.presenter.MainPresenter.restoreContentTable;
+import static cn.swt.danmuplayer.fileexplorer.presenter.ContentPresenter.getVideoThumbnail;
+import static cn.swt.danmuplayer.fileexplorer.presenter.ContentPresenter.restoreContentTable;
 
-public class AddVideoFileManualActivity extends BaseActivity {
 
-    @BindView(R.id.stool_toolbar_title)
-    TextView mStoolToolbarTitle;
-    @BindView(R.id.stool_toolbar)
-    Toolbar mStoolToolbar;
-    @BindView(R.id.text_scanpath_str)
-    TextView mTextScanpathStr;
-    @BindView(R.id.rv_file_contents)
-    RecyclerView mRvFileContents;
-    List<String> mList;
-    private FolderRecycleViewAdapter mFolderRecycleViewAdapter;
+public class MainActivity extends BaseActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+    private boolean mNetWorkMode = true;
+    private NavigationView mNavigationView;
+    private ContentsFragment mContentsFragment;
+    //当前页面标记
+    FragmentTag mFragmentTag = FragmentTag.CONTENT;
+    private AddVideoFileManualFragment mAddVideoFileManualFragment;
+    private SettingFragment mSettingFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_video_file_manual);
-        ButterKnife.bind(this);
+        setContentView(R.layout.activity_main);
+        initData();
+        initView();
+
+    }
+
+    private void initData() {
+        mContentsFragment = new ContentsFragment();
+        mAddVideoFileManualFragment = new AddVideoFileManualFragment();
+        mSettingFragment = new SettingFragment();
+
+    }
+
+    private void initView() {
+        Toolbar toolbar = getToolbar();
+        setCustomTitle(getResources().getString(R.string.app_name));
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.setItemIconTintList(null);//menu图标显示原来的颜色
+        //网络切换状态初始化
+        mNetWorkMode = MyApplication.getSP().getBoolean("network_mode", true);
+        MenuItem menuItemTitle = mNavigationView.getMenu().findItem(R.id.nav_switch_network_title);
+        MenuItem menuItemSwitch = mNavigationView.getMenu().findItem(R.id.nav_switch_network);
+        if (mNetWorkMode) {
+            menuItemTitle.setTitle(R.string.switch_network_online);
+            menuItemSwitch.setIcon(R.drawable.ic_online);
+        } else {
+            menuItemTitle.setTitle(R.string.switch_network_offline);
+            menuItemSwitch.setIcon(R.drawable.ic_offline);
+        }
+        //初始化首页
+        getSupportFragmentManager().beginTransaction().add(R.id.content_main, mContentsFragment).commit();
         //直接打开文件
         Intent intent = getIntent();
         String action = intent.getAction();
         if(intent.ACTION_VIEW.equals(action)){
             Uri uri = (Uri) intent.getData();
             try {
-                String filePath=getPathByUri4kitkat(AddVideoFileManualActivity.this,uri);
+                String filePath=getPathByUri4kitkat(MainActivity.this,uri);
                 Realm realm=MyApplication.getRealmInstance();
                 checkAndAddVideoInfo(realm,filePath);
             } catch (Exception e) {
-                ToastUtils.showShortToastSafe(AddVideoFileManualActivity.this, "系统未识别出视频文件，无法添加");
+                ToastUtils.showShortToastSafe(MainActivity.this, "系统未识别出视频文件，无法添加");
             }
         }
-        initData();
-        initView();
-        initListener();
     }
 
-    private void initData() {
-        mList = new ArrayList<>();
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        mRvFileContents.setLayoutManager(manager);
-        mFolderRecycleViewAdapter = new FolderRecycleViewAdapter();
-        mRvFileContents.setAdapter(mFolderRecycleViewAdapter);
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
-     *
+     * 根据tag获取当前显示的fragment
      */
-    private void getFolderAndFileList(String path) {
-        mList.clear();
-        if (!TextUtils.isEmpty(path) && path.length() > 1) {
-            mList.add("......");
+    Fragment getCurrentFragment(FragmentTag indexTag) {
+        Fragment fragment = null;
+        switch (indexTag) {
+            case CONTENT:
+                fragment = mContentsFragment;
+                break;
+            case ADD:
+                fragment = mAddVideoFileManualFragment;
+                break;
+            case SETTING:
+                fragment = mSettingFragment;
+                break;
+            case ABOUT:
+//                fragment = mProcessCenterFragment;
+                break;
+            default:
+                fragment = mContentsFragment;
+                break;
         }
-        List<File> fileList = FileUtils.listFilesInDir(path, false);
-        if (fileList != null) {
-            for (File f : fileList) {
-                mList.add(f.getName());
+        return fragment;
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        if (id == R.id.nav_switch_network) {
+            mNetWorkMode = !mNetWorkMode;
+            MyApplication.getSP().putBoolean("network_mode", mNetWorkMode);
+            MenuItem menuItemTitle = mNavigationView.getMenu().findItem(R.id.nav_switch_network_title);
+            if (mNetWorkMode) {
+                menuItemTitle.setTitle(R.string.switch_network_online);
+                item.setIcon(R.drawable.ic_online);
+            } else {
+                menuItemTitle.setTitle(R.string.switch_network_offline);
+                item.setIcon(R.drawable.ic_offline);
             }
-        }
-        Collections.sort(mList);
-        mFolderRecycleViewAdapter.notifyDataSetChanged();
-    }
-
-    private void initView() {
-        setCustomTitle(getResources().getString(R.string.app_video_file_select));
-        mTextScanpathStr.setText(MyApplication.getSP().getString("scan_path", Environment.getExternalStorageDirectory().toString() + "/"));
-        getFolderAndFileList(mTextScanpathStr.getText().toString());
-    }
-
-    private void initListener() {
-
-    }
-
-    class FolderRecycleViewAdapter extends RecyclerView.Adapter<FolderRecycleViewAdapter.ViewHolder> {
-
-
-        @Override
-        public FolderRecycleViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.folder_item_view, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(FolderRecycleViewAdapter.ViewHolder holder, final int position) {
-            holder.textView.setText(mList.get(position));
-            holder.textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        Realm realm = MyApplication.getRealmInstance();
-                        if ("......".equals(mList.get(position))) {
-                            String parentpath = mTextScanpathStr.getText().toString().substring(0, mTextScanpathStr.getText().toString().length() - 1);
-                            parentpath = parentpath.substring(0, parentpath.lastIndexOf("/") + 1);
-                            mTextScanpathStr.setText(parentpath);
-                            mList.clear();
-                            getFolderAndFileList(parentpath);
-                        } else {
-                            String newfilepath = mTextScanpathStr.getText().toString() + mList.get(position);
-                            if (FileUtils.isDir(newfilepath)) {
-                                mTextScanpathStr.setText(newfilepath + "/");
-                                mList.clear();
-                                getFolderAndFileList(newfilepath + "/");
-                            } else {
-                                ProgressDialogUtils.showDialog(AddVideoFileManualActivity.this, getResources().getString(R.string.loading));
-                                checkAndAddVideoInfo(realm,newfilepath);
-                                ProgressDialogUtils.dismissDialog();
-                                finish();
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mList.size();
-        }
-
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            public TextView textView;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                textView = (TextView) itemView.findViewById(R.id.text_folder_name);
+        } else if (id == R.id.nav_play) {
+            if (mContentsFragment.isAdded()) {
+                getSupportFragmentManager().beginTransaction().hide(getCurrentFragment(mFragmentTag)).show(mContentsFragment).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().hide(getCurrentFragment(mFragmentTag)).add(R.id.content_main, mContentsFragment).commit();
             }
-        }
-    }
+            mFragmentTag = FragmentTag.CONTENT;
+            setCustomTitle(getResources().getString(R.string.app_name));
+        } else if (id == R.id.nav_add) {
+            if (mAddVideoFileManualFragment.isAdded()) {
+                getSupportFragmentManager().beginTransaction().hide(getCurrentFragment(mFragmentTag)).show(mAddVideoFileManualFragment).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().hide(getCurrentFragment(mFragmentTag)).add(R.id.content_main, mAddVideoFileManualFragment).commit();
+            }
+            mFragmentTag = FragmentTag.ADD;
+            setCustomTitle(getResources().getString(R.string.app_video_file_select));
+        } else if (id == R.id.nav_setting) {
+            if (mSettingFragment.isAdded()) {
+                getSupportFragmentManager().beginTransaction().hide(getCurrentFragment(mFragmentTag)).show(mSettingFragment).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().hide(getCurrentFragment(mFragmentTag)).add(R.id.content_main, mSettingFragment).commit();
+            }
+            mFragmentTag = FragmentTag.SETTING;
+            setCustomTitle(getResources().getString(R.string.app_setting));
+        } else if (id == R.id.nav_about) {
 
+        } else if (id == R.id.nav_exit) {
+            finish();
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
     /**
      * 检查数据库中是否有该视频，如果没有就添加
      * @param realm
@@ -183,7 +221,7 @@ public class AddVideoFileManualActivity extends BaseActivity {
         VideoFileInfo videoFileInfoc = realm.where(VideoFileInfo.class).equalTo("videoPath", newfilepath).findFirst();
         if (videoFileInfoc == null) {
             if (!JudgeVideoUtil.isVideo(newfilepath)) {
-                ToastUtils.showShortToastSafe(AddVideoFileManualActivity.this, "请选择视频文件！");
+                ToastUtils.showShortToastSafe(MainActivity.this, "请选择视频文件！");
                 ProgressDialogUtils.dismissDialog();
                 return;
             }
@@ -216,7 +254,7 @@ public class AddVideoFileManualActivity extends BaseActivity {
             realm.commitTransaction();
             restoreContentTable();
         } else {
-            ToastUtils.showShortToastSafe(AddVideoFileManualActivity.this, "数据库中已存在该数据，无法添加");
+            ToastUtils.showShortToastSafe(MainActivity.this, "数据库中已存在该数据，无法添加");
         }
     }
     /**
@@ -323,5 +361,4 @@ public class AddVideoFileManualActivity extends BaseActivity {
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
-
 }

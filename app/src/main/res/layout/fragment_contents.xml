@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".fileexplorer.view.ContentsActivity">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <include layout="@layout/base_toobar_view"/>
+    android:orientation="vertical">
         <in.srain.cube.views.ptr.PtrFrameLayout
             xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
             android:id="@+id/store_house_ptr_frame"
@@ -30,16 +23,5 @@
                 android:layout_height="match_parent">
             </android.support.v7.widget.RecyclerView>
         </in.srain.cube.views.ptr.PtrFrameLayout>
-    </LinearLayout>
-    <com.nightonke.boommenu.BoomMenuButton
-        android:id="@+id/bmb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/x10"
-        android:layout_marginBottom="@dimen/y10"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        />
 
-</RelativeLayout>
+</LinearLayout>

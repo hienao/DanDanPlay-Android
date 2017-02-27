@@ -1,48 +1,50 @@
 package cn.swt.danmuplayer.setting;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
 import com.z.settingitemlib.SettingItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.swt.danmuplayer.R;
-import cn.swt.danmuplayer.core.base.BaseActivity;
 
 import static cn.swt.danmuplayer.application.MyApplication.getSP;
 
-public class SettingActivity extends BaseActivity {
+public class SettingFragment extends Fragment {
 
-    @BindView(R.id.stool_toolbar_title)
-    TextView mStoolToolbarTitle;
-    @BindView(R.id.stool_toolbar)
-    Toolbar mStoolToolbar;
     @BindView(R.id.set_scan_path)
     SettingItem mSetScanPath;
     @BindView(R.id.set_auto_play)
     SettingItem mSetAutoPlay;
     private boolean auto_play;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
-        ButterKnife.bind(this);
-        initData();
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_setting, container, false);
+        ButterKnife.bind(this, view);
         initView();
         initListener();
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initData();
     }
 
     private void initData() {
-        mSetScanPath.rightText.setText(getSP().getString("scan_path", "external"));
         auto_play=getSP().getBoolean("auto_play",true);
     }
 
     private void initView() {
-        setCustomTitle(getResources().getString(R.string.app_setting));
+        mSetScanPath.rightText.setText(getSP().getString("scan_path", "external"));
     }
 
     private void initListener() {
@@ -75,7 +77,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         if ("external".equals(getSP().getString("scan_path", "external"))) {
             mSetScanPath.rightText.setText(getResources().getString(R.string.app_setting_external));
