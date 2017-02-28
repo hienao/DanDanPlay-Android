@@ -20,6 +20,12 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+//task clean(type: Delete) {
+//    delete rootProject.buildDir
+//}
+// 解决编译时无法删除build文件夹（原因：文件夹java虚拟机占用）
+task clean(type: Exec) {
+    ext.lockhunter = '\"C:\\Program Files\\LockHunter\\LockHunter.exe\"'
+    def buildDir = file(new File("build"))
+    commandLine 'cmd', "$lockhunter", '/delete', '/silent', buildDir
 }
