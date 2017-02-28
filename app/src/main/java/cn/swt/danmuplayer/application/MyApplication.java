@@ -36,6 +36,13 @@ public class MyApplication extends Application {
         }else {
             LogUtils.init(context,false,true,'e',TAG);
         }
+        //LeakCanary初始化
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return;
+//        }
+//        LeakCanary.install(this);
         //SP初始化
         mSpUtils = new SPUtils(context,"Setting");
 
