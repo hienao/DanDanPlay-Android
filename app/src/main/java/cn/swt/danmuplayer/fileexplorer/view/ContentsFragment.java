@@ -180,7 +180,8 @@ public class ContentsFragment extends Fragment implements MainContract.View {
             ActivityCompat.requestPermissions((Activity) getContext(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
                     WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
         } else {
-            mContentPresenter.getAllVideo(mContentResolver);
+//            mContentPresenter.getAllVideo(mContentResolver);
+            mContentPresenter.getAllVideo();
         }
     }
 
@@ -202,6 +203,5 @@ public class ContentsFragment extends Fragment implements MainContract.View {
             }
         }
     }
-
 
 }

@@ -19,8 +19,7 @@ public class VideoFileNameFilter implements FilenameFilter {
         types = new ArrayList<String>();
         if (usedefaulttype){
             types.add(".asf");types.add(".avi");types.add(".mkv");types.add(".mp4");
-            types.add(".mov");types.add(".flv");types.add(".mpeg");types.add(".mpg");
-            types.add(".rmvb");types.add(".vob");types.add(".wmv");types.add(".3gp");
+            types.add(".flv");types.add(".rmvb");;types.add(".wmv");types.add(".3gp");
         }
     }
 

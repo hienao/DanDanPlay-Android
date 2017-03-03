@@ -21,5 +21,6 @@ public class MainContract {
 
     public interface Present extends BasePresenter {
         void getAllVideo(ContentResolver contentResolver);
+        void getAllVideo();
     }
 }

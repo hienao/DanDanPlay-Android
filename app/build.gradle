@@ -9,6 +9,11 @@ def releaseTime() {
 }
 
 android {
+    //在写本地单测的时候，会遇到android.jar某个方法没有被Mock的情况，此时需要如下配置:
+    //让Gradle系统为该方法返回默认值
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     signingConfigs {
         releaseConfig {
             keyAlias 'Shiwentao'
@@ -97,8 +102,6 @@ dependencies {
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
     //设置
     compile 'com.z:SettingItem:2.0'
-    
-
     compile files('libs/TalkingData_Analytics_Android_SDK_V2.2.48.jar')
     compile project(':corelib')
     compile project(':playerview')
@@ -113,18 +116,13 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'in.srain.cube:ultra-ptr:1.0.11'
-
-
     compile 'com.android.support:design:25.2.0'
     testCompile 'junit:junit:4.12'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     //leakcanary
-//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-//    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    //缩略图
     compile 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
-    compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-armeabi:1.0.14'
-    compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-armeabi-v7a:1.0.14'
-    compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-x86:1.0.14'
-    compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-arm64-v8a:1.0.14'
 }

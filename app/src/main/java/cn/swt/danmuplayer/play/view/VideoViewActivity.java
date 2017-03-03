@@ -1,7 +1,6 @@
 package cn.swt.danmuplayer.play.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -24,7 +23,6 @@ import cn.swt.danmuplayer.play.contract.VideoViewContract;
 import cn.swt.danmuplayer.play.presenter.VideoViewPresenter;
 import io.realm.Realm;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
-import wseemann.media.FFmpegMediaMetadataRetriever;
 
 public class VideoViewActivity extends AppCompatActivity implements VideoViewContract.View {
     VideoViewPresenter mVideoViewPresenter;
@@ -98,12 +96,12 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         }
         try {
             //缩略图
-            FFmpegMediaMetadataRetriever fmmr = new FFmpegMediaMetadataRetriever();
-            fmmr.setDataSource(videoPath);
-            Bitmap bitmap = fmmr.getFrameAtTime();
+//            FFmpegMediaMetadataRetriever fmmr = new FFmpegMediaMetadataRetriever();
+//            fmmr.setDataSource(videoPath);
+//            Bitmap bitmap = fmmr.getFrameAtTime();
 //            String duration=fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION);
-            mViewSuperPlayer.mPlayerThumb.setImageBitmap(bitmap);
-            fmmr.release();
+//            mViewSuperPlayer.mPlayerThumb.setImageBitmap(bitmap);
+//            fmmr.release();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             LogUtils.i("获取缩略图失败");

@@ -10,10 +10,12 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import com.swt.corelib.beans.StorageInfo;
 import com.swt.corelib.utils.ConvertUtils;
 import com.swt.corelib.utils.FileUtils;
 import com.swt.corelib.utils.ImageUtils;
 import com.swt.corelib.utils.SDCardUtils;
+import com.swt.corelib.utils.StorageUtils;
 import com.swt.corelib.utils.TimeUtils;
 import com.swt.corelib.utils.ToastUtils;
 
@@ -28,6 +30,7 @@ import cn.swt.danmuplayer.fileexplorer.beans.VideoFileInfo;
 import cn.swt.danmuplayer.fileexplorer.contract.MainContract;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 /**
  * Title: ContentPresenter <br>
@@ -180,6 +183,105 @@ public class ContentPresenter implements MainContract.Present {
 
         }).start();
 
+    }
+
+    @Override
+    public void getAllVideo() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String[]suffixList={"asf","avi","mkv","mp4","wmv","3gp","flv"};
+                List<StorageInfo> storageInfoList=StorageUtils.listAvaliableStorage(mView.getContext());
+                List<File>fileList=new ArrayList<File>();
+                if (storageInfoList==null||storageInfoList.size()==0)
+                    return;
+                for (StorageInfo s:storageInfoList){
+                    //获取每一个挂载点的文件
+                    for (String ss:suffixList){
+                        fileList.addAll(FileUtils.listFilesInDirWithFilter(s.path,ss,true));
+                    }
+                }
+                Realm realm = MyApplication.getRealmInstance();
+                if (fileList==null||fileList.size()==0)
+                    return;
+                for (File f:fileList){
+                    String filePath=f.getPath();
+                    FFmpegMediaMetadataRetriever fmmr = new FFmpegMediaMetadataRetriever();
+                    fmmr.setDataSource(filePath);
+                    Bitmap bitmap = fmmr.getFrameAtTime();
+                    String videoDuration=fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION);
+                    String videoName=f.getName();
+                    fmmr.release();
+                    //保存弹幕及观看进度信息到数据库
+                    VideoFileArgInfo videoFileArgInfo=realm.where(VideoFileArgInfo.class).equalTo("videoPath", filePath).findFirst();
+                    String ddxml = filePath.substring(0, filePath.lastIndexOf(".")) + "dd.xml";
+                    String bilixml = filePath.substring(0, filePath.lastIndexOf(".")) + ".xml";
+                    realm.beginTransaction();
+                    if (videoFileArgInfo==null){
+                        videoFileArgInfo=new VideoFileArgInfo();
+                        videoFileArgInfo.setVideoPath(filePath);
+                        videoFileArgInfo.setSawProgress(0);
+                        if (FileUtils.isFileExists(ddxml) || FileUtils.isFileExists(bilixml)) {
+                            videoFileArgInfo.setHaveLocalDanmu(true);
+                        }else {
+                            videoFileArgInfo.setHaveLocalDanmu(false);
+                        }
+                        realm.copyToRealm(videoFileArgInfo);
+                    }else {
+                        if (FileUtils.isFileExists(ddxml) || FileUtils.isFileExists(bilixml)) {
+                            videoFileArgInfo.setHaveLocalDanmu(true);
+                        }else {
+                            videoFileArgInfo.setHaveLocalDanmu(false);
+                        }
+
+                    }
+                    realm.commitTransaction();
+                    VideoFileInfo videoFileInfoc = realm.where(VideoFileInfo.class).equalTo("videoPath", filePath).findFirst();
+                    //文件已存在，跳过
+                    if (videoFileInfoc != null)
+                        continue;
+                    //文件不存在，添加
+                    VideoFileInfo videoFileInfo = new VideoFileInfo();
+                    videoFileInfo.setVideoPath(filePath);
+                    videoFileInfo.setVideoContentPath(filePath.substring(0, filePath.lastIndexOf("/") + 1));
+                    if (TextUtils.isEmpty(videoName)) {
+                        videoFileInfo.setVideoName(videoName);
+                        videoFileInfo.setVideoNameWithoutSuffix("Unkonwn");
+                    } else if (videoName.contains(".")) {
+                        videoFileInfo.setVideoName(videoName);
+                        videoFileInfo.setVideoNameWithoutSuffix(videoName.substring(0, videoName.lastIndexOf(".")));
+                    } else {
+                        videoFileInfo.setVideoName(videoName);
+                        videoFileInfo.setVideoNameWithoutSuffix(videoName);
+                    }
+                    videoFileInfo.setCover(ConvertUtils.bitmapToBase64(bitmap));
+                    try {
+                        videoFileInfo.setVideoLength(TimeUtils.formatDuring(Long.parseLong(videoDuration)));
+                    } catch (NumberFormatException e) {
+                        videoFileInfo.setVideoLength("UnKnown");
+                    }
+                    realm.beginTransaction();
+                    realm.copyToRealm(videoFileInfo);
+                    realm.commitTransaction();
+                }
+                //查询数据库中是否有被删除的视频，有的话删除记录
+                RealmResults<VideoFileInfo> videolist = realm.where(VideoFileInfo.class).findAll();
+                if (videolist != null && videolist.size() != 0) {
+                    for (final VideoFileInfo v : videolist) {
+                        //文件不存在
+                        if (!FileUtils.isFileExists(v.getVideoPath())) {
+                            realm.beginTransaction();
+                            v.deleteFromRealm();
+                            realm.commitTransaction();
+                        }
+                    }
+                }
+                restoreContentTable();
+                mHandler.sendEmptyMessage(MSG_SCAN_FINISH);
+                Message msg = new Message();
+                mHandler.sendMessage(msg);
+            }
+        }).start();
     }
 
     /**
