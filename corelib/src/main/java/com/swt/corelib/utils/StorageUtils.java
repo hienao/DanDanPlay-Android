@@ -36,7 +36,7 @@ public class StorageUtils {
                     String path = (String) getPath.invoke(obj, new Object[0]);
                     info = new StorageInfo(path);
                     File file = new File(info.path);
-                    if ((file.exists()) && (file.isDirectory())) {
+                    if ((file.exists()) && (file.isDirectory())&&(file.canWrite())) {
                         Method isRemovable = obj.getClass().getMethod("isRemovable", new Class[0]);
                         String state = null;
                         try {
