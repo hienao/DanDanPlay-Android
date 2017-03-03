@@ -73,7 +73,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void initPlayer() {
-
         String danmuxml = "";
         InputStream inputStream = null;
         if (!TextUtils.isEmpty(videoPath)) {
@@ -89,7 +88,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         if (!TextUtils.isEmpty(danmuxml) && FileUtils.isFileExists(danmuxml)) {
             try {
                 inputStream = new FileInputStream(new File(danmuxml));
-
             } catch (FileNotFoundException e) {
                 LogUtils.e("cuowu", e);
             }
