@@ -14,6 +14,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -31,9 +36,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     // ijkplayer
     compile 'tv.danmaku.ijk.media:ijkplayer-java:0.7.7.1'
-    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.7.7.1'
-    compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.7.7.1'
-    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.7.7.1'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.7.7.1'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.7.7.1'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.7.7.1'
     // Danmaku
     compile 'com.github.ctiao:DanmakuFlameMaster:0.6.2'
     compile 'com.github.ctiao:ndkbitmap-armv7a:0.6.2'
