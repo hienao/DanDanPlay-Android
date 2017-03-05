@@ -24,14 +24,15 @@
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_setting"
             android:title="@string/app_setting"/>
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/drawer_about"
+            android:title="@string/drawer_about"/>
     </group>
 
     <item android:title="@string/drawer_other">
         <menu>
-            <item
-                android:id="@+id/nav_about"
-                android:icon="@drawable/drawer_about"
-                android:title="@string/drawer_about"/>
+
             <item
                 android:id="@+id/nav_exit"
                 android:icon="@drawable/drawer_exit"

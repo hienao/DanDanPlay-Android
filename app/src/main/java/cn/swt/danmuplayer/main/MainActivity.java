@@ -1,5 +1,6 @@
 package cn.swt.danmuplayer.main;
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import com.swt.corelib.utils.ProgressDialogUtils;
 import com.swt.corelib.utils.TimeUtils;
 import com.swt.corelib.utils.ToastUtils;
 
+import cn.swt.danmuplayer.AboutFragment;
 import cn.swt.danmuplayer.R;
 import cn.swt.danmuplayer.application.MyApplication;
 import cn.swt.danmuplayer.core.base.BaseActivity;
@@ -49,21 +51,22 @@ public class MainActivity extends BaseActivity
     FragmentTag mFragmentTag = FragmentTag.CONTENT;
     private AddVideoFileManualFragment mAddVideoFileManualFragment;
     private SettingFragment mSettingFragment;
+    private AboutFragment mAboutFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setPERMISSIONS(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE});
         initData();
         initView();
-
     }
 
     private void initData() {
         mContentsFragment = new ContentsFragment();
         mAddVideoFileManualFragment = new AddVideoFileManualFragment();
         mSettingFragment = new SettingFragment();
-
+        mAboutFragment=new AboutFragment();
     }
 
     private void initView() {
@@ -153,7 +156,7 @@ public class MainActivity extends BaseActivity
                 fragment = mSettingFragment;
                 break;
             case ABOUT:
-//                fragment = mProcessCenterFragment;
+                fragment=mAboutFragment;
                 break;
             default:
                 fragment = mContentsFragment;
@@ -203,7 +206,13 @@ public class MainActivity extends BaseActivity
             mFragmentTag = FragmentTag.SETTING;
             setCustomTitle(getResources().getString(R.string.app_setting));
         } else if (id == R.id.nav_about) {
-
+            if (mAboutFragment.isAdded()) {
+                getSupportFragmentManager().beginTransaction().hide(getCurrentFragment(mFragmentTag)).show(mAboutFragment).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().hide(getCurrentFragment(mFragmentTag)).add(R.id.content_main, mAboutFragment).commit();
+            }
+            mFragmentTag = FragmentTag.ABOUT;
+            setCustomTitle(getResources().getString(R.string.drawer_about));
         } else if (id == R.id.nav_exit) {
             finish();
         }

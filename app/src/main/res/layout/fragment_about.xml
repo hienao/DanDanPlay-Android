@@ -1,0 +1,15 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="cn.swt.danmuplayer.AboutFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="1.为什么SD卡的视频文件扫描不到？\n\t 因为app获取不到外置sd卡的写文件权限，所以获取的弹幕文件无法保存到视频所在的目录下，
+这个暂时是没有解决方案的，除非把弹幕文件单独放在内置存储里，但是这样用户获取弹幕xml文件就不那么方便查找了，所以暂时不修改。\n
+如有建议，请微博私信我@Swart6"/>
+
+</FrameLayout>

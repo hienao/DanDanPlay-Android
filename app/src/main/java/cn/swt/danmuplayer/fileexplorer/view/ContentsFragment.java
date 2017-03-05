@@ -1,16 +1,10 @@
 package cn.swt.danmuplayer.fileexplorer.view;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -134,7 +128,7 @@ public class ContentsFragment extends Fragment implements MainContract.View {
         mStoreHousePtrFrame.setPtrHandler(new PtrDefaultHandler() {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
-                requestPremission();
+                mContentPresenter.getAllVideo();
             }
 
             @Override
@@ -167,41 +161,6 @@ public class ContentsFragment extends Fragment implements MainContract.View {
             ToastUtils.showShortToast(getContext(), R.string.no_file_notice);
         }
         mStoreHousePtrFrame.refreshComplete();
-    }
-
-    /**
-     * 请求文件存储权限,获取媒体文件列表
-     */
-    void requestPremission() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            //申请WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE权限
-            ActivityCompat.requestPermissions((Activity) getContext(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
-                    WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
-        } else {
-//            mContentPresenter.getAllVideo(mContentResolver);
-            mContentPresenter.getAllVideo();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        doNext(requestCode, grantResults);
-    }
-
-    private void doNext(int requestCode, int[] grantResults) {
-        if (requestCode == WRITE_EXTERNAL_STORAGE_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission Granted
-                getDataFromSQLite();
-            } else {
-                // Permission Denied
-                ToastUtils.showShortToastSafe(getContext(), "无法读取外置存储数据，请授予外置存储访问权限");
-//                finish();
-            }
-        }
     }
 
 }

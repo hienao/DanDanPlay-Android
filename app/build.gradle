@@ -97,14 +97,19 @@ dependencies {
     })
     //bugly
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
-    compile 'com.tencent.bugly:crashreport_upgrade:1.2.2.0'
-    compile 'com.tencent.bugly:nativecrashreport:3.1.2'
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
     //设置
-    compile 'com.z:SettingItem:2.0'
     compile files('libs/TalkingData_Analytics_Android_SDK_V2.2.48.jar')
     compile project(':corelib')
     compile project(':playerview')
+    //leakcanary
+    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    //缩略图
+    compile 'com.tencent.bugly:crashreport_upgrade:1.2.2.0'
+    compile 'com.tencent.bugly:nativecrashreport:3.1.2'
+    compile 'com.z:SettingItem:2.0'
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'org.glassfish:javax.annotation:3.1.1-b02'
@@ -117,12 +122,8 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'in.srain.cube:ultra-ptr:1.0.11'
     compile 'com.android.support:design:25.2.0'
+    compile 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
+    compile 'com.android.support:support-v4:25.2.0'
     testCompile 'junit:junit:4.12'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
-    //leakcanary
-    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    //缩略图
-    compile 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
 }

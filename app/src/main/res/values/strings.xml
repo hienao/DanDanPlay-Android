@@ -38,7 +38,7 @@
 
     <string name="navigation_drawer_open">打开抽屉</string>
     <string name="navigation_drawer_close">关闭抽屉</string>
-    <string name="label_feed_back">反馈请联系微博Swart6</string>
+    <string name="label_head_desc">弹幕分享快乐</string>
     <string name="drawer_exit">退出</string>
     <string name="drawer_other">其他</string>
     <string name="drawer_about">关于</string>
@@ -46,4 +46,7 @@
     <string name="click2switch">点击切换</string>
     <string name="play_video">播放视频</string>
     <string name="add_video">添加视频</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
