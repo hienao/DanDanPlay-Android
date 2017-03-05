@@ -27,6 +27,8 @@
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
+#wseemann
+-keep class wseemann.media.**{*;}
 #talkingdata
 -dontwarn com.tendcloud.tenddata.**
 -keep class com.tendcloud.** {*;}
