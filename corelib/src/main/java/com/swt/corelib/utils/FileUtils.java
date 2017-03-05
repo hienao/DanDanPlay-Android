@@ -572,6 +572,20 @@ public class FileUtils {
     }
 
     /**
+     * 判断指定目录下是否有非媒体标识文件
+     * @param dir
+     * @return
+     */
+    public static boolean haveNoMedia(File dir){
+        if (dir!=null&&isDir(dir)){
+            String nomediapath=dir.getPath()+"/.nomedia";
+            File file=getFileByPath(nomediapath);
+            if (file.exists())
+                return true;
+        }
+        return false;
+    }
+    /**
      * 获取目录下所有后缀名为suffix的文件包括子目录
      * <p>大小写忽略</p>
      *
@@ -581,6 +595,11 @@ public class FileUtils {
      */
     public static List<File> listFilesInDirWithFilter(File dir, String suffix) {
         if (dir == null || !isDir(dir)) return null;
+        //判断是否有nomedia文件
+        if (haveNoMedia(dir)){
+            return new ArrayList<File>();
+        }
+        //
         List<File> list = new ArrayList<>();
         File[] files = dir.listFiles();
         if (files != null && files.length != 0) {

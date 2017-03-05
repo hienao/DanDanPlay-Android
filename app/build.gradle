@@ -35,8 +35,8 @@ android {
         applicationId "cn.swt.danmuplayer"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 15
-        versionName "2.3.0"
+        versionCode 16
+        versionName "2.3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             // 设置支持的SO库架构
