@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.swt.corelib.utils.LogUtils;
-import com.swt.corelib.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,8 +66,6 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
         mRvFiles.setItemAnimator(new DefaultItemAnimator());
         mRvFiles.setLayoutManager(new LinearLayoutManager(this));
         mRvFiles.setAdapter(mFileAdapter);
-        //注册需要上下文菜单的View
-//        registerForContextMenu(mRvFiles);
     }
 
     @Override
@@ -80,28 +77,6 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
     }
 
     private void initListener() {
-        mStoolToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.action_switch_network_mode:
-                        mNetworkMode=!mNetworkMode;
-                        if (mNetworkMode){
-                            item.setIcon(R.drawable.ic_online);
-                            item.setTitle(R.string.switch_network_online);
-                            ToastUtils.showShortToastSafe(FileExplorerActivity.this,getResources().getString(R.string.switch_network_online));
-                        }else {
-                            item.setIcon(R.drawable.ic_offline);
-                            item.setTitle(R.string.switch_network_offline);
-                            ToastUtils.showShortToastSafe(FileExplorerActivity.this,getResources().getString(R.string.switch_network_offline));
-                        }
-                        MyApplication.getSP().putBoolean("network_mode",mNetworkMode);
-                        mFileAdapter.setNetworkMode(mNetworkMode);
-                        break;
-                }
-                return true;
-            }
-        });
 
     }
 
@@ -122,17 +97,11 @@ public class FileExplorerActivity extends BaseActivity implements FileExplorerCo
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-//        if(mNetworkMode) {
-//            menu.findItem(R.id.action_switch_network_mode).setIcon(R.drawable.ic_online).setTitle(R.string.switch_network_online);
-//        }else {
-//            menu.findItem(R.id.action_switch_network_mode).setIcon(R.drawable.ic_offline).setTitle(R.string.switch_network_offline);
-//        }
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_toolbar_switch_network, menu);
         return true;
     }
 

@@ -1,6 +1,5 @@
 package cn.swt.danmuplayer.fileexplorer.view;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -44,7 +43,6 @@ public class ContentsFragment extends Fragment implements MainContract.View {
     PtrFrameLayout mStoreHousePtrFrame;
     private List<ContentInfo> mDatas;
     private ContentAdapter mContentAdapter;
-    private ContentResolver mContentResolver;
     private String refreshHeader;
     private StoreHouseHeader mHeader;
     private Realm realm;
@@ -83,7 +81,6 @@ public class ContentsFragment extends Fragment implements MainContract.View {
         mDatas = new ArrayList<>();
         refreshHeader = getResources().getString(R.string.scaning);
         mContentAdapter = new ContentAdapter(getContext(), mDatas);
-        mContentResolver = getContext().getContentResolver();
         mHeader = new StoreHouseHeader(getContext());
         mHeader.setPadding(0, 15, 0, 0);
         mHeader.setTextColor(R.color.text_black);

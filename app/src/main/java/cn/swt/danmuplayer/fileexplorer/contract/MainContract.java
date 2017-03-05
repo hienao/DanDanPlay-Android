@@ -1,6 +1,5 @@
 package cn.swt.danmuplayer.fileexplorer.contract;
 
-import android.content.ContentResolver;
 import android.content.Context;
 
 import cn.swt.danmuplayer.core.base.BasePresenter;
@@ -20,7 +19,6 @@ public class MainContract {
     }
 
     public interface Present extends BasePresenter {
-        void getAllVideo(ContentResolver contentResolver);
         void getAllVideo();
     }
 }
