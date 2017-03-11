@@ -14,15 +14,6 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
-    signingConfigs {
-        releaseConfig {
-            keyAlias 'Shiwentao'
-            keyPassword '19921016'
-            keyAlias "swt.keystore"
-            storeFile file('swt.keystore')
-            storePassword '19921016'
-        }
-    }
     productFlavors.all { flavor ->
         flavor.manifestPlaceholders = [APP_Channel: name]
     }
