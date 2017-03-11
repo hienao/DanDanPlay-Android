@@ -32,7 +32,7 @@
             android:value="${APP_Channel}"/>
         <meta-data
             android:name="TD_APP_ID"
-            android:value="595AB37AB4BB4463979F0ACB9FA1D381"/>
+            android:value="请自行申请TalkingDataId"/>
         <meta-data
             android:name="TD_CHANNEL_ID"
             android:value="${APP_Channel}"/>

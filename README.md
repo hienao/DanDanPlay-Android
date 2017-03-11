@@ -1,2 +1,5 @@
 # DanDanPlay-Android
-##自己练习在做的一个手机版的弹幕播放器
+##弹弹play手机版
+###请自行配置MyApplication.java中bugly的信息
+###请自行配置AndroidManifest.xml中TalkingData的信息
+###请自行配置EncryptUtils中弹弹play弹幕发送的相关key（需要向dandanplayPc版作者申请）

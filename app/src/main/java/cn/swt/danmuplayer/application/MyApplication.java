@@ -47,7 +47,7 @@ public class MyApplication extends Application {
         mSpUtils = new SPUtils(context,"Setting");
 
         //bugly初始化
-        Bugly.init(context, "92428c9315", false);
+        Bugly.init(context, "请自行申请bugly信息", false);
         //talkData初始化
         TCAgent.LOG_ON=true;
         // App ID: 在TalkingData创建应用后，进入数据报表页中，在“系统设置”-“编辑应用”页面里查看App ID。
