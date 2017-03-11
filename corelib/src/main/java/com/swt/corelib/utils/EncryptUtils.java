@@ -32,8 +32,8 @@ public class EncryptUtils {
      * 而且它的长度和密码分组相同(比如：对于AES 128为128位，即长度为16的byte类型数组)
      *
      */
-    public static final byte[] IVPARAMETERS = EncodeUtils.base64Decode("Kd7TaQPacLdqp/jXG5zU5Q==");
-    public static final SecretKey secretKey = new SecretKeySpec(EncodeUtils.base64Decode("ycf8nIsUBQc8dvpoOTNJsPmGOrzYNoaAfQ1sqRUS2zw="), KEY_ALGORITHM);
+    public static final byte[] IVPARAMETERS = EncodeUtils.base64Decode("请向dandanplayPC版作者申请");
+    public static final SecretKey secretKey = new SecretKeySpec(EncodeUtils.base64Decode("请向dandanplayPC版作者申请"), KEY_ALGORITHM);
 
     /**
      * CBC加密，三步走，只是在初始化时加了一个初始变量
