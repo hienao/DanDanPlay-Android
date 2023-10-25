@@ -10,7 +10,7 @@ import cn.swt.danmuplayer.fileexplorer.beans.SearchResultInfo;
 /**
  * Title: EpisodeIdMatchContract <br>
  * Description:匹配视频EpisodeId的页面 <br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017-1-5 16:19
  * Created by Wentao.Shi.
  */

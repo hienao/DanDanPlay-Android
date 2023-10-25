@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Title: AcFunVideoNumResponse <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017/1/7 0007 15:22
  * Created by Wentao.Shi.
  */

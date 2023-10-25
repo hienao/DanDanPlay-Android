@@ -17,7 +17,7 @@ import retrofit2.Response;
 /**
  * Title: VideoViewPresenter <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/10/29 0029 9:44
  * Created by Wentao.Shi.
  */

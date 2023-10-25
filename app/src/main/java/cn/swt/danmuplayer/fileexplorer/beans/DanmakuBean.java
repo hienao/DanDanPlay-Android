@@ -5,7 +5,7 @@ import android.text.TextUtils;
 /**
  * Title: DanmakuBean <br>
  * Description:用来存储的弹幕实体类 <br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017-1-11 9:49
  * Created by Wentao.Shi.
  */

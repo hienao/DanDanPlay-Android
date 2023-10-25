@@ -3,7 +3,7 @@ package cn.swt.danmuplayer.fileexplorer.beans;
 /**
  * Title: SearchResultInfo <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017-1-6 9:55
  * Created by Wentao.Shi.
  */

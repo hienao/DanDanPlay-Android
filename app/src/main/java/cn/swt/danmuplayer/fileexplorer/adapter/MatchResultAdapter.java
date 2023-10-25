@@ -18,7 +18,7 @@ import cn.swt.danmuplayer.fileexplorer.utils.DanmuUtils;
 /**
  * Title: MatchResultAdapter <br>
  * Description: 匹配结果列表adapter<br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017/1/5 0005 19:05
  * Created by Wentao.Shi.
  */

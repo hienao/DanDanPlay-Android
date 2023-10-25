@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Title: ContentInfo <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/10/22 0022 18:35
  * Created by Wentao.Shi.
  */

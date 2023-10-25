@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Title: StorageUtils <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017-3-3 13:38
  * Created by Wentao.Shi.
  */

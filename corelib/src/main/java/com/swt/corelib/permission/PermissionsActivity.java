@@ -18,7 +18,7 @@ import com.swt.corelib.R;
 /**
  * Title: PermissionsActivity <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017/3/5 0005 11:29
  * Created by Wentao.Shi.
  */

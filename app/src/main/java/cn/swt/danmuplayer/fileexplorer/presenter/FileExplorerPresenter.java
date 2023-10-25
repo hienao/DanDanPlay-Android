@@ -20,7 +20,7 @@ import cn.swt.danmuplayer.others.VideoFileNameFilter;
 /**
  * Title: FileExplorerPresenter <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/10/23 0023 9:30
  * Created by Wentao.Shi.
  */

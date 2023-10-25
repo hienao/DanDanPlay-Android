@@ -3,7 +3,7 @@ package cn.swt.danmuplayer.core.http.beans;
 /**
  * Title: CidResponse <br>
  * Description: cid解析接口返回值 <br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/12/3 0003 10:36
  * Created by Wentao.Shi.
  */

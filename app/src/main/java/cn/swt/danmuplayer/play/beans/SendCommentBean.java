@@ -3,7 +3,7 @@ package cn.swt.danmuplayer.play.beans;
 /**
  * Title: SendCommentBean <br>
  * Description: 发送弹幕的bean<br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017-2-13 15:27
  * Created by Wentao.Shi.
  */

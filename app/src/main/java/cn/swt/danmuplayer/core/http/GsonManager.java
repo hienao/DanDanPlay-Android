@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 /**
  * Title: GsonManager <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/12/2 10:03
  * Created by Wentao.Shi.
  */

@@ -3,7 +3,7 @@ package com.swt.corelib.beans;
 /**
  * Title: StorageInfo <br>
  * Description: 系统挂载点<br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017-3-3 12:30
  * Created by Wentao.Shi.
  */

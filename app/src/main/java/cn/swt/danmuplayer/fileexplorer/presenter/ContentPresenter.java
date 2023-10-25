@@ -30,7 +30,7 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
 /**
  * Title: ContentPresenter <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/10/17 10:55
  * Created by Wentao.Shi.
  */

@@ -3,7 +3,7 @@ package cn.swt.danmuplayer.core.http;
 /**
  * Title: HttpConstant <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/11/23 0023 20:12
  * Created by Wentao.Shi.
  */

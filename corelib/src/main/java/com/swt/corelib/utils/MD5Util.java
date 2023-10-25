@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Title: MD5Util <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017-1-3 14:52
  * Created by Wentao.Shi.
  */

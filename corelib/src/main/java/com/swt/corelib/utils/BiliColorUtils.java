@@ -5,7 +5,7 @@ import android.text.TextUtils;
 /**
  * Title: BiliColorUtils <br>
  * Description: 颜色转换工具<br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/12/26 17:34
  * Created by Wentao.Shi.
  */

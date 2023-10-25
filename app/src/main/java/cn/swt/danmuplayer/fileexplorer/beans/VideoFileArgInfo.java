@@ -6,7 +6,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Title: VideoFileArgInfo <br>
  * Description: 记录视频是否有弹幕及观看进度等参数的bean<br>
- * Copyright (c) 传化物流版权所有 2017 <br>
+ * Copyright (c) Hienao版权所有 2017 <br>
  * Created DateTime: 2017-2-21 9:23
  * Created by Wentao.Shi.
  */

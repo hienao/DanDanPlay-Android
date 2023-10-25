@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Title: CommentResponse <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/11/23 0023 20:30
  * Created by Wentao.Shi.
  */

@@ -18,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Title: RetrofitManager <br>
  * Description: <br>
- * Copyright (c) 传化物流版权所有 2016 <br>
+ * Copyright (c) Hienao版权所有 2016 <br>
  * Created DateTime: 2016/11/24 8:59
  * Created by Wentao.Shi.
  */
