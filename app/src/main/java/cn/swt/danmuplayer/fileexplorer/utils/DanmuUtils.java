@@ -59,9 +59,8 @@ import retrofit2.Response;
 /**
  * Title: DanmuUtils <br>
  * Description: 弹幕存储器<br>
- * Copyright (c) 传化物流版权所有 2017 <br>
  * Created DateTime: 2017-1-13 13:59
- * Created by Wentao.Shi.
+ * Created by Hienao
  */
 public class DanmuUtils {
     private  Context mContext;
